@@ -40,8 +40,6 @@ class Portfolio:
 
     @property
     def value_tilt(self) -> float:
-        # NOTE: using "value tilt" in a loose sense to include both value and size premiums
-        # TODO: include separate estimates of value and size tilts
         portfolio_value = self.value
         return sum(
             position.equity.value_tilt * (position.value / portfolio_value)
@@ -49,9 +47,24 @@ class Portfolio:
         )
 
     @property
+    def size_tilt(self) -> float:
+        portfolio_value = self.value
+        return sum(
+            position.equity.size_tilt * (position.value / portfolio_value)
+            for position in self.positions.values()
+        )
+
+    @property
     def target_value_tilt(self) -> float:
         return sum(
             position.equity.value_tilt * position.target_proportion
+            for position in self.positions.values()
+        )
+
+    @property
+    def target_size_tilt(self) -> float:
+        return sum(
+            position.equity.size_tilt * position.target_proportion
             for position in self.positions.values()
         )
 

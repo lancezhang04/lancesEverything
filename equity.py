@@ -13,6 +13,7 @@ class Ticker(Enum):
     AVEM = "AVEM"  # Avantis emerging markets index
     AVUV = "AVUV"  # Avantis American small cap value
     AVDV = "AVDV"  # Avantis international small cap value
+    AVES = "AVES"  # Avantis emerging markets value
 
 
 class Equity(BaseModel):
@@ -24,6 +25,7 @@ class Equity(BaseModel):
 
     is_value: bool
     value_tilt: float
+    size_tilt: float
     region: Region
 
 
@@ -42,6 +44,7 @@ def load_equities():
             fractional=data.get("fractional", True),
             share_price=yf.Ticker(ticker_str).info["regularMarketPrice"],
             value_tilt=data["value_tilt"],
+            size_tilt=data["size_tilt"],
             is_value=data["is_value"],
             region=Region[data["region"]],
         )
