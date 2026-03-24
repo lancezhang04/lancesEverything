@@ -26,6 +26,7 @@ class Equity(BaseModel):
     is_value: bool
     value_tilt: float
     size_tilt: float
+    profitability_tilt: float
     region: Region
 
 
@@ -45,6 +46,7 @@ def load_equities():
             share_price=yf.Ticker(ticker_str).info["regularMarketPrice"],
             value_tilt=data["value_tilt"],
             size_tilt=data["size_tilt"],
+            profitability_tilt=data["profitability_tilt"],
             is_value=data["is_value"],
             region=Region[data["region"]],
         )
