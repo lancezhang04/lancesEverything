@@ -22,12 +22,7 @@ class Region(Enum):
 TARGET_VALUE_LOADINGS = {
     Region[k]: v for k, v in config_data["target_value_loadings"].items()
 }
-
-FACTOR_PREMIUMS = config_data.get("factor_premiums", {
-    "HML": 0.04,
-    "SMB": 0.03,
-    "RMW": 0.03
-})
+FACTOR_PREMIUMS = config_data.get("factor_premiums")
 
 
 def get_portfolio_data():

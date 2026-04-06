@@ -33,10 +33,10 @@ class Portfolio:
         return sum(position.value for position in self.positions.values())
 
     @property
-    def value_loading(self) -> float:
+    def market_loading(self) -> float:
         portfolio_value = self.value
         return sum(
-            position.equity.value_loading * (position.value / portfolio_value)
+            position.equity.market_loading * (position.value / portfolio_value)
             for position in self.positions.values()
         )
 
@@ -49,6 +49,14 @@ class Portfolio:
         )
 
     @property
+    def value_loading(self) -> float:
+        portfolio_value = self.value
+        return sum(
+            position.equity.value_loading * (position.value / portfolio_value)
+            for position in self.positions.values()
+        )
+
+    @property
     def profitability_loading(self) -> float:
         portfolio_value = self.value
         return sum(
@@ -57,9 +65,17 @@ class Portfolio:
         )
 
     @property
-    def target_value_loading(self) -> float:
+    def investment_loading(self) -> float:
+        portfolio_value = self.value
         return sum(
-            position.equity.value_loading * position.target_proportion
+            position.equity.investment_loading * (position.value / portfolio_value)
+            for position in self.positions.values()
+        )
+
+    @property
+    def target_market_loading(self) -> float:
+        return sum(
+            position.equity.market_loading * position.target_proportion
             for position in self.positions.values()
         )
 
@@ -71,9 +87,23 @@ class Portfolio:
         )
 
     @property
+    def target_value_loading(self) -> float:
+        return sum(
+            position.equity.value_loading * position.target_proportion
+            for position in self.positions.values()
+        )
+
+    @property
     def target_profitability_loading(self) -> float:
         return sum(
             position.equity.profitability_loading * position.target_proportion
+            for position in self.positions.values()
+        )
+
+    @property
+    def target_investment_loading(self) -> float:
+        return sum(
+            position.equity.investment_loading * position.target_proportion
             for position in self.positions.values()
         )
 
@@ -125,6 +155,13 @@ class Portfolio:
 
         loadings_data = [
             [
+                "Rm-Rf",
+                self.market_loading,
+                self.target_market_loading,
+                FACTOR_PREMIUMS["Rm-Rf"],
+                FACTOR_PREMIUMS["Rm-Rf"] * self.market_loading
+            ],
+            [
                 "SMB",
                 self.size_loading,
                 self.target_size_loading,
@@ -145,19 +182,43 @@ class Portfolio:
                 FACTOR_PREMIUMS["RMW"],
                 FACTOR_PREMIUMS["RMW"] * self.profitability_loading
             ],
-            # TODO: add investment and market factors
+            [
+                "CMA",
+                self.investment_loading,
+                self.target_investment_loading,
+                FACTOR_PREMIUMS["CMA"],
+                FACTOR_PREMIUMS["CMA"] * self.investment_loading
+            ],
         ]
 
         total_portfolio_premium = sum(row[4] for row in loadings_data)
 
-        print(f"\nPortfolio Factor Loadings (Est.)")
+        print(f"\nEstimated Portfolio Factor Loadings and Return")
         print(tabulate(
             loadings_data,
-            headers=["Factor", "Loading", "Target Loading", "Est. Premium", "Est. Portfolio Premium"],
+            headers=["Factor", "Loading", "Target Loading", "Est. Factor Premium", "Est. Portfolio Premium"],
             tablefmt='grid',
             floatfmt=".4f"
         ))
-        print(f"Total Estimated Portfolio Excess Returns: {total_portfolio_premium:.2%}")
+        # print(f"Total Est. Portfolio Premium: {total_portfolio_premium:.2%}")
+
+        real_er = 0.002 / (1 + FACTOR_PREMIUMS["inflation"])  # TODO: confirm this is the correct calculation, add to config
+        arithmetic_return = total_portfolio_premium + FACTOR_PREMIUMS["Rf"] - real_er
+        nominal_arithmetic_return = (1 + arithmetic_return) * (1 + FACTOR_PREMIUMS["inflation"]) - 1
+        geometric_return = arithmetic_return - FACTOR_PREMIUMS["vol"] ** 2 / 2
+        nominal_geometric_return = (1 + geometric_return) * (1 + FACTOR_PREMIUMS["inflation"]) - 1
+
+        print("\n Estimated Expected Returns")
+        print(tabulate(
+            [
+                ["Arithmetic Return", arithmetic_return, nominal_arithmetic_return],
+                ["Geometric Return", geometric_return, nominal_geometric_return],
+            ],
+            headers=["", "Real", "Nominal"],
+            tablefmt='grid',
+            floatfmt=".2%"
+        ))
+
 
     def balance_with_infusion(self, infusion: float) -> None:
         data = self.format_data()

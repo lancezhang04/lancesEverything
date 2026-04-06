@@ -26,9 +26,11 @@ class Equity(BaseModel):
     fractional: bool = True
     share_price: float
 
-    value_loading: float
+    market_loading: float
     size_loading: float
+    value_loading: float
     profitability_loading: float
+    investment_loading: float
     region: Region
 
 
@@ -125,9 +127,11 @@ def get_equities(use_cache: bool = False):
             ticker=ticker,
             fractional=data.get("fractional", True),
             share_price=stock_prices[ticker_str],
-            value_loading=data["value_loading"],
+            market_loading=data["market_loading"],
             size_loading=data["size_loading"],
+            value_loading=data["value_loading"],
             profitability_loading=data["profitability_loading"],
+            investment_loading=data["investment_loading"],
             region=Region[data["region"]],
         )
     return equities, fund_proportion_in_region
