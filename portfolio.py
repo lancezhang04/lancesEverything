@@ -184,6 +184,12 @@ class Portfolio:
         ]
 
 
+    def display_regional_distribution(self, target_regional_split: dict) -> None:
+        regional_dist = self.regional_distribution()
+        print("Regional distribution:")
+        for region, proportion in regional_dist.items():
+            print(f"\t{region.value} - {proportion:.2%} ({target_regional_split[region]:.2%} target)")
+
     def display(self) -> None:
         # TODO: Consider adding regional composition and estimated loading %
         data = self.format_data()

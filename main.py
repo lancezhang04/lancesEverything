@@ -31,11 +31,7 @@ if __name__ == "__main__":
     current_portfolio.display()
 
     print()
-    # TODO: extract into method
-    regional_dist = current_portfolio.regional_distribution()
-    print("Regional distribution:")
-    for region, proportion in regional_dist.items():
-        print(f"\t{region.value} - {proportion:.2%} ({TARGET_REGIONAL_SPLIT[region]:.2%} target)")
+    current_portfolio.display_regional_distribution(TARGET_REGIONAL_SPLIT)
 
     print()
     current_portfolio.display_loadings()
