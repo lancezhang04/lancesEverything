@@ -1,29 +1,25 @@
 current_portfolio:
-  - ticker: DFUS
-    shares: 0.0
-  - ticker: DFAI
-    shares: 0.0
-  - ticker: AVEM
-    shares: 0.0
-  - ticker: AVES
-    shares: 4.0
-  - ticker: AVUV
-    shares: 11.73815
-  - ticker: AVDV
-    shares: 5.45139
-
-# TODO: different market premium for different regions? better theoretical values?
+- ticker: DFUS
+  shares: 0.0
+- ticker: DFAI
+  shares: 0.0
+- ticker: AVEM
+  shares: 0.0
+- ticker: AVES
+  shares: 4.0
+- ticker: AVUV
+  shares: 11.73815
+- ticker: AVDV
+  shares: 5.45139
 factor_premiums:
   Rm-Rf: 0.05
   HML: 0.025
   SMB: 0.01
   RMW: 0.025
   CMA: 0.015
-
-  Rf: 0.006  # est. long-run risk-free real returns  # TODO: One number for total market premium might not be advisable
-  inflation: 0.025  # est. long-run inflation
-  vol: 0.23  # est. long-run portfolio volatility; TODO: better evaluation
-
+  Rf: 0.006
+  inflation: 0.025
+  vol: 0.23
 equities:
   DFUS:
     market_loading: 1.0
@@ -31,61 +27,49 @@ equities:
     value_loading: 0.0
     profitability_loading: 0.05
     investment_loading: 0.04
-
     region: US
     fractional: false
-
   DFAI:
     market_loading: 1.03
     size_loading: -0.18
     value_loading: 0.08
     profitability_loading: 0.02
     investment_loading: 0.06
-
     region: Developed
     fractional: false
-
   AVEM:
     market_loading: 1.09
     size_loading: 0.03
     value_loading: 0.03
     profitability_loading: 0.16
     investment_loading: 0.03
-
     region: Emerging
     fractional: true
-
   AVES:
     market_loading: 1.18
     size_loading: 0.32
     value_loading: 0.18
     profitability_loading: 0.17
     investment_loading: 0.26
-
     region: Emerging
     fractional: false
-
   AVUV:
     market_loading: 1.07
     size_loading: 0.89
     value_loading: 0.54
     profitability_loading: 0.28
     investment_loading: -0.08
-
     region: US
     fractional: true
-
   AVDV:
     market_loading: 1.16
     size_loading: 0.69
     value_loading: 0.5
     profitability_loading: 0.4
     investment_loading: -0.07
-
     region: Developed
     fractional: true
-
 target_value_loadings:
-  US: 1.0  # maximize loading across the board
+  US: 1.0
   Developed: 1.0
   Emerging: 1.0
