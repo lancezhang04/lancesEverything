@@ -3,7 +3,7 @@ import { portfolioApi } from '../services/api';
 import { useConfigStore } from '../store/configStore';
 
 export const usePortfolio = () => {
-  const { useCache, setUseCache } = useConfigStore();
+  const { setUseCache } = useConfigStore();
 
   return useQuery({
     queryKey: ['portfolio'],

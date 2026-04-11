@@ -1,5 +1,5 @@
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
 import { FactorAnalysis } from '../../types/portfolio';
 
@@ -9,7 +9,7 @@ interface ReturnComparisonChartProps {
 
 export const ReturnComparisonChart = ({ factorAnalysis }: ReturnComparisonChartProps) => {
   const { expected_returns, loadings } = factorAnalysis;
-  const { inflation, vol, rf } = expected_returns.assumptions;
+  const { inflation, rf } = expected_returns.assumptions;
 
   // Benchmark: market loading = 1, all others = 0
   // So total_portfolio_premium = 1 * rm_rf

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   useConfig,
   useTargetProportions,
@@ -20,7 +20,7 @@ export const TargetsTab = () => {
   const resetRegionalSplitMutation = useResetRegionalSplit();
 
   const [editedEquities, setEditedEquities] = useState<Record<string, EquityConfig>>({});
-  const [editedLoadings, setEditedLoadings] = useState<Record<Region, number>>({});
+  const [editedLoadings, setEditedLoadings] = useState<Partial<Record<Region, number>>>({});
   const [editedSplit, setEditedSplit] = useState<Record<string, number> | null>(null);
 
   if (!config || !targetProportions) {

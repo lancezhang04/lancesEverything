@@ -8,7 +8,7 @@ import {
 import { PortfolioHoldingItem } from '../../types/config';
 import { Ticker } from '../../types/portfolio';
 import { PortfolioOverview } from './RegionalChart';
-import { formatCurrency, formatPercent, formatNumber } from '../../utils/formatters';
+import { formatCurrency, formatPercent } from '../../utils/formatters';
 
 const ALL_TICKERS = Object.values(Ticker);
 
@@ -22,6 +22,7 @@ export const HoldingsTab = () => {
 
   const [selectedTemplate, setSelectedTemplate] = useState<string>('lances');
   const [editedHoldings, setEditedHoldings] = useState<PortfolioHoldingItem[] | null>(null);
+  const [editedSharesRaw, setEditedSharesRaw] = useState<Record<string, string>>({});
   const [editedVol, setEditedVol] = useState<number | null>(null);
   const [addingTicker, setAddingTicker] = useState(false);
   const [newTickerValue, setNewTickerValue] = useState('');
@@ -72,6 +73,7 @@ export const HoldingsTab = () => {
       // Switch to empty custom portfolio — immediately push to backend
       setSelectedTemplate('custom');
       setEditedHoldings([]);
+      setEditedSharesRaw({});
       setEditedVol(0.20);
       updatePortfolioMutation.mutate({ holdings: [], vol: 0.20 });
     } else if (templateState?.templates[templateKey]) {
@@ -79,11 +81,15 @@ export const HoldingsTab = () => {
       // Reset to template — clear overrides and tell backend
       resetPortfolioMutation.mutate(undefined);
       setEditedHoldings(null);
+      setEditedSharesRaw({});
       setEditedVol(null);
     }
   };
 
   const handleSharesChange = (ticker: string, newShares: string) => {
+    // Always update raw display value so user can clear the field
+    setEditedSharesRaw((prev) => ({ ...prev, [ticker]: newShares }));
+
     const shares = parseFloat(newShares);
     if (isNaN(shares) || shares < 0) return;
 
@@ -144,12 +150,14 @@ export const HoldingsTab = () => {
     const vol = editedVol ?? currentVol;
     updatePortfolioMutation.mutate({ holdings, vol });
     setEditedHoldings(null);
+    setEditedSharesRaw({});
     setEditedVol(null);
     setSelectedTemplate('custom');
   };
 
   const handleDiscard = () => {
     setEditedHoldings(null);
+    setEditedSharesRaw({});
     setEditedVol(null);
     if (templateState) {
       setSelectedTemplate(templateState.has_override ? 'custom' : (templateState.active_template ?? 'lances'));
@@ -243,62 +251,65 @@ export const HoldingsTab = () => {
               </tr>
             </thead>
             <tbody className="bg-slate-800/50 divide-y divide-slate-700">
-              {portfolio.positions.map((position) => (
-                <tr key={position.ticker} className="hover:bg-slate-700/50">
-                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-slate-100">
-                    {position.ticker}
-                    {!position.equity.fractional && '*'}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
-                    {formatCurrency(position.equity.share_price)}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={
-                        (editedHoldings ?? workingHoldings).find(
-                          (h) => h.ticker === position.ticker
-                        )?.shares ?? position.shares
-                      }
-                      onChange={(e) =>
-                        handleSharesChange(position.ticker, e.target.value)
-                      }
-                      className="w-24 px-1.5 py-0.5 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
-                    />
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
-                    {formatCurrency(position.value)}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
-                    {formatPercent(position.current_proportion)}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
-                    {formatPercent(position.target_proportion)}
-                  </td>
-                  <td
-                    className={`px-4 py-3 whitespace-nowrap text-sm text-right font-medium ${
-                      position.drift > 0
-                        ? 'text-red-600'
-                        : position.drift < 0
-                        ? 'text-green-600'
-                        : 'text-slate-100'
-                    }`}
-                  >
-                    {formatPercent(position.drift)}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-center">
-                    <button
-                      onClick={() => handleRemoveTicker(position.ticker)}
-                      className="text-slate-500 hover:text-red-400 text-sm"
-                      title="Remove"
+              {workingHoldings.map((holding) => {
+                const position = portfolio.positions.find((p) => p.ticker === holding.ticker);
+                const sharesRawValue = editedSharesRaw[holding.ticker];
+                const sharesDisplayValue = sharesRawValue !== undefined
+                  ? sharesRawValue
+                  : holding.shares.toString();
+                return (
+                  <tr key={holding.ticker} className="hover:bg-slate-700/50">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-slate-100">
+                      {holding.ticker}
+                      {position && !position.equity.fractional && '*'}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
+                      {position ? formatCurrency(position.equity.share_price) : '--'}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={sharesDisplayValue}
+                        onChange={(e) => handleSharesChange(holding.ticker, e.target.value)}
+                        className="w-24 px-1.5 py-0.5 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
+                      />
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
+                      {position ? formatCurrency(position.value) : '--'}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
+                      {position ? formatPercent(position.current_proportion) : '--'}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
+                      {position ? formatPercent(position.target_proportion) : '--'}
+                    </td>
+                    <td
+                      className={`px-4 py-3 whitespace-nowrap text-sm text-right font-medium ${
+                        position
+                          ? position.drift > 0
+                            ? 'text-green-600'
+                            : position.drift < 0
+                            ? 'text-red-600'
+                            : 'text-slate-100'
+                          : 'text-slate-400'
+                      }`}
                     >
-                      ✕
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      {position ? formatPercent(position.drift) : '--'}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-center">
+                      <button
+                        onClick={() => handleRemoveTicker(holding.ticker)}
+                        className="text-slate-500 hover:text-red-400 text-sm"
+                        title="Remove"
+                      >
+                        ✕
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
 
               {/* Add ticker row */}
               {addingTicker && (

@@ -1,6 +1,7 @@
 import { FactorLoadingRow } from '../../types/portfolio';
 import { formatNumber, formatPercent } from '../../utils/formatters';
 
+
 interface FactorLoadingsTableProps {
   loadings: FactorLoadingRow[];
   excessPremium: number;
@@ -10,6 +11,7 @@ export const FactorLoadingsTable = ({
   loadings,
   excessPremium,
 }: FactorLoadingsTableProps) => {
+  const totalPortfolioPremium = loadings.reduce((sum, row) => sum + row.portfolio_premium, 0);
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-slate-700">
@@ -54,13 +56,23 @@ export const FactorLoadingsTable = ({
           ))}
         </tbody>
       </table>
-      <div className="mt-4 text-right">
-        <span className="text-sm font-medium text-slate-200">
-          Est. Excess Premium:{' '}
-        </span>
-        <span className="text-sm font-bold text-slate-100">
-          {formatPercent(excessPremium)}
-        </span>
+      <div className="mt-4 flex justify-between">
+        <div>
+          <span className="text-sm font-medium text-slate-200">
+            Est. Total Portfolio Premium:{' '}
+          </span>
+          <span className="text-sm font-bold text-slate-100">
+            {formatPercent(totalPortfolioPremium)}
+          </span>
+        </div>
+        <div>
+          <span className="text-sm font-medium text-slate-200">
+            Est. Excess Premium:{' '}
+          </span>
+          <span className="text-sm font-bold text-emerald-400">
+            {formatPercent(excessPremium)}
+          </span>
+        </div>
       </div>
       <p className="mt-2 text-xs text-slate-400">
         *Portfolio premiums are calculated using target factor loadings

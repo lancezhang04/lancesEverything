@@ -24,6 +24,14 @@ class PortfolioService:
         override = config_manager.get_regional_split_override()
         self.target_regional_split = override if override else get_global_market_split(use_cache=use_cache)
         self.positions: Dict[Ticker, PortfolioPosition] = {}
+        # Compute full target proportions for ALL equities (not just held ones)
+        self._all_target_proportions: Dict[Ticker, float] = {}
+        for ticker, equity in self.equities.items():
+            tp = (
+                self.target_regional_split.get(equity.region, 0.0) *
+                self.fund_proportion_in_region.get(ticker.value, 0.0)
+            )
+            self._all_target_proportions[ticker] = tp
         self._load_portfolio()
 
     def _load_portfolio(self):
@@ -99,36 +107,36 @@ class PortfolioService:
     @property
     def target_market_loading(self) -> float:
         return sum(
-            pos.equity.market_loading * pos.target_proportion
-            for pos in self.positions.values()
+            self.equities[ticker].market_loading * tp
+            for ticker, tp in self._all_target_proportions.items()
         )
 
     @property
     def target_size_loading(self) -> float:
         return sum(
-            pos.equity.size_loading * pos.target_proportion
-            for pos in self.positions.values()
+            self.equities[ticker].size_loading * tp
+            for ticker, tp in self._all_target_proportions.items()
         )
 
     @property
     def target_value_loading(self) -> float:
         return sum(
-            pos.equity.value_loading * pos.target_proportion
-            for pos in self.positions.values()
+            self.equities[ticker].value_loading * tp
+            for ticker, tp in self._all_target_proportions.items()
         )
 
     @property
     def target_profitability_loading(self) -> float:
         return sum(
-            pos.equity.profitability_loading * pos.target_proportion
-            for pos in self.positions.values()
+            self.equities[ticker].profitability_loading * tp
+            for ticker, tp in self._all_target_proportions.items()
         )
 
     @property
     def target_investment_loading(self) -> float:
         return sum(
-            pos.equity.investment_loading * pos.target_proportion
-            for pos in self.positions.values()
+            self.equities[ticker].investment_loading * tp
+            for ticker, tp in self._all_target_proportions.items()
         )
 
     @property
