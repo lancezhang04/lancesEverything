@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { configApi } from '../services/api';
+import { configApi, equitiesApi } from '../services/api';
 import { useConfigStore } from '../store/configStore';
 import { FactorPremiums, EquityConfig, PortfolioHoldingItem } from '../types/config';
 import { Region } from '../types/portfolio';
@@ -94,6 +94,19 @@ export const useUpdateTargetValueLoadings = () => {
       queryClient.invalidateQueries({ queryKey: ['targetProportions'] });
       queryClient.invalidateQueries({ queryKey: ['factorAnalysis'] });
     },
+  });
+};
+
+export const useEquityPrices = () => {
+  return useQuery({
+    queryKey: ['equityPrices'],
+    queryFn: () => {
+      const useCache = useConfigStore.getState().useCache;
+      return equitiesApi.getPrices(useCache);
+    },
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
 

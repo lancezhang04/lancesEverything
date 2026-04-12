@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { usePortfolio, useRegionalDistribution } from '../../hooks/usePortfolio';
 import {
   usePortfolioTemplates,
   useUpdatePortfolio,
   useResetPortfolio,
+  useEquityPrices,
 } from '../../hooks/useConfig';
 import { PortfolioHoldingItem } from '../../types/config';
 import { Ticker } from '../../types/portfolio';
@@ -19,6 +20,7 @@ export const HoldingsTab = () => {
   const { data: templateState } = usePortfolioTemplates();
   const updatePortfolioMutation = useUpdatePortfolio();
   const resetPortfolioMutation = useResetPortfolio();
+  const { data: equityPrices } = useEquityPrices();
 
   const [selectedTemplate, setSelectedTemplate] = useState<string>('lances');
   const [editedHoldings, setEditedHoldings] = useState<PortfolioHoldingItem[] | null>(null);
@@ -39,6 +41,11 @@ export const HoldingsTab = () => {
       }
     }
   }, [templateState]);
+
+  // Helper to push current holdings to backend
+  const pushToBackend = useCallback((holdings: PortfolioHoldingItem[], vol?: number) => {
+    updatePortfolioMutation.mutate({ holdings, vol: vol ?? editedVol ?? templateState?.vol ?? 0.23 });
+  }, [updatePortfolioMutation, editedVol, templateState?.vol]);
 
   if (portfolioLoading || regionalLoading) {
     return (
@@ -66,11 +73,24 @@ export const HoldingsTab = () => {
   const usedTickers = new Set(workingHoldings.map((h) => h.ticker));
   const availableTickers = ALL_TICKERS.filter((t) => !usedTickers.has(t));
 
-  const hasUnsavedChanges = editedHoldings !== null || editedVol !== null;
+  // Build price lookup: position prices take priority, then equityPrices
+  const getPrice = (ticker: string): number => {
+    const pos = portfolio.positions.find((p) => p.ticker === ticker);
+    return pos?.equity.share_price ?? equityPrices?.[ticker] ?? 0;
+  };
+
+  // Compute values locally for instant display
+  const computedRows = workingHoldings.map((holding) => {
+    const price = getPrice(holding.ticker);
+    const value = price * holding.shares;
+    const position = portfolio.positions.find((p) => p.ticker === holding.ticker);
+    return { holding, price, value, position };
+  });
+
+  const totalValue = computedRows.reduce((sum, r) => sum + r.value, 0);
 
   const handleTemplateChange = (templateKey: string) => {
     if (templateKey === 'custom') {
-      // Switch to empty custom portfolio — immediately push to backend
       setSelectedTemplate('custom');
       setEditedHoldings([]);
       setEditedSharesRaw({});
@@ -78,7 +98,6 @@ export const HoldingsTab = () => {
       updatePortfolioMutation.mutate({ holdings: [], vol: 0.20 });
     } else if (templateState?.templates[templateKey]) {
       setSelectedTemplate(templateKey);
-      // Reset to template — clear overrides and tell backend
       resetPortfolioMutation.mutate(undefined);
       setEditedHoldings(null);
       setEditedSharesRaw({});
@@ -87,7 +106,6 @@ export const HoldingsTab = () => {
   };
 
   const handleSharesChange = (ticker: string, newShares: string) => {
-    // Always update raw display value so user can clear the field
     setEditedSharesRaw((prev) => ({ ...prev, [ticker]: newShares }));
 
     const shares = parseFloat(newShares);
@@ -101,11 +119,19 @@ export const HoldingsTab = () => {
     setSelectedTemplate('custom');
   };
 
+  // Auto-save when user finishes editing a shares field
+  const handleSharesBlur = () => {
+    const holdings = editedHoldings ?? workingHoldings;
+    pushToBackend(holdings);
+    setEditedSharesRaw({});
+  };
+
   const handleRemoveTicker = (ticker: string) => {
     const base = editedHoldings ?? workingHoldings;
     const updated = base.filter((h) => h.ticker !== ticker);
     setEditedHoldings(updated);
     setSelectedTemplate('custom');
+    pushToBackend(updated);
   };
 
   const handleAddTicker = () => {
@@ -116,7 +142,6 @@ export const HoldingsTab = () => {
   const handleConfirmAddTicker = () => {
     const shares = parseFloat(newSharesValue);
     if (!newTickerValue || isNaN(shares) || shares <= 0) {
-      // Invalid — cancel
       setAddingTicker(false);
       setNewTickerValue('');
       setNewSharesValue('');
@@ -124,11 +149,13 @@ export const HoldingsTab = () => {
     }
 
     const base = editedHoldings ?? [...workingHoldings];
-    setEditedHoldings([...base, { ticker: newTickerValue, shares }]);
+    const updated = [...base, { ticker: newTickerValue, shares }];
+    setEditedHoldings(updated);
     setSelectedTemplate('custom');
     setAddingTicker(false);
     setNewTickerValue('');
     setNewSharesValue('');
+    pushToBackend(updated);
   };
 
   const handleCancelAdd = () => {
@@ -145,22 +172,11 @@ export const HoldingsTab = () => {
     }
   };
 
-  const handleSave = () => {
-    const holdings = editedHoldings ?? workingHoldings;
-    const vol = editedVol ?? currentVol;
-    updatePortfolioMutation.mutate({ holdings, vol });
-    setEditedHoldings(null);
-    setEditedSharesRaw({});
-    setEditedVol(null);
-    setSelectedTemplate('custom');
-  };
-
-  const handleDiscard = () => {
-    setEditedHoldings(null);
-    setEditedSharesRaw({});
-    setEditedVol(null);
-    if (templateState) {
-      setSelectedTemplate(templateState.has_override ? 'custom' : (templateState.active_template ?? 'lances'));
+  // Auto-save vol on blur
+  const handleVolBlur = () => {
+    if (editedVol !== null) {
+      const holdings = editedHoldings ?? workingHoldings;
+      pushToBackend(holdings, editedVol);
     }
   };
 
@@ -188,45 +204,27 @@ export const HoldingsTab = () => {
               )}
             </select>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-sm text-slate-300">
-              <span className="font-medium">Est. Vol:</span>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="1"
-                value={currentVol}
-                onChange={(e) => handleVolChange(e.target.value)}
-                className="w-16 px-1.5 py-0.5 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
-              />
-            </div>
-            {hasUnsavedChanges && (
-              <>
-                <button
-                  onClick={handleDiscard}
-                  className="px-2 py-0.5 text-sm bg-slate-700 text-slate-200 rounded hover:bg-slate-600"
-                >
-                  Discard
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={updatePortfolioMutation.isPending}
-                  className="px-2 py-0.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
-                >
-                  {updatePortfolioMutation.isPending ? 'Saving...' : 'Save'}
-                </button>
-              </>
-            )}
+          <div className="flex items-center gap-2 text-sm text-slate-300">
+            <span className="font-medium">Est. Vol:</span>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              max="1"
+              value={currentVol}
+              onChange={(e) => handleVolChange(e.target.value)}
+              onBlur={handleVolBlur}
+              className="w-16 px-1.5 py-0.5 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
+            />
           </div>
         </div>
 
-        {/* Editable holdings table */}
+        {/* Holdings table */}
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-700">
             <thead className="bg-slate-700">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider w-28">
                   Ticker
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
@@ -251,12 +249,14 @@ export const HoldingsTab = () => {
               </tr>
             </thead>
             <tbody className="bg-slate-800/50 divide-y divide-slate-700">
-              {workingHoldings.map((holding) => {
-                const position = portfolio.positions.find((p) => p.ticker === holding.ticker);
+              {computedRows.map(({ holding, price, value, position }) => {
                 const sharesRawValue = editedSharesRaw[holding.ticker];
                 const sharesDisplayValue = sharesRawValue !== undefined
                   ? sharesRawValue
                   : holding.shares.toString();
+                const currentPct = totalValue > 0 ? value / totalValue : 0;
+                const targetPct = position?.target_proportion ?? 0;
+                const drift = currentPct - targetPct;
                 return (
                   <tr key={holding.ticker} className="hover:bg-slate-700/50">
                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-slate-100">
@@ -264,7 +264,7 @@ export const HoldingsTab = () => {
                       {position && !position.equity.fractional && '*'}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
-                      {position ? formatCurrency(position.equity.share_price) : '--'}
+                      {formatCurrency(price)}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
                       <input
@@ -273,30 +273,29 @@ export const HoldingsTab = () => {
                         min="0"
                         value={sharesDisplayValue}
                         onChange={(e) => handleSharesChange(holding.ticker, e.target.value)}
+                        onBlur={handleSharesBlur}
                         className="w-24 px-1.5 py-0.5 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
                       />
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
-                      {position ? formatCurrency(position.value) : '--'}
+                      {formatCurrency(value)}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
-                      {position ? formatPercent(position.current_proportion) : '--'}
+                      {formatPercent(currentPct)}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-100 text-right">
-                      {position ? formatPercent(position.target_proportion) : '--'}
+                      {formatPercent(targetPct)}
                     </td>
                     <td
                       className={`px-4 py-3 whitespace-nowrap text-sm text-right font-medium ${
-                        position
-                          ? position.drift > 0
-                            ? 'text-green-600'
-                            : position.drift < 0
-                            ? 'text-red-600'
-                            : 'text-slate-100'
-                          : 'text-slate-400'
+                        drift > 0.0001
+                          ? 'text-green-600'
+                          : drift < -0.0001
+                          ? 'text-red-600'
+                          : 'text-slate-100'
                       }`}
                     >
-                      {position ? formatPercent(position.drift) : '--'}
+                      {formatPercent(drift)}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-center">
                       <button
@@ -314,12 +313,12 @@ export const HoldingsTab = () => {
               {/* Add ticker row */}
               {addingTicker && (
                 <tr className="bg-slate-700/30">
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-1.5">
                     <select
                       ref={newTickerRef}
                       value={newTickerValue}
                       onChange={(e) => setNewTickerValue(e.target.value)}
-                      className="w-24 px-1.5 py-0.5 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="w-full px-1.5 py-0.5 text-xs bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                     >
                       <option value="">Select...</option>
                       {availableTickers.map((t) => (
@@ -329,10 +328,12 @@ export const HoldingsTab = () => {
                       ))}
                     </select>
                   </td>
-                  <td className="px-4 py-3 text-sm text-slate-400 text-right">
-                    --
+                  <td className="px-4 py-1.5 text-xs text-slate-100 text-right">
+                    {newTickerValue && equityPrices?.[newTickerValue]
+                      ? formatCurrency(equityPrices[newTickerValue])
+                      : '--'}
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-1.5 text-right">
                     <input
                       type="number"
                       step="0.01"
@@ -344,10 +345,10 @@ export const HoldingsTab = () => {
                         if (e.key === 'Enter') handleConfirmAddTicker();
                         if (e.key === 'Escape') handleCancelAdd();
                       }}
-                      className="w-24 px-1.5 py-0.5 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
+                      className="w-24 px-1.5 py-0.5 text-xs bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-right"
                     />
                   </td>
-                  <td colSpan={4} className="px-4 py-3 text-sm">
+                  <td colSpan={4} className="px-4 py-1.5">
                     <div className="flex gap-2">
                       <button
                         onClick={handleConfirmAddTicker}
