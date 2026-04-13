@@ -26,7 +26,7 @@ export const Dashboard = () => {
 
   return (
     <div className="min-h-screen relative z-10 flex flex-col">
-      <div ref={headerRef} className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm">
+      <div ref={headerRef} className="fixed top-0 left-0 right-0 z-50">
         <Header />
         <TabNav />
       </div>

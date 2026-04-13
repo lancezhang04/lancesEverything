@@ -27,7 +27,7 @@ export const Header = () => {
   };
 
   return (
-    <div className="bg-slate-800 shadow-lg shadow-slate-900/50">
+    <div className="bg-slate-800/95 backdrop-blur-sm shadow-lg shadow-slate-900/50">
       <div className="px-4 py-3 sm:px-10 sm:py-4 lg:px-16">
         <h1 className="text-slate-100">
           <div className="flex items-end gap-2">
