@@ -33,12 +33,12 @@ export const PortfolioOverview = ({ distributions, portfolio }: PortfolioOvervie
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-slate-100 mb-6">Portfolio Overview</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <h2 className="text-lg sm:text-xl font-semibold text-slate-100 mb-4 sm:mb-6">Portfolio Overview</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Left: Pie chart + legend */}
         <div>
-          <div className="flex items-center justify-center gap-6">
-            <div style={{ width: 280, height: 280 }}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+            <div className="w-[200px] h-[200px] sm:w-[280px] sm:h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -46,7 +46,7 @@ export const PortfolioOverview = ({ distributions, portfolio }: PortfolioOvervie
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    outerRadius={120}
+                    outerRadius="80%"
                     fill="#8884d8"
                     dataKey="current"
                   >
@@ -63,7 +63,7 @@ export const PortfolioOverview = ({ distributions, portfolio }: PortfolioOvervie
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="space-y-3">
+            <div className="flex sm:flex-col gap-4 sm:gap-3">
               {distributions.map((dist) => (
                 <div key={dist.region} className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ export const PortfolioOverview = ({ distributions, portfolio }: PortfolioOvervie
 
         {/* Right: Factor loadings bar chart */}
         <div>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={250}>
             <BarChart data={factorData} margin={{ top: 0, right: 10, left: -10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis dataKey="factor" tick={{ fill: '#94a3b8', fontSize: 12 }} />

@@ -56,20 +56,20 @@ export const FactorLoadingsTable = ({
           ))}
         </tbody>
       </table>
-      <div className="mt-4 flex justify-between">
+      <div className="mt-4 flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
         <div>
-          <span className="text-sm font-medium text-slate-200">
+          <span className="text-xs sm:text-sm font-medium text-slate-200">
             Est. Total Portfolio Premium:{' '}
           </span>
-          <span className="text-sm font-bold text-slate-100">
+          <span className="text-xs sm:text-sm font-bold text-slate-100">
             {formatPercent(totalPortfolioPremium)}
           </span>
         </div>
         <div>
-          <span className="text-sm font-medium text-slate-200">
+          <span className="text-xs sm:text-sm font-medium text-slate-200">
             Est. Excess Premium:{' '}
           </span>
-          <span className="text-sm font-bold text-emerald-400">
+          <span className="text-xs sm:text-sm font-bold text-emerald-400">
             {formatPercent(excessPremium)}
           </span>
         </div>

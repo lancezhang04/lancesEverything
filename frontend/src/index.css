@@ -7,17 +7,39 @@ html {
   cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICA8ZyB0cmFuc2Zvcm09InJvdGF0ZSgtNDUsIDEwLCAxMCkiPgogICAgPHBvbHlnb24gcG9pbnRzPSIxMCwxIDE4LDE5IDEwLDE0IDIsMTkiIGZpbGw9IiMzYjgyZjYiIHN0cm9rZT0iIzFlM2E1ZiIgc3Ryb2tlLXdpZHRoPSIwLjYiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8L2c+Cjwvc3ZnPgo=') 4 4, auto !important;
 }
 
+/* Slightly larger cursors on desktop (precise pointer devices) */
+@media (pointer: fine) {
+  html {
+    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICA8ZyB0cmFuc2Zvcm09InJvdGF0ZSgtNDUsIDEwLCAxMCkiPgogICAgPHBvbHlnb24gcG9pbnRzPSIxMCwxIDE4LDE5IDEwLDE0IDIsMTkiIGZpbGw9IiMzYjgyZjYiIHN0cm9rZT0iIzFlM2E1ZiIgc3Ryb2tlLXdpZHRoPSIwLjYiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8L2c+Cjwvc3ZnPgo=') 4 4, auto !important;
+  }
+}
+
 /* Custom cursors - universal override */
 *, *::before, *::after {
   cursor: inherit !important;
 }
 
-/* Pointer cursor: light blue arrow for clickable elements */
+/* Text cursor: caret for selectable (non-interactive) text */
+p, h1, h2, h3, h4, h5, h6, li, td, th, label:not([for]),
+.select-text {
+  cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDEwIDE2Ij4KICA8IS0tIFRvcCBob3Jpem9udGFsIGxpbmUgLS0+CiAgPGxpbmUgeDE9IjIuNSIgeTE9IjEiIHgyPSI3LjUiIHkyPSIxIiBzdHJva2U9IiMzYjgyZjYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8IS0tIE1pZGRsZSBob3Jpem9udGFsIGxpbmUgLS0+CiAgPGxpbmUgeDE9IjMiIHkxPSI4IiB4Mj0iNyIgeTI9IjgiIHN0cm9rZT0iIzNiODJmNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gQm90dG9tIGhvcml6b250YWwgbGluZSAtLT4KICA8bGluZSB4MT0iMi41IiB5MT0iMTUiIHgyPSI3LjUiIHkyPSIxNSIgc3Ryb2tlPSIjM2I4MmY2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPCEtLSBWZXJ0aWNhbCBzdGVtIC0tPgogIDxsaW5lIHgxPSI1IiB5MT0iMSIgeDI9IjUiIHkyPSIxNSIgc3Ryb2tlPSIjM2I4MmY2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPgo=') 5 8, auto !important;
+}
+
+/* Pointer cursor: light blue arrow for clickable elements — overrides text cursor */
 a, button, [role="button"], label[for], select,
 input[type="checkbox"], input[type="radio"], input[type="submit"],
 input[type="button"],
 .cursor-pointer, [onclick] {
   cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICA8ZyB0cmFuc2Zvcm09InJvdGF0ZSgtNDUsIDEwLCAxMCkiPgogICAgPHBvbHlnb24gcG9pbnRzPSIxMCwxIDE4LDE5IDEwLDE0IDIsMTkiIGZpbGw9IiM5M2M1ZmQiIHN0cm9rZT0ibm9uZSIvPgogIDwvZz4KPC9zdmc+Cg==') 4 4, auto !important;
+}
+
+@media (pointer: fine) {
+  a, button, [role="button"], label[for], select,
+  input[type="checkbox"], input[type="radio"], input[type="submit"],
+  input[type="button"],
+  .cursor-pointer, [onclick] {
+    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICA8ZyB0cmFuc2Zvcm09InJvdGF0ZSgtNDUsIDEwLCAxMCkiPgogICAgPHBvbHlnb24gcG9pbnRzPSIxMCwxIDE4LDE5IDEwLDE0IDIsMTkiIGZpbGw9IiM5M2M1ZmQiIHN0cm9rZT0ibm9uZSIvPgogIDwvZz4KPC9zdmc+Cg==') 4 4, auto !important;
+  }
 }
 
 /* Text cursor: blue caret with three lines */

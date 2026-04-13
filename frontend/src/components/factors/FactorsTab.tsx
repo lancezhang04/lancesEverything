@@ -24,14 +24,14 @@ export const FactorsTab = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
       <div className="lg:col-span-2 min-h-0">
         <AssumptionsPanel />
       </div>
 
-      <div className="lg:col-span-3 space-y-6">
-        <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-slate-100 mb-4">
+      <div className="lg:col-span-3 space-y-4 sm:space-y-6">
+        <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-slate-100 mb-4">
             Estimated Portfolio Factor Premiums
           </h2>
           <FactorLoadingsTable
@@ -40,11 +40,11 @@ export const FactorsTab = () => {
           />
         </div>
 
-        <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
+        <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
           <ExpectedReturnsTable expectedReturns={factorAnalysis.expected_returns} />
         </div>
 
-        <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
+        <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
           <ReturnComparisonChart factorAnalysis={factorAnalysis} />
         </div>
       </div>

@@ -98,7 +98,7 @@ export const ReturnComparisonChart = ({ factorAnalysis }: ReturnComparisonChartP
       </ResponsiveContainer>
 
       {/* Excess return indicators */}
-      <div className="mt-4 grid grid-cols-4 gap-2">
+      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
         {portfolioExcess.map((d) => {
           const isHighlight = d.metric === 'Real Geometric';
           return (

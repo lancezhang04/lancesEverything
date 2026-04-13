@@ -10,9 +10,10 @@ export const ExpectedReturnsTable = ({
 }: ExpectedReturnsTableProps) => {
   return (
     <div>
-      <h2 className="text-xl font-semibold text-slate-100 mb-4">
+      <h2 className="text-lg sm:text-xl font-semibold text-slate-100 mb-4">
         Estimated Expected Returns
       </h2>
+      <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-slate-700">
         <thead className="bg-slate-700">
           <tr>
@@ -52,6 +53,7 @@ export const ExpectedReturnsTable = ({
           </tr>
         </tbody>
       </table>
+      </div>
       <p className="mt-4 text-xs text-slate-400">
         *Assuming {formatPercent(expectedReturns.assumptions.inflation)} inflation,{' '}
         {formatPercent(expectedReturns.assumptions.vol)} portfolio volatility,{' '}

@@ -28,13 +28,16 @@ export const Header = () => {
 
   return (
     <div className="bg-slate-800 shadow-lg shadow-slate-900/50">
-      <div className="px-6 py-4 sm:px-10 lg:px-16">
-        <h1 className="text-slate-100 flex items-end gap-2">
-          <img src="/lances-logo.svg" alt="Lance's" className="inline-block" style={{ height: '3.2rem' }} />
-          <span className="text-3xl">Factor Portfolio Analyzer</span>
+      <div className="px-4 py-3 sm:px-10 sm:py-4 lg:px-16">
+        <h1 className="text-slate-100">
+          <div className="flex items-end gap-2">
+            <img src="/lances-logo.svg" alt="Lance's" className="inline-block h-12 sm:h-[3.2rem]" />
+            <span className="hidden sm:inline text-3xl">Factor Portfolio Analyzer</span>
+          </div>
+          <span className="block sm:hidden text-lg mt-1">Factor Portfolio Analyzer</span>
         </h1>
-        <div className="mt-2 flex justify-between items-center">
-          <div className="flex gap-6 text-sm text-slate-300">
+        <div className="mt-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0">
+          <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm text-slate-300">
             {portfolio && (
               <>
                 <div>
@@ -48,8 +51,8 @@ export const Header = () => {
               </>
             )}
           </div>
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-1.5 text-sm text-slate-200">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <label className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-200">
               <input
                 type="checkbox"
                 checked={useCache}
@@ -61,7 +64,7 @@ export const Header = () => {
             <button
               onClick={handleRefresh}
               disabled={isRefetching}
-              className="px-2 py-0.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+              className="px-2 py-0.5 text-xs sm:text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
             >
               {isRefetching ? 'Refreshing...' : 'Refresh Data'}
             </button>
