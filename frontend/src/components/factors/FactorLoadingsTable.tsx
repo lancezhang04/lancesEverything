@@ -57,6 +57,7 @@ export const FactorLoadingsTable = ({
           ))}
         </tbody>
       </table>
+      </div>
       <div className="mt-4 flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
         <div>
           <span className="text-xs sm:text-sm font-medium text-slate-200">
@@ -81,3 +82,4 @@ export const FactorLoadingsTable = ({
     </div>
   );
 };
+
