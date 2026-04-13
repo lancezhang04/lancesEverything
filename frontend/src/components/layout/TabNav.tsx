@@ -28,7 +28,7 @@ export const TabNav = () => {
   const activeLabel = tabs.find((t) => t.id === activeTab)?.label ?? '';
 
   return (
-    <div className="border-b border-slate-700">
+    <div className="bg-gradient-to-b from-slate-900 to-transparent border-b border-slate-700/40">
       {/* Desktop nav */}
       <nav className="hidden sm:flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mb-px space-x-8">
         {tabs.map((tab) => (
