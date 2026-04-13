@@ -184,16 +184,16 @@ export const HoldingsTab = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-4">
-            <h2 className="text-xl font-semibold text-slate-100">
+      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-100">
               Current Holdings
             </h2>
             <select
               value={selectedTemplate}
               onChange={(e) => handleTemplateChange(e.target.value)}
-              className="px-2 py-0.5 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="px-2 py-0.5 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 w-fit"
             >
               {templateState &&
                 Object.entries(templateState.templates).map(([key, tmpl]) => (
@@ -255,7 +255,7 @@ export const HoldingsTab = () => {
                 const sharesRawValue = editedSharesRaw[holding.ticker];
                 const sharesDisplayValue = sharesRawValue !== undefined
                   ? sharesRawValue
-                  : holding.shares.toString();
+                  : parseFloat(holding.shares.toPrecision(10)).toString();
                 const currentPct = totalValue > 0 ? value / totalValue : 0;
                 const targetPct = position?.target_proportion ?? 0;
                 const drift = currentPct - targetPct;
@@ -385,7 +385,7 @@ export const HoldingsTab = () => {
         </div>
       </div>
 
-      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
+      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
         <PortfolioOverview distributions={regionalDistribution} portfolio={portfolio} />
       </div>
     </div>

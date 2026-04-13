@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
@@ -7,7 +8,42 @@ interface ReturnComparisonChartProps {
   factorAnalysis: FactorAnalysis;
 }
 
+const SplitVerticalTick = ({ x, y, payload }: { x?: number; y?: number; payload?: { value: string } }) => {
+  const words = (payload?.value ?? '').split(' ');
+  const gap = 13; // px between word columns
+  const offsets = words.length === 2
+    ? [-gap / 2, gap / 2]
+    : [0];
+  return (
+    <g>
+      {words.map((word, i) => {
+        const px = (x ?? 0) + offsets[i];
+        const py = (y ?? 0) + 4;
+        return (
+          <text
+            key={i}
+            x={px}
+            y={py}
+            transform={`rotate(-90, ${px}, ${py})`}
+            textAnchor="end"
+            fill="#94a3b8"
+            fontSize={11}
+          >
+            {word}
+          </text>
+        );
+      })}
+    </g>
+  );
+};
+
 export const ReturnComparisonChart = ({ factorAnalysis }: ReturnComparisonChartProps) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
   const { expected_returns, loadings } = factorAnalysis;
   const { inflation, rf } = expected_returns.assumptions;
 
@@ -66,13 +102,14 @@ export const ReturnComparisonChart = ({ factorAnalysis }: ReturnComparisonChartP
         Portfolio vs. market-only benchmark (Rm-Rf = 1, all other loadings = 0, vol = 16%)
       </p>
 
-      <ResponsiveContainer width="100%" height={240}>
+      <ResponsiveContainer width="100%" height={isMobile ? 300 : 240}>
         <BarChart data={chartData} margin={{ top: 5, right: 10, left: -5, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
           <XAxis
             dataKey="metric"
-            tick={{ fill: '#94a3b8', fontSize: 11 }}
+            tick={isMobile ? SplitVerticalTick : { fill: '#94a3b8', fontSize: 11 }}
             interval={0}
+            height={isMobile ? 90 : 30}
           />
           <YAxis
             tick={{ fill: '#94a3b8', fontSize: 11 }}
@@ -98,7 +135,7 @@ export const ReturnComparisonChart = ({ factorAnalysis }: ReturnComparisonChartP
       </ResponsiveContainer>
 
       {/* Excess return indicators */}
-      <div className="mt-4 grid grid-cols-4 gap-2">
+      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
         {portfolioExcess.map((d) => {
           const isHighlight = d.metric === 'Real Geometric';
           return (

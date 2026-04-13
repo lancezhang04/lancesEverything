@@ -68,9 +68,9 @@ export const AssumptionsPanel = () => {
   ];
 
   return (
-    <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6 flex flex-col h-full min-h-0">
+    <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6 flex flex-col h-full min-h-0">
       <div className="flex justify-between items-center mb-1">
-        <h2 className="text-xl font-semibold text-slate-100">Parameters</h2>
+        <h2 className="text-lg sm:text-xl font-semibold text-slate-100">Parameters</h2>
         <div className="flex gap-2">
           {!allDefaults && !hasChanges && (
             <button

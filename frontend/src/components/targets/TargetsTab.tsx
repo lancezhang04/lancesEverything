@@ -99,8 +99,8 @@ export const TargetsTab = () => {
   return (
     <div className="space-y-6">
       {/* Final Target Proportions - MOVED TO TOP */}
-      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-slate-100 mb-4">
+      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-semibold text-slate-100 mb-4">
           Calculated Target Proportions
         </h2>
         <p className="text-sm text-slate-300 mb-4">
@@ -134,9 +134,9 @@ export const TargetsTab = () => {
       </div>
 
       {/* Target Value Loadings Section */}
-      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-slate-100">
+      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+          <h2 className="text-lg sm:text-xl font-semibold text-slate-100">
             Target Value Loadings by Region
           </h2>
           {hasLoadingChanges && (
@@ -185,10 +185,10 @@ export const TargetsTab = () => {
       </div>
 
       {/* Regional Split */}
-      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
           <div>
-            <h2 className="text-xl font-semibold text-slate-100">
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-100">
               Target Regional Distribution
             </h2>
             <p className="text-xs text-slate-400 mt-1">
@@ -289,8 +289,8 @@ export const TargetsTab = () => {
       </div>
 
       {/* Equity Configurations */}
-      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-slate-100 mb-4">
+      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-semibold text-slate-100 mb-4">
           Equity Factor Loadings
         </h2>
         <div className="space-y-6">
@@ -313,7 +313,7 @@ export const TargetsTab = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-200 mb-1">
                       Market

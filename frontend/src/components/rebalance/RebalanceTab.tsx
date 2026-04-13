@@ -36,8 +36,8 @@ export const RebalanceTab = () => {
   return (
     <div className="space-y-6">
       {/* Infusion Input Section */}
-      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
-        <h2 className="text-xl font-semibold text-slate-100 mb-4">
+      <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-semibold text-slate-100 mb-4">
           Calculate Rebalancing
         </h2>
 
@@ -90,8 +90,8 @@ export const RebalanceTab = () => {
       {result && (
         <>
           {/* Summary Card */}
-          <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-slate-100 mb-4">Summary</h3>
+          <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-100 mb-4">Summary</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="border border-slate-700 rounded-lg p-4">
                 <div className="text-sm font-medium text-slate-200">
@@ -113,8 +113,8 @@ export const RebalanceTab = () => {
           </div>
 
           {/* Adjustments Table */}
-          <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-slate-100 mb-4">
+          <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-100 mb-4">
               Rebalancing Adjustments
             </h3>
             <div className="overflow-x-auto">
