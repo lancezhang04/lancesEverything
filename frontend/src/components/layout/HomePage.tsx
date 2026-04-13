@@ -2,7 +2,7 @@ import { Footer } from './Footer';
 
 export const HomePage = () => {
   return (
-    <div className="min-h-screen relative z-10 flex flex-col">
+    <div style={{ minHeight: '100dvh' }} className="relative z-10 flex flex-col">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-slate-800/95 backdrop-blur-sm shadow-lg shadow-slate-900/50">
         <div className="px-4 py-3 sm:px-10 sm:py-5 lg:px-16">
