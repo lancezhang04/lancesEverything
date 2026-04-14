@@ -21,6 +21,7 @@ export const TargetsTab = () => {
 
   const [editedEquities, setEditedEquities] = useState<Record<string, EquityConfig>>({});
   const [editedLoadings, setEditedLoadings] = useState<Partial<Record<Region, number>>>({});
+  const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
   const [editedSplit, setEditedSplit] = useState<Record<string, number> | null>(null);
 
   if (!config || !targetProportions) {
@@ -286,131 +287,112 @@ export const TargetsTab = () => {
             );
           })}
         </div>
+        <p className="mt-4 text-xs text-slate-400">
+          * Weights sourced from the{' '}
+          <a
+            href="https://www.ishares.com/us/products/239600/ishares-msci-acwi-etf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-400 transition-colors"
+          >
+            iShares MSCI ACWI ETF
+          </a>
+          .
+        </p>
       </div>
 
       {/* Equity Configurations */}
       <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
-        <h2 className="text-lg sm:text-xl font-semibold text-slate-100 mb-4">
-          Equity Factor Loadings
-        </h2>
-        <div className="space-y-6">
-          {Object.entries(config.equities).map(([ticker, equityConfig]) => {
-            const currentConfig = editedEquities[ticker] || equityConfig;
-            const hasChanges = !!editedEquities[ticker];
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <h2 className="text-lg sm:text-xl font-semibold text-slate-100">
+            Equity Factor Loadings
+          </h2>
+          <select
+            value={selectedTicker ?? ''}
+            onChange={(e) => setSelectedTicker(e.target.value || null)}
+            className="px-3 py-1.5 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 sm:w-40"
+          >
+            <option value="">Select…</option>
+            {Object.keys(config.equities).map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </div>
 
-            return (
-              <div key={ticker} className="border border-slate-700 rounded-lg p-4">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-medium text-slate-100" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{ticker}</h3>
-                  {hasChanges && (
-                    <button
-                      onClick={() => handleSaveEquity(ticker)}
-                      disabled={updateEquityMutation.isPending}
-                      className="px-2 py-0.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
-                    >
-                      Save
-                    </button>
-                  )}
+        <div className="min-h-[120px]">
+        {selectedTicker && (() => {
+          const ticker = selectedTicker;
+          const equityConfig = config.equities[ticker];
+          const currentConfig = editedEquities[ticker] || equityConfig;
+          const hasChanges = !!editedEquities[ticker];
+          return (
+            <div>
+              <div className="flex justify-between items-center mb-4">
+                <div className="text-xs text-slate-400">
+                  Region: {currentConfig.region} &nbsp;|&nbsp; Final Target: {formatPercent(targetProportions.final_target_proportions[ticker] || 0)}
                 </div>
-
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-200 mb-1">
-                      Market
-                    </label>
+                {hasChanges && (
+                  <button
+                    onClick={() => handleSaveEquity(ticker)}
+                    disabled={updateEquityMutation.isPending}
+                    className="px-2 py-0.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+                  >
+                    {updateEquityMutation.isPending ? 'Saving…' : 'Save'}
+                  </button>
+                )}
+              </div>
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
+                {(
+                  [
+                    { field: 'market_loading', label: 'Market' },
+                    { field: 'size_loading', label: 'Size' },
+                    { field: 'value_loading', label: 'Value' },
+                    { field: 'profitability_loading', label: 'Profitability' },
+                    { field: 'investment_loading', label: 'Investment' },
+                  ] as { field: keyof EquityConfig; label: string }[]
+                ).map(({ field, label }) => (
+                  <div key={field}>
+                    <label className="block text-xs font-medium text-slate-200 mb-1">{label}</label>
                     <input
                       type="number"
                       step="0.01"
-                      value={currentConfig.market_loading}
-                      onChange={(e) =>
-                        handleEquityChange(ticker, 'market_loading', e.target.value)
-                      }
+                      value={currentConfig[field] as number}
+                      onChange={(e) => handleEquityChange(ticker, field, e.target.value)}
                       className="w-full px-2 py-1 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-200 mb-1">
-                      Size
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={currentConfig.size_loading}
-                      onChange={(e) =>
-                        handleEquityChange(ticker, 'size_loading', e.target.value)
-                      }
-                      className="w-full px-2 py-1 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-200 mb-1">
-                      Value
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={currentConfig.value_loading}
-                      onChange={(e) =>
-                        handleEquityChange(ticker, 'value_loading', e.target.value)
-                      }
-                      className="w-full px-2 py-1 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-200 mb-1">
-                      Profitability
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={currentConfig.profitability_loading}
-                      onChange={(e) =>
-                        handleEquityChange(ticker, 'profitability_loading', e.target.value)
-                      }
-                      className="w-full px-2 py-1 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-200 mb-1">
-                      Investment
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={currentConfig.investment_loading}
-                      onChange={(e) =>
-                        handleEquityChange(ticker, 'investment_loading', e.target.value)
-                      }
-                      className="w-full px-2 py-1 text-sm bg-slate-700 text-slate-100 border border-slate-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-200 mb-1">
-                      Fractional
-                    </label>
-                    <input
-                      type="checkbox"
-                      checked={currentConfig.fractional}
-                      onChange={(e) =>
-                        handleEquityChange(ticker, 'fractional', e.target.checked)
-                      }
-                      className="mt-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-600 rounded"
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-2 text-xs text-slate-400">
-                  Region: {currentConfig.region} | Final Target: {formatPercent(targetProportions.final_target_proportions[ticker] || 0)}
+                ))}
+                <div>
+                  <label className="block text-xs font-medium text-slate-200 mb-1">Fractional</label>
+                  <input
+                    type="checkbox"
+                    checked={currentConfig.fractional}
+                    onChange={(e) => handleEquityChange(ticker, 'fractional', e.target.checked)}
+                    className="mt-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-600 rounded"
+                  />
                 </div>
               </div>
-            );
-          })}
+            </div>
+          );
+        })()}
+
+        {!selectedTicker && (
+          <p className="text-sm text-slate-500 py-6 text-center">Select a ticker above to edit its factor loadings.</p>
+        )}
         </div>
+
+        <p className="mt-4 text-xs text-slate-400">
+          * Defaults from full-history factor regression on{' '}
+          <a
+            href="https://www.portfoliovisualizer.com/factor-analysis"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-400 transition-colors"
+          >
+            portfoliovisualizer.com
+          </a>
+          .
+        </p>
       </div>
     </div>
   );
