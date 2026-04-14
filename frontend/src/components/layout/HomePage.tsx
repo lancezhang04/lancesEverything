@@ -5,7 +5,7 @@ export const HomePage = () => {
     <div style={{ minHeight: '100dvh' }} className="relative z-10 flex flex-col">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-slate-800/95 backdrop-blur-sm shadow-lg shadow-slate-900/50">
-        <div className="px-4 py-3 sm:px-10 sm:py-5 lg:px-16">
+        <div className="px-4 py-3 sm:px-10 sm:py-4 lg:px-16">
           <h1 className="text-slate-100">
             <div className="flex items-end gap-3">
               <img src="/lances-logo.svg" alt="Lance's" className="inline-block h-12 sm:h-[3.2rem]" />
@@ -38,6 +38,16 @@ export const HomePage = () => {
               Open Tool →
             </a>
           </div>
+
+          {/* Placeholder cards */}
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div
+              key={i}
+              className="rounded-lg p-6 border-2 border-dashed border-slate-600/50 min-h-[180px] flex items-center justify-center"
+            >
+              <span className="text-sm text-slate-600">Coming soon</span>
+            </div>
+          ))}
         </div>
       </main>
 
