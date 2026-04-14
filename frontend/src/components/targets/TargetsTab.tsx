@@ -319,7 +319,7 @@ export const TargetsTab = () => {
           </select>
         </div>
 
-        <div className="min-h-[120px]">
+        <div className="min-h-[120px] flex flex-col justify-center">
         {selectedTicker && (() => {
           const ticker = selectedTicker;
           const equityConfig = config.equities[ticker];
@@ -377,7 +377,7 @@ export const TargetsTab = () => {
         })()}
 
         {!selectedTicker && (
-          <p className="text-sm text-slate-500 py-6 text-center">Select a ticker above to edit its factor loadings.</p>
+          <p className="text-sm text-slate-500 text-center">Select a ticker above to edit its factor loadings.</p>
         )}
         </div>
 

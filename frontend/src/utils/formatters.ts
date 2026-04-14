@@ -4,7 +4,7 @@ export const formatCurrency = (value: number): string => {
     currency: 'USD',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(value);
+  }).format(value || 0);
 };
 
 export const formatPercent = (value: number, decimals = 2): string => {
