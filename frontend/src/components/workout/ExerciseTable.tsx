@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Exercise, MuscleActivation } from '../../data/workoutData';
 
 const RatingBar = ({ rating }: { rating: number }) => (
@@ -172,6 +172,23 @@ const ExerciseRow = ({ exercise, isExpanded, onToggle }: ExerciseRowProps) => {
 
 export const ExerciseTable = ({ exercises }: { exercises: Exercise[] }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const tableScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = tableScrollRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      // When there is no horizontal overflow this container should not capture
+      // scroll events — forward them directly to the page so vertical scrolling
+      // is uninterrupted regardless of where the cursor is.
+      if (el.scrollWidth <= el.clientWidth) {
+        e.preventDefault();
+        window.scrollBy(0, e.deltaY);
+      }
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
 
   return (
     <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg overflow-hidden">
@@ -188,7 +205,7 @@ export const ExerciseTable = ({ exercises }: { exercises: Exercise[] }) => {
       </div>
 
       {/* Desktop: table */}
-      <div className="hidden md:block overflow-x-auto overscroll-x-contain">
+      <div ref={tableScrollRef} className="hidden md:block overflow-x-auto overscroll-x-contain">
         <table className="min-w-full divide-y divide-slate-700">
           <thead className="bg-slate-700">
             <tr>
