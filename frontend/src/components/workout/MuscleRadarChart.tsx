@@ -81,12 +81,6 @@ const GROUP_COLORS: Record<MuscleGroup, string> = {
   lower: '#fb923c',
 };
 
-// Canonical head order for By-Head mode (controls polygon vertex order)
-const HEAD_AXIS_ORDER: string[] = [
-  ...CATEGORY_HEADS.push,
-  ...CATEGORY_HEADS.pull,
-  ...CATEGORY_HEADS.lower,
-];
 
 const LABEL_OFFSET = 14;
 
