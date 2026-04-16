@@ -74,7 +74,7 @@ export const workoutData: Record<Day, DayWorkout | null> = {
           { muscle: 'Delts', head: 'Lateral', rating: 5 },
           { muscle: 'Delts', head: 'Anterior', rating: 2 },
           { muscle: 'Delts', head: 'Posterior', rating: 2 },
-          { muscle: 'Traps', head: 'Upper', rating: 3 },
+          { muscle: 'Back', head: 'Upper/Mid', rating: 3 },
         ],
         videoId: 'SgyUoY0IZ7A',
         videoStart: 477,

@@ -8,22 +8,18 @@ import { DayWorkout, aggregateActivations } from '../../data/workoutData';
 type MuscleGroup = 'push' | 'pull' | 'lower';
 
 const MUSCLE_GROUP: Record<string, MuscleGroup> = {
-  // Push
-  'Chest — Sternal':     'push',
-  'Chest — Clavicular':  'push',
-  'Delts — Anterior':    'push',
-  'Delts — Lateral':     'push',
-  'Triceps — Long':      'push',
-  'Triceps — Medial':    'push',
-  'Triceps — Lateral':   'push',
-  // Pull
-  'Back — Lats':         'pull',
-  'Back — Upper/Mid':    'pull',
-  'Delts — Posterior':   'pull',
-  'Biceps — Long':       'pull',
-  'Biceps — Short':      'pull',
-  'Traps — Upper':       'pull',
-  // Lower
+  'Chest — Sternal':      'push',
+  'Chest — Clavicular':   'push',
+  'Delts — Anterior':     'push',
+  'Delts — Lateral':      'push',
+  'Triceps — Long':       'push',
+  'Triceps — Medial':     'push',
+  'Triceps — Lateral':    'push',
+  'Back — Lats':          'pull',
+  'Back — Upper/Mid':     'pull',
+  'Delts — Posterior':    'pull',
+  'Biceps — Long':        'pull',
+  'Biceps — Short':       'pull',
   'Quads — VL':              'lower',
   'Quads — VM':              'lower',
   'Quads — VI':              'lower',
@@ -37,38 +33,47 @@ const MUSCLE_GROUP: Record<string, MuscleGroup> = {
   'Calves — Soleus':         'lower',
 };
 
-const MUSCLE_NAME_GROUP: Record<string, MuscleGroup> = {
-  'Chest':      'push',
-  'Delts':      'push',
-  'Triceps':    'push',
-  'Back':       'pull',
-  'Biceps':     'pull',
-  'Traps':      'pull',
-  'Quads':      'lower',
-  'Glutes':     'lower',
-  'Hamstrings': 'lower',
-  'Calves':     'lower',
+// All heads in canonical order per category
+const CATEGORY_HEADS: Record<MuscleGroup, string[]> = {
+  push: [
+    'Chest — Sternal', 'Chest — Clavicular',
+    'Delts — Anterior', 'Delts — Lateral',
+    'Triceps — Long', 'Triceps — Medial', 'Triceps — Lateral',
+  ],
+  pull: [
+    'Back — Lats', 'Back — Upper/Mid',
+    'Delts — Posterior',
+    'Biceps — Long', 'Biceps — Short',
+  ],
+  lower: [
+    'Quads — VL', 'Quads — VM', 'Quads — VI', 'Quads — RF',
+    'Glutes — Maximus', 'Glutes — Medius',
+    'Hamstrings — BF', 'Hamstrings — SM', 'Hamstrings — ST',
+    'Calves — Gastrocnemius', 'Calves — Soleus',
+  ],
 };
 
-const AXIS_ORDER: string[] = [
-  'Chest — Sternal', 'Chest — Clavicular',
-  'Delts — Anterior', 'Delts — Lateral',
-  'Triceps — Long', 'Triceps — Medial', 'Triceps — Lateral',
-  'Back — Lats', 'Back — Upper/Mid',
-  'Delts — Posterior',
-  'Biceps — Long', 'Biceps — Short',
-  'Traps — Upper',
-  'Quads — VL', 'Quads — VM', 'Quads — VI', 'Quads — RF',
-  'Glutes — Maximus', 'Glutes — Medius',
-  'Hamstrings — BF', 'Hamstrings — SM', 'Hamstrings — ST',
-  'Calves — Gastrocnemius', 'Calves — Soleus',
-];
+// Muscle name → heads within that category (drives By-Group averaging denominator)
+const CATEGORY_MUSCLE_HEADS: Record<MuscleGroup, Record<string, string[]>> = {
+  push: {
+    'Chest':   ['Chest — Sternal', 'Chest — Clavicular'],
+    'Delts':   ['Delts — Anterior', 'Delts — Lateral'],
+    'Triceps': ['Triceps — Long', 'Triceps — Medial', 'Triceps — Lateral'],
+  },
+  pull: {
+    'Back':       ['Back — Lats', 'Back — Upper/Mid'],
+    'Rear Delts': ['Delts — Posterior'],
+    'Biceps':     ['Biceps — Long', 'Biceps — Short'],
+  },
+  lower: {
+    'Quads':      ['Quads — VL', 'Quads — VM', 'Quads — VI', 'Quads — RF'],
+    'Glutes':     ['Glutes — Maximus', 'Glutes — Medius'],
+    'Hamstrings': ['Hamstrings — BF', 'Hamstrings — SM', 'Hamstrings — ST'],
+    'Calves':     ['Calves — Gastrocnemius', 'Calves — Soleus'],
+  },
+};
 
-const GROUP_AXIS_ORDER: string[] = [
-  'Chest', 'Delts', 'Triceps',
-  'Back', 'Biceps', 'Traps',
-  'Quads', 'Glutes', 'Hamstrings', 'Calves',
-];
+const CATEGORY_ORDER: MuscleGroup[] = ['push', 'pull', 'lower'];
 
 const GROUP_COLORS: Record<MuscleGroup, string> = {
   push:  '#f87171',
@@ -76,25 +81,27 @@ const GROUP_COLORS: Record<MuscleGroup, string> = {
   lower: '#fb923c',
 };
 
-const LABEL_OFFSET = 14;
-const CATEGORY_ORDER: MuscleGroup[] = ['push', 'pull', 'lower'];
+// Canonical head order for By-Head mode (controls polygon vertex order)
+const HEAD_AXIS_ORDER: string[] = [
+  ...CATEGORY_HEADS.push,
+  ...CATEGORY_HEADS.pull,
+  ...CATEGORY_HEADS.lower,
+];
 
-// Factory so each chart can pass its own colour override for grouped-mode labels
-const makeTick = (chartCategory?: MuscleGroup) => (props: any) => {
+const LABEL_OFFSET = 14;
+
+const makeTick = (chartCategory: MuscleGroup) => (props: any) => {
   const { cx, cy, x, y, payload, textAnchor } = props;
   const dx = x - cx;
   const dy = y - cy;
   const dist = Math.sqrt(dx * dx + dy * dy) || 1;
   const nx = cx + dx * (1 + LABEL_OFFSET / dist);
   const ny = cy + dy * (1 + LABEL_OFFSET / dist);
-  // In split charts every label is the chart's own category colour; otherwise per-label
-  const group: MuscleGroup =
-    chartCategory ?? MUSCLE_GROUP[payload.value] ?? MUSCLE_NAME_GROUP[payload.value] ?? 'push';
   const parts = payload.value.split(' — ');
   const LINE_H = 11;
   const startY = ny - ((parts.length - 1) * LINE_H) / 2;
   return (
-    <text x={nx} textAnchor={textAnchor} fill={GROUP_COLORS[group]} fontSize={9}>
+    <text x={nx} textAnchor={textAnchor} fill={GROUP_COLORS[chartCategory]} fontSize={9}>
       {parts.map((part: string, i: number) => (
         <tspan key={i} x={nx} y={startY + i * LINE_H} dominantBaseline="central">
           {part}
@@ -104,56 +111,68 @@ const makeTick = (chartCategory?: MuscleGroup) => (props: any) => {
   );
 };
 
+// Compute the max display value across all categories for a given day so all
+// charts on the same day share the same scale.
+function computeDomainMax(
+  byCategory: Partial<Record<MuscleGroup, Record<string, number>>>,
+  presentCategories: MuscleGroup[],
+  byGroup: boolean,
+): number {
+  let maxVal = 0;
+  for (const cat of presentCategories) {
+    const raw = byCategory[cat]!;
+    const fullRaw: Record<string, number> = {};
+    for (const head of CATEGORY_HEADS[cat]) fullRaw[head] = raw[head] ?? 0;
+
+    const values = byGroup
+      ? Object.entries(CATEGORY_MUSCLE_HEADS[cat]).map(([, heads]) =>
+          heads.reduce((s, h) => s + (fullRaw[h] ?? 0), 0) / heads.length,
+        )
+      : Object.values(fullRaw);
+
+    for (const v of values) if (v > maxVal) maxVal = v;
+  }
+  // Round up to the nearest multiple of 3 (clean ticks with tickCount=4), min 6
+  return Math.max(6, Math.ceil(maxVal / 3) * 3);
+}
+
 interface SingleChartProps {
   raw: Record<string, number>;
   byGroup: boolean;
-  // When set (split mode), every label and data key uses this category's colour
-  chartCategory?: MuscleGroup;
+  chartCategory: MuscleGroup;
+  domainMax: number;
 }
 
-const SingleChart = ({ raw, byGroup, chartCategory }: SingleChartProps) => {
-  let displayRaw: Record<string, number>;
-  let axisOrder: string[];
-  // In split mode, all names map to the chart's own category so the right Radar layer lights up
-  const groupLookup = (name: string): MuscleGroup =>
-    chartCategory ?? MUSCLE_GROUP[name] ?? MUSCLE_NAME_GROUP[name] ?? 'push';
-
-  if (byGroup) {
-    const sums: Record<string, number> = {};
-    const counts: Record<string, number> = {};
-    for (const [head, val] of Object.entries(raw)) {
-      const muscleName = head.split(' — ')[0];
-      sums[muscleName] = (sums[muscleName] ?? 0) + val;
-      counts[muscleName] = (counts[muscleName] ?? 0) + 1;
-    }
-    displayRaw = {};
-    for (const name of Object.keys(sums)) {
-      displayRaw[name] = sums[name] / counts[name];
-    }
-    axisOrder = GROUP_AXIS_ORDER;
-  } else {
-    displayRaw = raw;
-    axisOrder = AXIS_ORDER;
+const SingleChart = ({ raw, byGroup, chartCategory, domainMax }: SingleChartProps) => {
+  // Build a complete raw that includes every head in this category (0 for untrained)
+  const fullRaw: Record<string, number> = {};
+  for (const head of CATEGORY_HEADS[chartCategory]) {
+    fullRaw[head] = raw[head] ?? 0;
   }
 
-  const sortedKeys = Object.keys(displayRaw).sort((a, b) => {
-    const ai = axisOrder.indexOf(a);
-    const bi = axisOrder.indexOf(b);
-    if (ai !== -1 && bi !== -1) return ai - bi;
-    if (ai !== -1) return -1;
-    if (bi !== -1) return 1;
-    return a.localeCompare(b);
-  });
+  let displayRaw: Record<string, number>;
+  let sortedKeys: string[];
 
-  const data = sortedKeys.map((name) => {
-    const group = groupLookup(name);
-    return {
-      name,
-      push:  group === 'push'  ? displayRaw[name] : 0,
-      pull:  group === 'pull'  ? displayRaw[name] : 0,
-      lower: group === 'lower' ? displayRaw[name] : 0,
-    };
-  });
+  if (byGroup) {
+    // Average over ALL heads per muscle within this category (including untrained zeros)
+    const muscleHeads = CATEGORY_MUSCLE_HEADS[chartCategory];
+    displayRaw = {};
+    for (const [muscleName, heads] of Object.entries(muscleHeads)) {
+      const sum = heads.reduce((acc, h) => acc + (fullRaw[h] ?? 0), 0);
+      displayRaw[muscleName] = sum / heads.length;
+    }
+    sortedKeys = Object.keys(muscleHeads); // already in canonical order
+  } else {
+    displayRaw = fullRaw;
+    sortedKeys = CATEGORY_HEADS[chartCategory]; // canonical head order
+  }
+
+  const data = sortedKeys.map((name) => ({
+    name,
+    push:  chartCategory === 'push'  ? displayRaw[name] : 0,
+    pull:  chartCategory === 'pull'  ? displayRaw[name] : 0,
+    lower: chartCategory === 'lower' ? displayRaw[name] : 0,
+  }));
 
   return (
     <div style={{ height: 260 }}>
@@ -165,13 +184,10 @@ const SingleChart = ({ raw, byGroup, chartCategory }: SingleChartProps) => {
           margin={{ top: 24, right: 56, bottom: 24, left: 56 }}
         >
           <PolarGrid stroke="#1e293b" />
-          <PolarAngleAxis
-            dataKey="name"
-            tick={makeTick(chartCategory)}
-          />
+          <PolarAngleAxis dataKey="name" tick={makeTick(chartCategory)} />
           <PolarRadiusAxis
             angle={90}
-            domain={[0, 12]}
+            domain={[0, domainMax]}
             tickCount={4}
             tick={{ fill: '#334155', fontSize: 9 }}
             axisLine={false}
@@ -194,7 +210,7 @@ export const MuscleRadarChart = ({ dayData }: Props) => {
   const raw = aggregateActivations(dayData);
   if (Object.keys(raw).length === 0) return null;
 
-  // Partition heads by muscle group category
+  // Partition activated heads by category
   const byCategory: Partial<Record<MuscleGroup, Record<string, number>>> = {};
   for (const [head, val] of Object.entries(raw)) {
     const cat = MUSCLE_GROUP[head] ?? 'push';
@@ -202,6 +218,7 @@ export const MuscleRadarChart = ({ dayData }: Props) => {
   }
   const presentCategories = CATEGORY_ORDER.filter((c) => byCategory[c]);
   const isSplit = presentCategories.length > 1;
+  const domainMax = computeDomainMax(byCategory, presentCategories, byGroup);
 
   return (
     <div className="bg-slate-950 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
@@ -238,14 +255,15 @@ export const MuscleRadarChart = ({ dayData }: Props) => {
             <SingleChart
               raw={byCategory[cat]!}
               byGroup={byGroup}
-              chartCategory={isSplit ? cat : undefined}
+              chartCategory={cat}
+              domainMax={domainMax}
             />
           </div>
         ))}
       </div>
 
       <p className="mt-1 text-xs text-slate-600 text-center whitespace-nowrap">
-        {byGroup ? 'Avg. activation per muscle' : 'Activation per head'} · scale 0–12
+        {byGroup ? 'Avg. activation point per muscle' : 'Activation point per head'}
       </p>
     </div>
   );
