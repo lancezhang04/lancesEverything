@@ -231,9 +231,10 @@ export const MuscleRadarChart = ({ dayData }: Props) => {
           </div>
           <button
             onClick={() => setByGroup((v) => !v)}
-            className="text-xs px-2.5 py-1 rounded-md bg-slate-700 text-slate-300 hover:bg-slate-600 transition-colors whitespace-nowrap"
+            className="text-xs px-2.5 py-1 rounded-md border border-blue-500 text-blue-400 bg-transparent hover:bg-blue-500/10 transition-colors whitespace-nowrap flex items-center gap-1"
           >
             {byGroup ? 'By Group' : 'By Head'}
+            <span className="text-[10px] leading-none">▾</span>
           </button>
         </div>
       </div>
