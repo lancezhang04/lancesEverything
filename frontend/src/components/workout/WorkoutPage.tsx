@@ -64,7 +64,7 @@ export const WorkoutPage = () => {
             {dayData ? (
               <>
                 <div className="text-center">
-                  <span className="text-xs font-medium uppercase tracking-wider text-blue-400">
+                  <span className="text-sm font-medium uppercase tracking-wider text-blue-400">
                     {dayData.label}
                   </span>
                 </div>
