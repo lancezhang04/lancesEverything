@@ -40,12 +40,12 @@ export const DaySelector = ({ selected, onSelect }: DaySelectorProps) => {
     let minDist = Infinity;
     LOOPED.forEach((day, i) => {
       if (day !== selected) return;
-      const pill = el.children[i] as HTMLElement;
+      const pill = el.children[i] as HTMLElement | undefined;
       if (!pill) return;
       const dist = Math.abs(pill.offsetLeft + pill.offsetWidth / 2 - viewCenter);
       if (dist < minDist) { minDist = dist; closest = pill; }
     });
-    closest?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    (closest as HTMLElement | null)?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   }, [selected, selectedIndex]);
 
   // Infinite loop: jump when scrolled into first or last copy
@@ -77,7 +77,7 @@ export const DaySelector = ({ selected, onSelect }: DaySelectorProps) => {
 
       <div
         ref={containerRef}
-        className="flex gap-2 overflow-x-auto pt-1 pb-8 px-1 no-scrollbar"
+        className="flex gap-2 overflow-x-auto pt-1 pb-1 px-1 no-scrollbar"
       >
         {LOOPED.map((day, i) => {
           const dayIndex = i % 7;
@@ -92,8 +92,8 @@ export const DaySelector = ({ selected, onSelect }: DaySelectorProps) => {
                 transition-all duration-200
                 ${isSelected
                   ? isToday
-                    ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30'
-                    : 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
+                    ? 'bg-amber-500 text-white'
+                    : 'bg-blue-600 text-white'
                   : 'bg-slate-800/60 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
                 }
               `}
@@ -107,6 +107,13 @@ export const DaySelector = ({ selected, onSelect }: DaySelectorProps) => {
           );
         })}
       </div>
+
+      {/* Underglow — absolutely positioned so it doesn't affect layout, escaping the overflow clip */}
+      <div
+        className={`pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-1 w-14 h-1.5 rounded-full blur-md ${
+          DAYS[todayIndex] === selected ? 'bg-amber-400/70' : 'bg-blue-500/60'
+        }`}
+      />
     </div>
   );
 };
