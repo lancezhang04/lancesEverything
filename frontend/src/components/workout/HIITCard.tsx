@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-type IntervalType = 'warmup' | 'work' | 'moderate' | 'rest' | 'cooldown';
+type IntervalType = 'warmup' | 'work' | 'moderate' | 'rest' | 'recovery' | 'cooldown';
 
 interface Interval {
   label: string;
@@ -31,6 +31,7 @@ const TYPE_STYLES: Record<IntervalType, { bar: string; dot: string }> = {
   work:     { bar: 'bg-red-500',     dot: 'bg-red-400'     },
   moderate: { bar: 'bg-amber-500',   dot: 'bg-amber-400'   },
   rest:     { bar: 'bg-slate-600',   dot: 'bg-slate-500'   },
+  recovery: { bar: 'bg-blue-800',    dot: 'bg-blue-600'    },
   cooldown: { bar: 'bg-blue-600',    dot: 'bg-blue-500'    },
 };
 
@@ -38,7 +39,8 @@ const TYPE_LABEL: Record<IntervalType, string> = {
   warmup:   'Warm-up',
   work:     'Work',
   moderate: 'Moderate',
-  rest:     'Rest / Recovery',
+  rest:     'Easy / Active Rest',
+  recovery: 'Recovery',
   cooldown: 'Cool-down',
 };
 
@@ -153,7 +155,7 @@ const PROTOCOLS: HIITProtocol[] = [
       { label: 'Easy',               duration: 30,  type: 'rest',     repeat: 5 },
       { label: 'Moderate',           duration: 20,  type: 'moderate', repeat: 5 },
       { label: 'All-out sprint',     duration: 10,  type: 'work',     repeat: 5 },
-      { label: 'Rest between blocks',duration: 120, type: 'rest',     repeat: 2 },
+      { label: 'Rest between blocks',duration: 120, type: 'recovery',  repeat: 2 },
       { label: 'Cool-down',          duration: 300, type: 'cooldown'            },
     ],
     sequence: [
@@ -163,13 +165,13 @@ const PROTOCOLS: HIITProtocol[] = [
         { duration: 20, type: 'moderate' },
         { duration: 10, type: 'work'     },
       ]),
-      { duration: 120, type: 'rest' },
+      { duration: 120, type: 'recovery' },
       ...rep(5, [
         { duration: 30, type: 'rest'     },
         { duration: 20, type: 'moderate' },
         { duration: 10, type: 'work'     },
       ]),
-      { duration: 120, type: 'rest' },
+      { duration: 120, type: 'recovery' },
       { duration: 300, type: 'cooldown' },
     ],
     tips: [
