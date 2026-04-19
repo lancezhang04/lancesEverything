@@ -5,6 +5,7 @@ import { ExerciseTable } from './ExerciseTable';
 import { MuscleRadarChart } from './MuscleRadarChart';
 import { MethodologyTab } from './MethodologyTab';
 import { DAYS, Day, workoutData } from '../../data/workoutData';
+import { HIITCard } from './HIITCard';
 
 const TAB_ITEMS = ['Workout', 'Methodology'] as const;
 type Tab = typeof TAB_ITEMS[number];
@@ -69,8 +70,14 @@ export const WorkoutPage = () => {
                   </span>
                 </div>
 
-                <ExerciseTable exercises={dayData.exercises} />
-                <MuscleRadarChart dayData={dayData} />
+                {selectedDay === 'Sunday' ? (
+                  <HIITCard />
+                ) : (
+                  <>
+                    <ExerciseTable exercises={dayData.exercises} />
+                    <MuscleRadarChart dayData={dayData} />
+                  </>
+                )}
               </>
             ) : (
               <div className="text-center py-20 text-slate-500">
