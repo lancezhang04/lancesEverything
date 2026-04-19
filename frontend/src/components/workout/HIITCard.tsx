@@ -9,22 +9,29 @@ interface Interval {
   repeat?: number;
 }
 
+// Flat sequence used only for the bar visualization — must be in actual temporal order
+interface SeqBlock {
+  duration: number;
+  type: IntervalType;
+}
+
 interface HIITProtocol {
   name: string;
   subtitle: string;
   description: string;
   totalTime: string;
   intensity: string;
-  intervals: Interval[];
+  intervals: Interval[];  // compact list for display
+  sequence: SeqBlock[];   // interleaved order for the structure bar
   tips: string[];
 }
 
 const TYPE_STYLES: Record<IntervalType, { bar: string; dot: string }> = {
-  warmup:   { bar: 'bg-slate-600',  dot: 'bg-slate-500'  },
-  work:     { bar: 'bg-red-500',    dot: 'bg-red-400'    },
-  moderate: { bar: 'bg-amber-500',  dot: 'bg-amber-400'  },
-  rest:     { bar: 'bg-slate-700',  dot: 'bg-slate-500'  },
-  cooldown: { bar: 'bg-slate-600',  dot: 'bg-slate-500'  },
+  warmup:   { bar: 'bg-orange-500',  dot: 'bg-orange-400'  },
+  work:     { bar: 'bg-red-500',     dot: 'bg-red-400'     },
+  moderate: { bar: 'bg-amber-500',   dot: 'bg-amber-400'   },
+  rest:     { bar: 'bg-slate-600',   dot: 'bg-slate-500'   },
+  cooldown: { bar: 'bg-slate-700',   dot: 'bg-slate-600'   },
 };
 
 const TYPE_LABEL: Record<IntervalType, string> = {
@@ -41,6 +48,11 @@ const INTENSITY_COLOR: Record<string, string> = {
   'Maximum':   'text-red-400 bg-red-400/10 border-red-400/30',
 };
 
+// Helper: repeat a block pattern n times
+function rep(n: number, blocks: SeqBlock[]): SeqBlock[] {
+  return Array.from({ length: n }, () => blocks).flat();
+}
+
 const PROTOCOLS: HIITProtocol[] = [
   {
     name: 'Norwegian 4×4',
@@ -50,10 +62,21 @@ const PROTOCOLS: HIITProtocol[] = [
     totalTime: '~28 min',
     intensity: 'Very High',
     intervals: [
-      { label: 'Warm-up',   duration: 600, type: 'warmup'   },
-      { label: 'Interval',  duration: 240, type: 'work',   repeat: 4 },
-      { label: 'Recovery',  duration: 180, type: 'rest',   repeat: 3 },
-      { label: 'Cool-down', duration: 300, type: 'cooldown' },
+      { label: 'Warm-up',   duration: 600, type: 'warmup'             },
+      { label: 'Interval',  duration: 240, type: 'work',   repeat: 4  },
+      { label: 'Recovery',  duration: 180, type: 'rest',   repeat: 3  },
+      { label: 'Cool-down', duration: 300, type: 'cooldown'            },
+    ],
+    sequence: [
+      { duration: 600, type: 'warmup'   },
+      { duration: 240, type: 'work'     },
+      { duration: 180, type: 'rest'     },
+      { duration: 240, type: 'work'     },
+      { duration: 180, type: 'rest'     },
+      { duration: 240, type: 'work'     },
+      { duration: 180, type: 'rest'     },
+      { duration: 240, type: 'work'     },
+      { duration: 300, type: 'cooldown' },
     ],
     tips: [
       'Reach 90–95% max HR within the first 2 minutes of each interval',
@@ -70,10 +93,18 @@ const PROTOCOLS: HIITProtocol[] = [
     totalTime: '~14 min',
     intensity: 'Maximum',
     intervals: [
-      { label: 'Warm-up',   duration: 300, type: 'warmup'   },
+      { label: 'Warm-up',   duration: 300, type: 'warmup'            },
       { label: 'Sprint',    duration: 20,  type: 'work',   repeat: 8 },
       { label: 'Rest',      duration: 10,  type: 'rest',   repeat: 8 },
-      { label: 'Cool-down', duration: 300, type: 'cooldown' },
+      { label: 'Cool-down', duration: 300, type: 'cooldown'           },
+    ],
+    sequence: [
+      { duration: 300, type: 'warmup'   },
+      ...rep(8, [
+        { duration: 20, type: 'work' },
+        { duration: 10, type: 'rest' },
+      ]),
+      { duration: 300, type: 'cooldown' },
     ],
     tips: [
       'Must be truly all-out — if the last round feels manageable, you went too easy',
@@ -90,10 +121,18 @@ const PROTOCOLS: HIITProtocol[] = [
     totalTime: '~26 min',
     intensity: 'Maximum',
     intervals: [
-      { label: 'Warm-up',   duration: 300, type: 'warmup'   },
+      { label: 'Warm-up',   duration: 300, type: 'warmup'            },
       { label: 'Sprint',    duration: 30,  type: 'work',   repeat: 8 },
       { label: 'Walk',      duration: 90,  type: 'rest',   repeat: 8 },
-      { label: 'Cool-down', duration: 300, type: 'cooldown' },
+      { label: 'Cool-down', duration: 300, type: 'cooldown'           },
+    ],
+    sequence: [
+      { duration: 300, type: 'warmup'   },
+      ...rep(8, [
+        { duration: 30, type: 'work' },
+        { duration: 90, type: 'rest' },
+      ]),
+      { duration: 300, type: 'cooldown' },
     ],
     tips: [
       'Sprint at 100% — the 90s recovery is intentionally longer to allow full effort each time',
@@ -110,12 +149,28 @@ const PROTOCOLS: HIITProtocol[] = [
     totalTime: '~20 min',
     intensity: 'High',
     intervals: [
-      { label: 'Warm-up',         duration: 300, type: 'warmup'   },
-      { label: 'Easy',            duration: 30,  type: 'rest',     repeat: 5 },
-      { label: 'Moderate',        duration: 20,  type: 'moderate', repeat: 5 },
-      { label: 'All-out sprint',  duration: 10,  type: 'work',     repeat: 5 },
-      { label: 'Rest between blocks', duration: 120, type: 'rest', repeat: 2 },
-      { label: 'Cool-down',       duration: 300, type: 'cooldown' },
+      { label: 'Warm-up',            duration: 300, type: 'warmup'             },
+      { label: 'Easy',               duration: 30,  type: 'rest',     repeat: 5 },
+      { label: 'Moderate',           duration: 20,  type: 'moderate', repeat: 5 },
+      { label: 'All-out sprint',     duration: 10,  type: 'work',     repeat: 5 },
+      { label: 'Rest between blocks',duration: 120, type: 'rest',     repeat: 2 },
+      { label: 'Cool-down',          duration: 300, type: 'cooldown'            },
+    ],
+    sequence: [
+      { duration: 300, type: 'warmup' },
+      ...rep(5, [
+        { duration: 30, type: 'rest'     },
+        { duration: 20, type: 'moderate' },
+        { duration: 10, type: 'work'     },
+      ]),
+      { duration: 120, type: 'rest' },
+      ...rep(5, [
+        { duration: 30, type: 'rest'     },
+        { duration: 20, type: 'moderate' },
+        { duration: 10, type: 'work'     },
+      ]),
+      { duration: 120, type: 'rest' },
+      { duration: 300, type: 'cooldown' },
     ],
     tips: [
       'Perform 2–3 blocks of 5 min with 2 min passive rest between each block',
@@ -133,29 +188,19 @@ function formatTime(seconds: number): string {
   return rem ? `${m}m ${rem}s` : `${m} min`;
 }
 
-function expandIntervals(intervals: Interval[]): Interval[] {
-  const out: Interval[] = [];
-  for (const iv of intervals) {
-    const n = iv.repeat ?? 1;
-    for (let k = 0; k < n; k++) out.push({ ...iv, repeat: undefined });
-  }
-  return out;
-}
-
-function StructureBar({ intervals }: { intervals: Interval[] }) {
-  const expanded = expandIntervals(intervals);
-  const total = expanded.reduce((s, iv) => s + iv.duration, 0);
-  const uniqueTypes = Array.from(new Set(intervals.map(iv => iv.type))) as IntervalType[];
+function StructureBar({ sequence }: { sequence: SeqBlock[] }) {
+  const total = sequence.reduce((s, b) => s + b.duration, 0);
+  const uniqueTypes = Array.from(new Set(sequence.map(b => b.type))) as IntervalType[];
 
   return (
     <div>
       <div className="flex rounded-full overflow-hidden h-3 gap-px">
-        {expanded.map((iv, i) => (
+        {sequence.map((b, i) => (
           <div
             key={i}
-            className={`${TYPE_STYLES[iv.type].bar} flex-shrink-0`}
-            style={{ width: `${(iv.duration / total) * 100}%` }}
-            title={`${iv.label}: ${formatTime(iv.duration)}`}
+            className={`${TYPE_STYLES[b.type].bar} flex-shrink-0`}
+            style={{ width: `${(b.duration / total) * 100}%` }}
+            title={`${TYPE_LABEL[b.type]}: ${formatTime(b.duration)}`}
           />
         ))}
       </div>
@@ -209,12 +254,12 @@ export const HIITCard = () => {
         {protocol.description}
       </p>
 
-      {/* Structure bar */}
+      {/* Structure bar — uses sequence for correct temporal order */}
       <div className="mb-5">
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
           Structure
         </p>
-        <StructureBar intervals={protocol.intervals} />
+        <StructureBar sequence={protocol.sequence} />
       </div>
 
       {/* Interval list */}
@@ -223,7 +268,7 @@ export const HIITCard = () => {
           <div key={i} className="flex items-center gap-3 py-2">
             <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${TYPE_STYLES[iv.type].dot}`} />
             <span className="text-sm text-slate-300 flex-1">
-              {iv.repeat ? `${iv.repeat}×  ` : ''}{iv.label}
+              {iv.repeat ? `${iv.repeat}× ` : ''}{iv.label}
             </span>
             <span className="text-sm text-slate-500 tabular-nums">
               {formatTime(iv.duration)}{iv.repeat ? ' each' : ''}

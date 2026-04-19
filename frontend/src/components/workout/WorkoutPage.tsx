@@ -70,13 +70,11 @@ export const WorkoutPage = () => {
                   </span>
                 </div>
 
+                <ExerciseTable exercises={dayData.exercises} />
                 {selectedDay === 'Sunday' ? (
                   <HIITCard />
                 ) : (
-                  <>
-                    <ExerciseTable exercises={dayData.exercises} />
-                    <MuscleRadarChart dayData={dayData} />
-                  </>
+                  <MuscleRadarChart dayData={dayData} />
                 )}
               </>
             ) : (
