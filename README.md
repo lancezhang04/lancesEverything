@@ -73,7 +73,7 @@ where $w_i = V_i / V_{\text{total}}$ is the weight of holding $i$ by market valu
 │                             │
 │  Data sources:              │
 │  ├─ Yahoo Finance (prices)  │
-│  └─ iShares ACWI (regions)  │
+│  └─ stockanalysis (regions) │
 └─────────────────────────────┘
 ```
 
