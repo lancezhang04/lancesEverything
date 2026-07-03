@@ -1,6 +1,8 @@
 import json
+from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 import requests
 
@@ -61,6 +63,15 @@ DEFAULT_MARKET_SPLIT = {
     "Developed": 0.2516,
     "Emerging": 0.1080,
 }
+
+
+@dataclass(frozen=True)
+class MarketSplit:
+    """Resolved market split plus provenance so the UI can flag stale data."""
+    weights: Dict[Region, float]
+    source: str            # 'live' | 'cache' | 'default'
+    stale: bool            # True when the live source failed and we served a fallback
+    as_of: Optional[str]   # ISO-8601 UTC of when the data was last fetched live
 
 
 def _parse_country_weights(payload: dict) -> Dict[str, float]:
@@ -132,49 +143,68 @@ def fetch_market_split() -> Dict[str, float]:
     }
 
 
-def _read_cache() -> Optional[Dict[Region, float]]:
+def _read_cache() -> Optional[Tuple[Dict[Region, float], Optional[str]]]:
+    """Return (weights, as_of) from the on-disk cache, or None."""
     if not MARKET_SPLIT_CACHE.exists():
         return None
     try:
         with open(MARKET_SPLIT_CACHE, 'r') as f:
             data = json.load(f)
-        return {Region[k]: v for k, v in data.items()}
+        # Current format: {"as_of": ..., "weights": {...}}; also tolerate the
+        # old flat {"US": ...} format.
+        raw = data.get("weights", data) if isinstance(data, dict) else data
+        as_of = data.get("as_of") if isinstance(data, dict) else None
+        weights = {Region[k]: v for k, v in raw.items()}
+        return weights, as_of
     except Exception:
         return None
 
 
-def _write_cache(split: Dict[str, float]) -> None:
+def _write_cache(split: Dict[str, float], as_of: str) -> None:
     try:
         CACHE_DIR.mkdir(exist_ok=True)
         with open(MARKET_SPLIT_CACHE, 'w') as f:
-            json.dump(split, f, indent=2)
+            json.dump({"as_of": as_of, "weights": split}, f, indent=2)
     except Exception:
         pass  # cache is best-effort (filesystem may be read-only/ephemeral)
 
 
-def get_global_market_split(use_cache: bool = False) -> Dict[Region, float]:
-    """Get the global market split, resilient to the live source being down.
+def resolve_market_split(use_cache: bool = False) -> MarketSplit:
+    """Resolve the global market split with provenance, resilient to the live
+    source being down.
 
     Resolution order: fresh cache (if requested) → live fetch → last-good cache
-    → bundled default. Never raises, so portfolio endpoints stay up even when
-    the upstream data source changes or is unreachable.
+    → bundled default. Never raises. `stale` is True whenever the live fetch
+    failed and we served a fallback (e.g. the upstream JSON shape changed), so
+    callers can surface a stale-data indicator.
     """
     if use_cache:
         cached = _read_cache()
         if cached is not None:
-            return cached
+            weights, as_of = cached
+            return MarketSplit(weights, source="cache", stale=False, as_of=as_of)
 
     try:
         split = fetch_market_split()
-        _write_cache(split)
-        return {Region[k]: v for k, v in split.items()}
+        as_of = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        _write_cache(split, as_of)
+        weights = {Region[k]: v for k, v in split.items()}
+        return MarketSplit(weights, source="live", stale=False, as_of=as_of)
     except Exception as e:
         print(f"  WARNING: live market split fetch failed ({e})")
 
     cached = _read_cache()
     if cached is not None:
+        weights, as_of = cached
         print("  Falling back to cached market split")
-        return cached
+        return MarketSplit(weights, source="cache", stale=True, as_of=as_of)
 
     print("  Falling back to bundled default market split")
-    return {Region[k]: v for k, v in DEFAULT_MARKET_SPLIT.items()}
+    weights = {Region[k]: v for k, v in DEFAULT_MARKET_SPLIT.items()}
+    return MarketSplit(weights, source="default", stale=True, as_of=None)
+
+
+def get_global_market_split(use_cache: bool = False) -> Dict[Region, float]:
+    """Backwards-compatible helper returning just the weights. Prefer
+    resolve_market_split() when you need staleness/provenance."""
+    return resolve_market_split(use_cache).weights

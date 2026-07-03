@@ -4,7 +4,7 @@ from typing import Dict, List
 from ..core.models import Ticker, Equity, Position, Region
 from ..core.config import config_manager
 from .equity_service import get_equities
-from .market_service import get_global_market_split
+from .market_service import resolve_market_split
 
 
 class PortfolioPosition:
@@ -22,7 +22,16 @@ class PortfolioService:
         self.use_cache = use_cache
         self.equities, self.fund_proportion_in_region = get_equities(use_cache=use_cache)
         override = config_manager.get_regional_split_override()
-        self.target_regional_split = override if override else get_global_market_split(use_cache=use_cache)
+        if override:
+            # User-set targets — not sourced from the live market feed.
+            self.target_regional_split = override
+            self.market_data_stale = False
+            self.market_data_as_of = None
+        else:
+            market = resolve_market_split(use_cache=use_cache)
+            self.target_regional_split = market.weights
+            self.market_data_stale = market.stale
+            self.market_data_as_of = market.as_of
         self.positions: Dict[Ticker, PortfolioPosition] = {}
         # Compute full target proportions for ALL equities (not just held ones)
         self._all_target_proportions: Dict[Ticker, float] = {}

@@ -386,7 +386,12 @@ export const HoldingsTab = () => {
       </div>
 
       <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
-        <PortfolioOverview distributions={regionalDistribution} portfolio={portfolio} />
+        <PortfolioOverview
+          distributions={regionalDistribution.distributions}
+          portfolio={portfolio}
+          marketDataStale={regionalDistribution.market_data_stale}
+          marketDataAsOf={regionalDistribution.market_data_as_of}
+        />
       </div>
     </div>
   );

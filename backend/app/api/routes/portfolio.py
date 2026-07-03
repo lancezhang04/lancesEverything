@@ -60,7 +60,11 @@ async def get_regional_distribution(use_cache: bool = Query(False)):
             for region, data in dist_data.items()
         ]
 
-        return RegionalDistributionResponse(distributions=distributions)
+        return RegionalDistributionResponse(
+            distributions=distributions,
+            market_data_stale=service.market_data_stale,
+            market_data_as_of=service.market_data_as_of,
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

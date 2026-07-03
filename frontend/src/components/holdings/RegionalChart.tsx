@@ -8,6 +8,8 @@ import { formatPercent } from '../../utils/formatters';
 interface PortfolioOverviewProps {
   distributions: RegionalDistribution[];
   portfolio: Portfolio;
+  marketDataStale?: boolean;
+  marketDataAsOf?: string | null;
 }
 
 const REGION_COLORS: Record<string, string> = {
@@ -16,7 +18,18 @@ const REGION_COLORS: Record<string, string> = {
   Emerging: '#93c5fd',
 };
 
-export const PortfolioOverview = ({ distributions, portfolio }: PortfolioOverviewProps) => {
+export const PortfolioOverview = ({
+  distributions,
+  portfolio,
+  marketDataStale = false,
+  marketDataAsOf = null,
+}: PortfolioOverviewProps) => {
+  const staleTitle = marketDataAsOf
+    ? `Live global market-cap data is unavailable, so regional and factor targets ` +
+      `use the last-known values from ${new Date(marketDataAsOf).toLocaleDateString()}.`
+    : `Live global market-cap data is unavailable, so regional and factor targets ` +
+      `use built-in fallback values.`;
+
   const chartData = distributions.map((dist) => ({
     name: dist.region,
     current: dist.current * 100,
@@ -33,7 +46,18 @@ export const PortfolioOverview = ({ distributions, portfolio }: PortfolioOvervie
 
   return (
     <div>
-      <h2 className="text-lg sm:text-xl font-semibold text-slate-100 mb-4 sm:mb-6">Portfolio Overview</h2>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-4 sm:mb-6">
+        <h2 className="text-lg sm:text-xl font-semibold text-slate-100">Portfolio Overview</h2>
+        {marketDataStale && (
+          <span
+            title={staleTitle}
+            className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-400"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            Targets may be stale
+          </span>
+        )}
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Left: Pie chart + legend */}
         <div>

@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 from pydantic import BaseModel
 
 from ..core.models import Position, Region, RegionalDistribution
@@ -22,6 +22,10 @@ class PortfolioResponse(BaseModel):
 
 class RegionalDistributionResponse(BaseModel):
     distributions: List[RegionalDistribution]
+    # True when the live market-cap source failed and targets fall back to
+    # cached/default weights (e.g. the upstream JSON shape changed).
+    market_data_stale: bool = False
+    market_data_as_of: Optional[str] = None
 
 
 class FactorLoadingRow(BaseModel):
