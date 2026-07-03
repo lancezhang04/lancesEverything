@@ -57,6 +57,14 @@ export interface RegionalDistribution {
   target: number;
 }
 
+export interface RegionalDistributionResponse {
+  distributions: RegionalDistribution[];
+  // True when the live market-cap source failed and targets fall back to
+  // cached/default weights.
+  market_data_stale: boolean;
+  market_data_as_of: string | null;
+}
+
 export interface FactorLoadingRow {
   factor: string;
   loading: number;

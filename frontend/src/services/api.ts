@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {
   Portfolio,
-  RegionalDistribution,
+  RegionalDistributionResponse,
   FactorAnalysis,
   RebalanceResult,
 } from '../types/portfolio';
@@ -21,11 +21,11 @@ export const portfolioApi = {
     return data;
   },
 
-  getRegionalDistribution: async (useCache = false): Promise<RegionalDistribution[]> => {
+  getRegionalDistribution: async (useCache = false): Promise<RegionalDistributionResponse> => {
     const { data } = await api.get('/portfolio/regional-distribution', {
       params: { use_cache: useCache },
     });
-    return data.distributions;
+    return data;
   },
 
   getFactorAnalysis: async (useCache = false): Promise<FactorAnalysis> => {
