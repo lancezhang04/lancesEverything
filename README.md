@@ -50,35 +50,6 @@ where $w_i = V_i / V_{\text{total}}$ is the weight of holding $i$ by market valu
 
 ---
 
-## Architecture
-
-```
-┌─────────────────────────────┐
-│   React + TypeScript        │
-│   (Vite, Tailwind, Recharts)│
-│                             │
-│  ┌─────┐ ┌──────┐ ┌──────┐ │
-│  │Hold-│ │Factor│ │Rebal-│ │
-│  │ings │ │& Ret.│ │ance  │ │
-│  └──┬──┘ └──┬───┘ └──┬───┘ │
-└─────┼───────┼─────────┼────┘
-      │       │         │  HTTP
-┌─────▼───────▼─────────▼────┐
-│   FastAPI (Python)          │
-│                             │
-│  PortfolioService           │
-│  ├─ factor loading calc     │
-│  ├─ core-satellite split    │
-│  └─ rebalance engine        │
-│                             │
-│  Data sources:              │
-│  ├─ Yahoo Finance (prices)  │
-│  └─ stockanalysis (regions) │
-└─────────────────────────────┘
-```
-
----
-
 ## Methodology
 
 ### 1. Regional Allocation Target
