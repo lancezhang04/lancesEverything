@@ -54,7 +54,7 @@ where $w_i = V_i / V_{\text{total}}$ is the weight of holding $i$ by market valu
 
 ### 1. Regional Allocation Target
 
-The global target allocation across US / Developed ex-US / Emerging markets is sourced live from the **iShares MSCI ACWI ETF** holdings CSV. The fund's country weights are bucketed into the three regions and normalized to sum to 1.0 (removing cash drag). This gives an objective, market-cap-weighted benchmark that updates dynamically.
+The global target allocation across US / Developed ex-US / Emerging markets is sourced live from the **MSCI ACWI** country weights. Those weights are bucketed into the three regions and normalized to sum to 1.0 (removing cash drag), giving an objective, market-cap-weighted benchmark that updates dynamically. If the live source is briefly unavailable, the app falls back to the last-known values (surfaced in the UI as a stale-data indicator) rather than failing.
 
 ### 2. Core-Satellite Fund Blending
 
