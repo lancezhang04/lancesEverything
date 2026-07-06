@@ -124,6 +124,12 @@ class ConfigManager:
             "vol": premiums.vol
         }
         self.save(self.config_data)
+        # When a custom portfolio is active, get_portfolio_vol() returns the
+        # in-memory vol override, which would otherwise shadow an explicit vol
+        # edit made here on the Factors page. Keep them in sync so the projected
+        # (geometric) return actually reflects the saved volatility.
+        if self._vol_override is not None:
+            self._vol_override = premiums.vol
 
     def update_equity_config(self, ticker: str, equity_config: EquityConfig) -> None:
         """Update specific equity configuration."""
