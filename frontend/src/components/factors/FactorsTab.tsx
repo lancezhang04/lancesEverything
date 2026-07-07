@@ -3,6 +3,7 @@ import { FactorLoadingsTable } from './FactorLoadingsTable';
 import { ExpectedReturnsTable } from './ExpectedReturnsTable';
 import { AssumptionsPanel } from './AssumptionsPanel';
 import { ReturnComparisonChart } from './ReturnComparisonChart';
+import { ReturnProjectionChart } from './ReturnProjectionChart';
 
 export const FactorsTab = () => {
   const { data: factorAnalysis, isLoading } = useFactorAnalysis();
@@ -46,6 +47,10 @@ export const FactorsTab = () => {
 
         <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
           <ReturnComparisonChart factorAnalysis={factorAnalysis} />
+        </div>
+
+        <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-3 sm:p-6">
+          <ReturnProjectionChart factorAnalysis={factorAnalysis} />
         </div>
       </div>
     </div>
