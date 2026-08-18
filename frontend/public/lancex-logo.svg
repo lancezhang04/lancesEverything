@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 44">
+  <!-- Blue background -->
+  <rect width="160" height="44" rx="4" fill="#3b82f6"/>
+  <!-- Grid lines -->
+  <g stroke="#93c5fd" stroke-width="0.5" opacity="0.4">
+    <!-- Vertical lines -->
+    <line x1="11" y1="0" x2="11" y2="44"/>
+    <line x1="22" y1="0" x2="22" y2="44"/>
+    <line x1="33" y1="0" x2="33" y2="44"/>
+    <line x1="44" y1="0" x2="44" y2="44"/>
+    <line x1="55" y1="0" x2="55" y2="44"/>
+    <line x1="66" y1="0" x2="66" y2="44"/>
+    <line x1="77" y1="0" x2="77" y2="44"/>
+    <line x1="88" y1="0" x2="88" y2="44"/>
+    <line x1="99" y1="0" x2="99" y2="44"/>
+    <line x1="110" y1="0" x2="110" y2="44"/>
+    <line x1="121" y1="0" x2="121" y2="44"/>
+    <line x1="132" y1="0" x2="132" y2="44"/>
+    <line x1="143" y1="0" x2="143" y2="44"/>
+    <line x1="154" y1="0" x2="154" y2="44"/>
+    <!-- Horizontal lines -->
+    <line x1="0" y1="11" x2="160" y2="11"/>
+    <line x1="0" y1="22" x2="160" y2="22"/>
+    <line x1="0" y1="33" x2="160" y2="33"/>
+  </g>
+  <!-- Text: the X picks up the exchange's emerald accent -->
+  <text x="80" y="32" text-anchor="middle" font-family="'Playfair Display', Georgia, serif" font-size="26" font-weight="700" fill="white">Lance<tspan fill="#6ee7b7">X</tspan></text>
+</svg>
