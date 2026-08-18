@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Dashboard } from './components/layout/Dashboard';
 import { HomePage } from './components/layout/HomePage';
 import { WorkoutPage } from './components/workout/WorkoutPage';
+import { ExchangePage } from './components/exchange/ExchangePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,6 +28,14 @@ function App() {
           }
         />
         <Route path="/workout" element={<WorkoutPage />} />
+        <Route
+          path="/exchange"
+          element={
+            <QueryClientProvider client={queryClient}>
+              <ExchangePage />
+            </QueryClientProvider>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

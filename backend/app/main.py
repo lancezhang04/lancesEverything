@@ -3,7 +3,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import portfolio, config, equities
+from app.api.routes import portfolio, config, equities, exchange
 
 app = FastAPI(
     title="Portfolio Rebalancer API",
@@ -28,6 +28,7 @@ app.add_middleware(
 app.include_router(portfolio.router)
 app.include_router(config.router)
 app.include_router(equities.router)
+app.include_router(exchange.router)
 
 
 @app.get("/")

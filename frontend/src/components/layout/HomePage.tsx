@@ -61,8 +61,29 @@ export const HomePage = () => {
             </a>
           </div>
 
+          {/* Exchange card */}
+          <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6 flex flex-col gap-4 min-h-[227px] border-l-4 border-emerald-500/70 transition-shadow duration-500 hover:shadow-[0_0_32px_rgba(16,185,129,0.4)]">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-100 mb-2 flex items-center gap-2">
+                LanceX
+                <span className="text-sm font-mono bg-emerald-900/50 text-emerald-400 px-1.5 py-0.5 rounded">WIP</span>
+              </h2>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Play "make a market" with friends. Quote a tightening bid-ask on
+                any event, lift or hit someone else's market, then settle up
+                when the tally comes in.
+              </p>
+            </div>
+            <a
+              href="/exchange"
+              className="mt-auto inline-block px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-md hover:bg-emerald-700 text-center transition-colors"
+            >
+              Open LanceX →
+            </a>
+          </div>
+
           {/* Placeholder cards */}
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
               className="rounded-lg p-6 border-2 border-dashed border-slate-600/50 flex items-center justify-center min-h-[227px]"

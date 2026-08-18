@@ -1,7 +1,8 @@
 __pycache__
 .idea
 .cache
-.claude
+.claude/*
+!.claude/skills/
 node_modules
 venv
 /frontend/dist
