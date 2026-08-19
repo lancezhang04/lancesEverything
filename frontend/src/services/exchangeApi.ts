@@ -66,13 +66,13 @@ export const exchangeApi = {
   advance: (id: number) => api.post(`/products/${id}/advance`),
   deleteUser: (username: string) => api.delete(`/users/${username}`),
 
-  /** The CSV route needs an auth header, so fetch it as a blob rather than linking to it. */
-  downloadCsv: async () => {
-    const { data } = await api.get('/export.csv', { responseType: 'blob' });
+  /** The export route needs an auth header, so fetch it as a blob rather than linking to it. */
+  downloadSession: async () => {
+    const { data } = await api.get('/export.json', { responseType: 'blob' });
     const url = URL.createObjectURL(data);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'exchange.csv';
+    link.download = `${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
     URL.revokeObjectURL(url);
   },

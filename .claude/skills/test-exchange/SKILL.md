@@ -103,7 +103,12 @@ curl -s http://localhost:8000/api/exchange/state \
 
 Swap in the `admin`/`admin_pass` token to reach the admin-only routes
 (`POST /products`, `PUT /products/{id}/value`, `POST /products/{id}/settle`,
-`DELETE /users/{name}`, `GET /export.csv`).
+`DELETE /users/{name}`, `GET /export.json`).
+
+`GET /export.json` is the session archive that the Past sessions tab replays.
+To check a change to it end to end, download it and drop it in
+`frontend/src/data/sessions/` — files there are picked up at build time, so it
+appears in the session picker with no manifest to update.
 
 ## Notes
 

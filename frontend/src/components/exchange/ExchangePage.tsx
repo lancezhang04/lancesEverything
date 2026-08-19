@@ -6,13 +6,14 @@ import { Footer } from '../layout/Footer';
 import { AdminPanel } from './AdminPanel';
 import { LoginForm } from './LoginForm';
 import { PositionsTable } from './PositionsTable';
+import { SessionsTab } from './SessionsTab';
 import { ProductDetail } from './ProductDetail';
 import { Card, num, PhaseBadge, SectionTitle } from './ui';
 
 export const ExchangePage = () => {
   const [signedIn, setSignedIn] = useState(!!getToken());
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [showAdmin, setShowAdmin] = useState(false);
+  const [tab, setTab] = useState<'products' | 'sessions' | 'admin'>('products');
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useExchangeState(signedIn);
@@ -21,7 +22,7 @@ export const ExchangePage = () => {
     clearToken();
     setSignedIn(false);
     setSelectedId(null);
-    setShowAdmin(false);
+    setTab('products');
     queryClient.clear();
   };
 
@@ -66,18 +67,23 @@ export const ExchangePage = () => {
 
           {data && (
             <div className="flex flex-col gap-8">
-              {data.me.is_admin && (
-                <div className="flex gap-2">
-                  <Tab active={!showAdmin} onClick={() => setShowAdmin(false)}>
-                    Products
-                  </Tab>
-                  <Tab active={showAdmin} onClick={() => setShowAdmin(true)}>
+              <div className="flex flex-wrap gap-2">
+                <Tab active={tab === 'products'} onClick={() => setTab('products')}>
+                  Products
+                </Tab>
+                <Tab active={tab === 'sessions'} onClick={() => setTab('sessions')}>
+                  Past sessions
+                </Tab>
+                {data.me.is_admin && (
+                  <Tab active={tab === 'admin'} onClick={() => setTab('admin')}>
                     Admin
                   </Tab>
-                </div>
-              )}
+                )}
+              </div>
 
-              {showAdmin && data.me.is_admin ? (
+              {tab === 'sessions' ? (
+                <SessionsTab />
+              ) : tab === 'admin' && data.me.is_admin ? (
                 <AdminPanel products={data.products} users={data.users} />
               ) : selected ? (
                 <ProductDetail product={selected} me={data.me} onBack={() => setSelectedId(null)} />

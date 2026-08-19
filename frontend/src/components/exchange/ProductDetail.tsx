@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useExchangeAction } from '../../hooks/useExchange';
 import { errorMessage, exchangeApi } from '../../services/exchangeApi';
 import { ExchangeUser, Product } from '../../types/exchange';
+import { SpreadChart } from './SpreadChart';
 import {
   buttonClass, Card, ErrorNote, inputClass, money, num, PhaseBadge, Pnl, SideBadge,
   tdClass, thClass,
@@ -294,17 +295,11 @@ export const ProductDetail = ({ product, me, onBack }: ProductDetailProps) => {
       {/* How the market got here */}
       {product.quote_history.length > 0 && (
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-slate-100 mb-3">Quote history</h3>
-          <ol className="flex flex-col gap-1 text-sm">
-            {product.quote_history.map((entry, index) => (
-              <li key={index} className="text-slate-400">
-                <span className="text-slate-200">{entry.user}</span> quoted{' '}
-                <span className="text-slate-200">
-                  {num(entry.bid)} @ {num(entry.ask)}
-                </span>
-              </li>
-            ))}
-          </ol>
+          <h3 className="text-lg font-semibold text-slate-100 mb-3">Spread progression</h3>
+          <SpreadChart
+            quotes={product.quote_history}
+            settleValue={product.phase === 'SETTLED' ? product.settle_value : null}
+          />
         </Card>
       )}
     </div>

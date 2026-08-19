@@ -17,9 +17,7 @@ A product moves through four phases:
 
 from __future__ import annotations
 
-import csv
 import hashlib
-import io
 import secrets
 import threading
 from datetime import datetime, timezone
@@ -148,7 +146,7 @@ def delete_user(username: str) -> None:
             if owner == username:
                 del _tokens[token]
         # Drop them from products still in play so phases don't stall on a ghost,
-        # but leave recorded trades alone so the CSV keeps a full history.
+        # but leave recorded trades alone so the session archive stays complete.
         for product in _products.values():
             if product["phase"] in (QUOTING, TRADING):
                 if username in product["participants"]:
@@ -368,23 +366,18 @@ def state_for(username: str) -> dict:
         }
 
 
-def export_csv() -> str:
+def export_session() -> dict:
+    """A full session archive, including the quote history a CSV can't hold.
+
+    Committed to frontend/src/data/sessions/ and replayed by the read-only
+    session viewer, so it has to carry everything needed to redraw the session.
+    """
     with _lock:
-        buffer = io.StringIO()
-        writer = csv.writer(buffer)
-        writer.writerow(
-            ["product_id", "product", "phase", "user", "side", "price",
-             "bid", "ask", "mark", "unit_value", "pnl"]
-        )
-        for product in _products.values():
-            mark = product["settle_value"] if product["phase"] == SETTLED else product["current_value"]
-            for row in _positions(product):
-                writer.writerow(
-                    [product["id"], product["name"], product["phase"], row["user"],
-                     row["side"], row["price"], product["bid"], product["ask"],
-                     mark, product["unit_value"], row["pnl"]]
-                )
-        return buffer.getvalue()
+        return {
+            "session": datetime.now(timezone.utc).date().isoformat(),
+            "exported_at": _now(),
+            "products": [_public(p) for p in _products.values()],
+        }
 
 
 # --------------------------------------------------------------------------- test support

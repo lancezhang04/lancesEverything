@@ -4,6 +4,7 @@ Reads all funnel through GET /state so the client can poll one URL; everything
 else is a thin write that delegates the rules to exchange_service.
 """
 
+import json
 import os
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response
@@ -131,12 +132,16 @@ async def delete_user(username: str, user: dict = Depends(admin_user)):
     return {"status": "success"}
 
 
-@router.get("/export.csv")
-async def export_csv(user: dict = Depends(admin_user)):
+@router.get("/export.json")
+async def export_session(user: dict = Depends(admin_user)):
+    """Session archive for committing to frontend/src/data/sessions/."""
+    session = ex.export_session()
     return Response(
-        content=ex.export_csv(),
-        media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=exchange.csv"},
+        content=json.dumps(session, indent=2),
+        media_type="application/json",
+        headers={
+            "Content-Disposition": f'attachment; filename={session["session"]}.json'
+        },
     )
 
 
