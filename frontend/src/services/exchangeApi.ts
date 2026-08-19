@@ -61,7 +61,10 @@ export const exchangeApi = {
     const { data } = await api.post('/products', product);
     return data;
   },
-  setValue: (id: number, value: number) => api.put(`/products/${id}/value`, { value }),
+  setValue: (id: number, value: number) => api.post(`/products/${id}/value`, { value }),
+  stepValue: (id: number, delta: number) => api.post(`/products/${id}/value`, { delta }),
+  confirmValue: (id: number) => api.post(`/products/${id}/value/confirm`),
+  clearSession: () => api.post('/session/clear'),
   settle: (id: number, value: number | null) => api.post(`/products/${id}/settle`, { value }),
   advance: (id: number) => api.post(`/products/${id}/advance`),
   deleteUser: (username: string) => api.delete(`/users/${username}`),

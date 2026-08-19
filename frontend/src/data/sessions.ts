@@ -42,10 +42,14 @@ export interface PlayerTotal {
   made: number;
 }
 
-/** Session-wide P&L per player, best first. */
-export const playerTotals = (session: Session): PlayerTotal[] => {
+/**
+ * P&L per player across a set of markets, best first. Takes the shape both a
+ * live Product and an archived SessionProduct share, so the live leaderboard
+ * and the session recap compute totals identically.
+ */
+export const playerTotals = (products: { positions: PositionRow[] }[]): PlayerTotal[] => {
   const totals = new Map<string, PlayerTotal>();
-  for (const product of session.products) {
+  for (const product of products) {
     for (const row of product.positions) {
       const entry = totals.get(row.user) ?? { user: row.user, pnl: 0, traded: 0, made: 0 };
       entry.pnl += row.pnl ?? 0;

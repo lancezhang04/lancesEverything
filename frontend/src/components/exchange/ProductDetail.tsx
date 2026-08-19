@@ -3,6 +3,7 @@ import { useExchangeAction } from '../../hooks/useExchange';
 import { errorMessage, exchangeApi } from '../../services/exchangeApi';
 import { ExchangeUser, Product } from '../../types/exchange';
 import { SpreadChart } from './SpreadChart';
+import { ValueStepper } from './ValueStepper';
 import {
   buttonClass, Card, ErrorNote, inputClass, money, num, PhaseBadge, Pnl, SideBadge,
   tdClass, thClass,
@@ -245,6 +246,20 @@ export const ProductDetail = ({ product, me, onBack }: ProductDetailProps) => {
           </p>
         )}
       </Card>
+
+      {/* Keeping the tally */}
+      {joined && product.phase !== 'SETTLED' && (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold text-slate-100 mb-3">Running tally</h3>
+          <ValueStepper
+            productId={product.id}
+            isAdmin={me.is_admin}
+            currentValue={product.current_value}
+            proposedValue={product.proposed_value}
+            proposedBy={product.proposed_by}
+          />
+        </Card>
+      )}
 
       {/* Everyone's standing */}
       <Card className="overflow-hidden">

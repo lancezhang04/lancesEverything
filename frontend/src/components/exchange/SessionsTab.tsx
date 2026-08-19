@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { playerTotals, Session, SessionProduct, sessions } from '../../data/sessions';
+import { Session, SessionProduct, sessions } from '../../data/sessions';
+import { Leaderboard } from './Leaderboard';
 import { SpreadChart } from './SpreadChart';
 import { Card, money, num, Pnl, SectionTitle, SideBadge, tdClass, thClass } from './ui';
 
@@ -63,41 +64,11 @@ const SessionOverview = ({
   session: Session;
   onOpen: (id: number) => void;
 }) => {
-  const totals = playerTotals(session);
-
   return (
     <>
       <section>
         <SectionTitle>Session P&amp;L</SectionTitle>
-        <Card className="overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-700">
-              <thead className="bg-slate-700">
-                <tr>
-                  <th className={thClass}>Player</th>
-                  <th className={`${thClass} text-right`}>P&amp;L</th>
-                  <th className={`${thClass} text-right hidden sm:table-cell`}>Traded</th>
-                  <th className={`${thClass} text-right hidden sm:table-cell`}>Made</th>
-                </tr>
-              </thead>
-              <tbody className="bg-slate-800 divide-y divide-slate-700">
-                {totals.map((row, index) => (
-                  <tr key={row.user} className="hover:bg-slate-700">
-                    <td className={`${tdClass} font-medium`}>
-                      <span className="text-slate-600 mr-2">{index + 1}</span>
-                      {row.user}
-                    </td>
-                    <td className={`${tdClass} text-right`}>
-                      <Pnl value={row.pnl} />
-                    </td>
-                    <td className={`${tdClass} text-right hidden sm:table-cell`}>{row.traded}</td>
-                    <td className={`${tdClass} text-right hidden sm:table-cell`}>{row.made}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+        <Leaderboard products={session.products} />
       </section>
 
       <section>

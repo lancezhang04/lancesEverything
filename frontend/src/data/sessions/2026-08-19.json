@@ -185,7 +185,7 @@
       "bid": 14.0,
       "ask": 24.0,
       "maker": "John Street",
-      "settle_value": 16.0,
+      "settle_value": 14.0,
       "quote_history": [
         {
           "user": "conner",
@@ -259,25 +259,25 @@
           "user": "conner",
           "side": "BUY",
           "price": 24.0,
-          "pnl": -4.0
+          "pnl": -5.0
         },
         {
           "user": "lance",
           "side": "BUY",
           "price": 24.0,
-          "pnl": -4.0
+          "pnl": -5.0
         },
         {
           "user": "benbaker",
           "side": "BUY",
           "price": 24.0,
-          "pnl": -4.0
+          "pnl": -5.0
         },
         {
           "user": "Charl",
           "side": "BUY",
           "price": 24.0,
-          "pnl": -4.0
+          "pnl": -5.0
         },
         {
           "user": "kush",
@@ -289,7 +289,7 @@
           "user": "John Street",
           "side": "MAKER",
           "price": null,
-          "pnl": 16.0
+          "pnl": 20.0
         }
       ]
     },

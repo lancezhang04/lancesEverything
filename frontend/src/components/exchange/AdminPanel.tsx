@@ -3,6 +3,7 @@ import { useExchangeAction } from '../../hooks/useExchange';
 import { errorMessage, exchangeApi } from '../../services/exchangeApi';
 import { ExchangeUser, Product } from '../../types/exchange';
 import { buttonClass, Card, ErrorNote, inputClass, num, PhaseBadge, SectionTitle } from './ui';
+import { ValueStepper } from './ValueStepper';
 
 interface AdminPanelProps {
   products: Product[];
@@ -15,14 +16,17 @@ export const AdminPanel = ({ products, users }: AdminPanelProps) => {
   const [expiry, setExpiry] = useState('');
   const [unitValue, setUnitValue] = useState('0.5');
   const [values, setValues] = useState<Record<number, string>>({});
+  const [confirmingClear, setConfirmingClear] = useState(false);
 
   const createProduct = useExchangeAction(exchangeApi.createProduct);
-  const setValue = useExchangeAction(exchangeApi.setValue);
   const settle = useExchangeAction(exchangeApi.settle);
   const advance = useExchangeAction(exchangeApi.advance);
   const deleteUser = useExchangeAction(exchangeApi.deleteUser);
+  const clearSession = useExchangeAction(exchangeApi.clearSession);
 
-  const failed = [createProduct, setValue, settle, advance, deleteUser].find((m) => m.isError);
+  const failed = [createProduct, settle, advance, deleteUser, clearSession].find(
+    (m) => m.isError
+  );
 
   const create = () => {
     createProduct.mutate(
@@ -100,24 +104,27 @@ export const AdminPanel = ({ products, users }: AdminPanelProps) => {
                 {' · '}value {num(product.settle_value ?? product.current_value)}
               </p>
 
+              {!settled && (
+                <div className="mb-3">
+                  <ValueStepper
+                    productId={product.id}
+                    isAdmin
+                    currentValue={product.current_value}
+                    proposedValue={product.proposed_value}
+                    proposedBy={product.proposed_by}
+                  />
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-2 items-center">
                 <input
                   className={`${inputClass} w-32`}
                   type="number"
                   step="any"
-                  placeholder="Value"
+                  placeholder={settled ? 'New settle' : 'Settle at'}
                   value={values[product.id] ?? ''}
                   onChange={(e) => setValues({ ...values, [product.id]: e.target.value })}
                 />
-                {product.phase !== 'SETTLED' && (
-                  <button
-                    disabled={emptyValue}
-                    onClick={() => setValue.mutate([product.id, Number(values[product.id])])}
-                    className={`${buttonClass} bg-blue-600 text-white hover:bg-blue-700`}
-                  >
-                    Update value
-                  </button>
-                )}
                 <button
                   // Correcting a settle needs an explicit number; re-settling at the
                   // existing value would be a confusing no-op.
@@ -143,10 +150,12 @@ export const AdminPanel = ({ products, users }: AdminPanelProps) => {
           })}
         </div>
         <p className="text-xs text-slate-500 mt-4">
-          Settle uses the box value, or the current running value if the box is empty.
-          A settled product can still be corrected — enter the right value and hit
-          Correct settlement, which recomputes everyone's P&amp;L. Force next phase
-          unsticks a game where someone never acted.
+          −/+ move the confirmed tally, which is what P&amp;L marks against; a player's
+          count shows as unverified until you confirm it. Settle uses the box value,
+          or the running tally if the box is empty. A settled market can still be
+          corrected — enter the right value and hit Correct settlement, which
+          recomputes everyone's P&amp;L. Force next phase unsticks a game where
+          someone never acted.
         </p>
       </Card>
 
@@ -188,6 +197,44 @@ export const AdminPanel = ({ products, users }: AdminPanelProps) => {
             </li>
           ))}
         </ul>
+      </Card>
+
+      {/* Destructive, so it sits last and behind a confirm */}
+      <Card className="p-6 border-l-4 border-red-500/70">
+        <SectionTitle>Danger zone</SectionTitle>
+        <p className="text-sm text-slate-400 mb-4">
+          Clearing wipes every market and all their positions so a new game night starts
+          fresh. Accounts survive. There's no undo, so download the session archive first
+          if you want to keep tonight.
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() =>
+              confirmingClear ? clearSession.mutate([], { onSuccess: () => { setConfirmingClear(false); setValues({}); } }) : setConfirmingClear(true)
+            }
+            className={`${buttonClass} ${
+              confirmingClear
+                ? 'bg-red-500 text-white ring-2 ring-red-300'
+                : 'bg-red-600 text-white hover:bg-red-700'
+            }`}
+          >
+            {confirmingClear ? 'Confirm — wipe all markets' : 'Clear session'}
+          </button>
+          {confirmingClear && (
+            <button
+              onClick={() => setConfirmingClear(false)}
+              className="text-sm text-slate-400 hover:text-slate-200 transition-colors"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+        {confirmingClear && (
+          <p className="text-xs text-amber-400 mt-2">
+            Click again to wipe {products.length} market
+            {products.length === 1 ? '' : 's'}. This can't be undone.
+          </p>
+        )}
       </Card>
     </div>
   );

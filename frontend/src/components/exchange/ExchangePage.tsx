@@ -5,7 +5,8 @@ import { clearToken, getToken } from '../../services/exchangeApi';
 import { Footer } from '../layout/Footer';
 import { AdminPanel } from './AdminPanel';
 import { LoginForm } from './LoginForm';
-import { PositionsTable } from './PositionsTable';
+import { Leaderboard } from './Leaderboard';
+import { PositionsList } from './PositionsList';
 import { SessionsTab } from './SessionsTab';
 import { ProductDetail } from './ProductDetail';
 import { Card, num, PhaseBadge, SectionTitle } from './ui';
@@ -90,10 +91,13 @@ export const ExchangePage = () => {
               ) : (
                 <>
                   <section>
+                    <SectionTitle>Leaderboard</SectionTitle>
+                    <Leaderboard products={data.products} me={data.me.username} />
+                  </section>
+
+                  <section>
                     <SectionTitle>Your positions</SectionTitle>
-                    <Card className="overflow-hidden">
-                      <PositionsTable positions={data.positions} />
-                    </Card>
+                    <PositionsList positions={data.positions} onOpen={setSelectedId} />
                   </section>
 
                   <section>

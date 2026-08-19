@@ -32,6 +32,9 @@ export interface Product {
   trades: Record<string, 'BUY' | 'SELL'>;
   quote_history: QuoteEntry[];
   current_value: number | null;
+  /** Players' running count, unverified until an admin confirms it. */
+  proposed_value: number | null;
+  proposed_by: string | null;
   settle_value: number | null;
   expired: boolean;
   positions: PositionRow[];

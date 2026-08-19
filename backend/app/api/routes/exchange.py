@@ -38,7 +38,9 @@ class TradeRequest(BaseModel):
 
 
 class ValueRequest(BaseModel):
-    value: float
+    """Exactly one of these: an absolute value, or a step to apply."""
+    value: Optional[float] = None
+    delta: Optional[float] = None
 
 
 class SettleRequest(BaseModel):
@@ -108,9 +110,30 @@ async def create_product(request: ProductRequest, user: dict = Depends(admin_use
     )
 
 
-@router.put("/products/{product_id}/value")
-async def set_value(product_id: int, request: ValueRequest, user: dict = Depends(admin_user)):
-    _run(ex.set_current_value, product_id, request.value)
+@router.post("/products/{product_id}/value")
+async def update_value(product_id: int, request: ValueRequest, user: dict = Depends(current_user)):
+    """Set or step the tally. Admins write the confirmed value, players a proposal."""
+    _run(
+        ex.update_value,
+        product_id,
+        user["username"],
+        user["is_admin"],
+        request.value,
+        request.delta,
+    )
+    return {"status": "success"}
+
+
+@router.post("/products/{product_id}/value/confirm")
+async def confirm_value(product_id: int, user: dict = Depends(admin_user)):
+    _run(ex.confirm_value, product_id)
+    return {"status": "success"}
+
+
+@router.post("/session/clear")
+async def clear_session(user: dict = Depends(admin_user)):
+    """Wipe every product. Accounts survive."""
+    ex.clear_session()
     return {"status": "success"}
 
 
@@ -169,6 +192,6 @@ async def dev_seed(phase: str = Query(default="QUOTING")):
     if phase == "OPEN":
         ex.trade(pid, "alice", "BUY")
         ex.trade(pid, "carol", "SELL")
-        ex.set_current_value(pid, 7)
+        ex.update_value(pid, "admin", True, value=7)
 
     return {"status": "success", "phase": ex.state_for("admin")["products"][0]["phase"]}

@@ -179,6 +179,9 @@ def create_product(name: str, description: str, expiry: str, unit_value: float) 
             "trades": {},
             "quote_history": [],
             "current_value": None,
+            # A player's running count, unverified until an admin confirms it.
+            "proposed_value": None,
+            "proposed_by": None,
             "settle_value": None,
             "created_at": _now(),
         }
@@ -251,13 +254,55 @@ def trade(product_id: int, username: str, side: str) -> None:
         _maybe_advance(product)
 
 
-def set_current_value(product_id: int, value: float) -> None:
-    """Admin updates the running tally. Drives live mark-to-market P&L."""
+def update_value(
+    product_id: int,
+    username: str,
+    is_admin: bool,
+    value: Optional[float] = None,
+    delta: Optional[float] = None,
+) -> None:
+    """Move the tally, by absolute value or by a step.
+
+    An admin writes the confirmed value; a player writes a proposal that stays
+    unverified until an admin confirms it. P&L therefore only ever marks against
+    a number the admin stands behind.
+    """
     with _lock:
         product = _product(product_id)
         if product["phase"] == SETTLED:
-            raise ExchangeError("This product is settled — change the settlement value instead.")
-        product["current_value"] = float(value)
+            raise ExchangeError("This product is settled — correct the settlement value instead.")
+        if not is_admin:
+            _require_participant(product, username)
+
+        field = "current_value" if is_admin else "proposed_value"
+        if delta is not None:
+            # Stepping an untouched proposal starts from whatever's confirmed.
+            base = product[field]
+            if base is None:
+                base = product["current_value"]
+            new_value = (0.0 if base is None else base) + float(delta)
+        elif value is not None:
+            new_value = float(value)
+        else:
+            raise ExchangeError("Provide a value or a delta.")
+
+        product[field] = new_value
+        if is_admin:
+            product["proposed_value"] = None
+            product["proposed_by"] = None
+        else:
+            product["proposed_by"] = username
+
+
+def confirm_value(product_id: int) -> None:
+    """Admin accepts the players' unverified tally as the confirmed one."""
+    with _lock:
+        product = _product(product_id)
+        if product["proposed_value"] is None:
+            raise ExchangeError("There's no unverified value to confirm.")
+        product["current_value"] = product["proposed_value"]
+        product["proposed_value"] = None
+        product["proposed_by"] = None
 
 
 def settle(product_id: int, value: Optional[float] = None) -> None:
@@ -271,7 +316,21 @@ def settle(product_id: int, value: Optional[float] = None) -> None:
             raise ExchangeError("This product never had a market made on it.")
         product["settle_value"] = final
         product["current_value"] = final
+        # An unconfirmed proposal can't outlive the settlement it lost to.
+        product["proposed_value"] = None
+        product["proposed_by"] = None
         product["phase"] = SETTLED
+
+
+def clear_session() -> None:
+    """Drop every product so a new game night starts clean.
+
+    Accounts survive, so nobody has to sign up again.
+    """
+    global _next_product_id
+    with _lock:
+        _products.clear()
+        _next_product_id = 1
 
 
 def advance(product_id: int) -> None:
@@ -328,6 +387,7 @@ def _public(product: dict) -> dict:
             "id", "name", "description", "expiry", "unit_value", "phase",
             "bid", "ask", "maker", "participants", "passed", "trades",
             "quote_history", "current_value", "settle_value",
+            "proposed_value", "proposed_by",
         )},
         "expired": _is_expired(product),
         "positions": _positions(product),
