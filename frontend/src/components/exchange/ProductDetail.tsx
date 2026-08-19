@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useExchangeAction } from '../../hooks/useExchange';
 import { errorMessage, exchangeApi } from '../../services/exchangeApi';
 import { ExchangeUser, Product } from '../../types/exchange';
+import { SpreadChart } from './SpreadChart';
+import { ValueStepper } from './ValueStepper';
 import {
   buttonClass, Card, ErrorNote, inputClass, money, num, PhaseBadge, Pnl, SideBadge,
   tdClass, thClass,
@@ -44,6 +46,8 @@ export const ProductDetail = ({ product, me, onBack }: ProductDetailProps) => {
 
   const marketLabel =
     product.bid === null ? 'No market yet' : `${num(product.bid)} @ ${num(product.ask)}`;
+  const spread =
+    product.bid === null || product.ask === null ? null : product.ask - product.bid;
 
   return (
     <div className="flex flex-col gap-6">
@@ -117,7 +121,7 @@ export const ProductDetail = ({ product, me, onBack }: ProductDetailProps) => {
               <>
                 <p className="text-sm text-slate-400">
                   {product.maker
-                    ? `Beat ${marketLabel} — raise the bid, lower the ask, or both.`
+                    ? `Beat ${marketLabel} — post any market with a spread under ${spread}.`
                     : 'No market yet. Post the opening bid and ask.'}
                 </p>
                 <div className="flex flex-wrap gap-3 items-end">
@@ -245,6 +249,20 @@ export const ProductDetail = ({ product, me, onBack }: ProductDetailProps) => {
         )}
       </Card>
 
+      {/* Keeping the tally */}
+      {joined && product.phase !== 'SETTLED' && (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold text-slate-100 mb-3">Running tally</h3>
+          <ValueStepper
+            productId={product.id}
+            isAdmin={me.is_admin}
+            currentValue={product.current_value}
+            proposedValue={product.proposed_value}
+            proposedBy={product.proposed_by}
+          />
+        </Card>
+      )}
+
       {/* Everyone's standing */}
       <Card className="overflow-hidden">
         <h3 className="text-lg font-semibold text-slate-100 px-6 pt-5 pb-3">Everyone's position</h3>
@@ -272,6 +290,11 @@ export const ProductDetail = ({ product, me, onBack }: ProductDetailProps) => {
                   </td>
                   <td className={tdClass}>
                     <SideBadge side={row.side} />
+                    {row.auto && (
+                      <span className="text-xs text-amber-400 ml-2" title="Never traded — side assigned at random">
+                        auto
+                      </span>
+                    )}
                   </td>
                   <td className={`${tdClass} text-right`}>{num(row.price)}</td>
                   <td className={`${tdClass} text-right`}>
@@ -294,17 +317,11 @@ export const ProductDetail = ({ product, me, onBack }: ProductDetailProps) => {
       {/* How the market got here */}
       {product.quote_history.length > 0 && (
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-slate-100 mb-3">Quote history</h3>
-          <ol className="flex flex-col gap-1 text-sm">
-            {product.quote_history.map((entry, index) => (
-              <li key={index} className="text-slate-400">
-                <span className="text-slate-200">{entry.user}</span> quoted{' '}
-                <span className="text-slate-200">
-                  {num(entry.bid)} @ {num(entry.ask)}
-                </span>
-              </li>
-            ))}
-          </ol>
+          <h3 className="text-lg font-semibold text-slate-100 mb-3">Spread progression</h3>
+          <SpreadChart
+            quotes={product.quote_history}
+            settleValue={product.phase === 'SETTLED' ? product.settle_value : null}
+          />
         </Card>
       )}
     </div>

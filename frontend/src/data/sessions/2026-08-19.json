@@ -1,0 +1,525 @@
+{
+  "session": "2026-08-19",
+  "exported_at": "2026-08-19",
+  "products": [
+    {
+      "id": 1,
+      "name": "Times Tyler says \"clear as mud\"",
+      "description": "",
+      "unit_value": 1.0,
+      "phase": "SETTLED",
+      "bid": 4.0,
+      "ask": 6.0,
+      "maker": "lance",
+      "settle_value": 2.0,
+      "quote_history": [
+        {
+          "user": "lance",
+          "bid": 1.0,
+          "ask": 15.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 1.0,
+          "ask": 14.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 3.0,
+          "ask": 10.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 3.0,
+          "ask": 9.0,
+          "at": ""
+        },
+        {
+          "user": "benbaker",
+          "bid": 4.0,
+          "ask": 9.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 4.0,
+          "ask": 7.0,
+          "at": ""
+        },
+        {
+          "user": "lance",
+          "bid": 4.0,
+          "ask": 6.0,
+          "at": ""
+        }
+      ],
+      "positions": [
+        {
+          "user": "John Street",
+          "side": "SELL",
+          "price": 4.0,
+          "pnl": 2.0
+        },
+        {
+          "user": "conner",
+          "side": "SELL",
+          "price": 4.0,
+          "pnl": 2.0
+        },
+        {
+          "user": "benbaker",
+          "side": "BUY",
+          "price": 6.0,
+          "pnl": -4.0
+        },
+        {
+          "user": "Charl",
+          "side": "SELL",
+          "price": 4.0,
+          "pnl": 2.0
+        },
+        {
+          "user": "kush",
+          "side": "PENDING",
+          "price": null,
+          "pnl": null
+        },
+        {
+          "user": "lance",
+          "side": "MAKER",
+          "price": null,
+          "pnl": -2.0
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Non-Tyler question repetition",
+      "description": "",
+      "unit_value": 0.5,
+      "phase": "SETTLED",
+      "bid": 5.0,
+      "ask": 14.0,
+      "maker": "conner",
+      "settle_value": 45.0,
+      "quote_history": [
+        {
+          "user": "lance",
+          "bid": 2.0,
+          "ask": 20.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 3.0,
+          "ask": 20.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 3.0,
+          "ask": 16.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 3.0,
+          "ask": 15.0,
+          "at": ""
+        },
+        {
+          "user": "lance",
+          "bid": 5.0,
+          "ask": 15.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 5.0,
+          "ask": 14.0,
+          "at": ""
+        }
+      ],
+      "positions": [
+        {
+          "user": "lance",
+          "side": "SELL",
+          "price": 5.0,
+          "pnl": -20.0
+        },
+        {
+          "user": "John Street",
+          "side": "SELL",
+          "price": 5.0,
+          "pnl": -20.0
+        },
+        {
+          "user": "Charl",
+          "side": "BUY",
+          "price": 14.0,
+          "pnl": 15.5
+        },
+        {
+          "user": "kush",
+          "side": "PENDING",
+          "price": null,
+          "pnl": null
+        },
+        {
+          "user": "conner",
+          "side": "MAKER",
+          "price": null,
+          "pnl": 24.5
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Sheeple clapped",
+      "description": "",
+      "unit_value": 0.5,
+      "phase": "SETTLED",
+      "bid": 14.0,
+      "ask": 24.0,
+      "maker": "John Street",
+      "settle_value": 14.0,
+      "quote_history": [
+        {
+          "user": "conner",
+          "bid": 1.0,
+          "ask": 100.0,
+          "at": ""
+        },
+        {
+          "user": "lance",
+          "bid": 5.0,
+          "ask": 85.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 10.0,
+          "ask": 35.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 10.0,
+          "ask": 34.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 10.0,
+          "ask": 29.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 10.0,
+          "ask": 28.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 10.0,
+          "ask": 25.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 11.0,
+          "ask": 25.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 13.0,
+          "ask": 25.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 13.0,
+          "ask": 24.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 14.0,
+          "ask": 24.0,
+          "at": ""
+        }
+      ],
+      "positions": [
+        {
+          "user": "conner",
+          "side": "BUY",
+          "price": 24.0,
+          "pnl": -5.0
+        },
+        {
+          "user": "lance",
+          "side": "BUY",
+          "price": 24.0,
+          "pnl": -5.0
+        },
+        {
+          "user": "benbaker",
+          "side": "BUY",
+          "price": 24.0,
+          "pnl": -5.0
+        },
+        {
+          "user": "Charl",
+          "side": "BUY",
+          "price": 24.0,
+          "pnl": -5.0
+        },
+        {
+          "user": "kush",
+          "side": "PENDING",
+          "price": null,
+          "pnl": null
+        },
+        {
+          "user": "John Street",
+          "side": "MAKER",
+          "price": null,
+          "pnl": 20.0
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Breaks",
+      "description": "",
+      "unit_value": 1.0,
+      "phase": "SETTLED",
+      "bid": 6.0,
+      "ask": 8.0,
+      "maker": "John Street",
+      "settle_value": 5.0,
+      "quote_history": [
+        {
+          "user": "conner",
+          "bid": 1.0,
+          "ask": 20.0,
+          "at": ""
+        },
+        {
+          "user": "lance",
+          "bid": 2.0,
+          "ask": 18.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 3.0,
+          "ask": 14.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 4.0,
+          "ask": 13.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 4.0,
+          "ask": 11.0,
+          "at": ""
+        },
+        {
+          "user": "lance",
+          "bid": 5.0,
+          "ask": 11.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 5.0,
+          "ask": 10.0,
+          "at": ""
+        },
+        {
+          "user": "benbaker",
+          "bid": 5.0,
+          "ask": 9.0,
+          "at": ""
+        },
+        {
+          "user": "conner",
+          "bid": 6.0,
+          "ask": 9.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 6.0,
+          "ask": 8.0,
+          "at": ""
+        }
+      ],
+      "positions": [
+        {
+          "user": "conner",
+          "side": "SELL",
+          "price": 6.0,
+          "pnl": 1.0
+        },
+        {
+          "user": "lance",
+          "side": "BUY",
+          "price": 8.0,
+          "pnl": -3.0
+        },
+        {
+          "user": "benbaker",
+          "side": "SELL",
+          "price": 6.0,
+          "pnl": 1.0
+        },
+        {
+          "user": "Charl",
+          "side": "SELL",
+          "price": 6.0,
+          "pnl": 1.0
+        },
+        {
+          "user": "kush",
+          "side": "PENDING",
+          "price": null,
+          "pnl": null
+        },
+        {
+          "user": "John Street",
+          "side": "MAKER",
+          "price": null,
+          "pnl": 0.0
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Get me home",
+      "description": "",
+      "unit_value": 0.5,
+      "phase": "SETTLED",
+      "bid": 4.0,
+      "ask": 9.0,
+      "maker": "John Street",
+      "settle_value": 24.0,
+      "quote_history": [
+        {
+          "user": "John Street",
+          "bid": 0.0,
+          "ask": 30.0,
+          "at": ""
+        },
+        {
+          "user": "lance",
+          "bid": 0.0,
+          "ask": 25.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 1.0,
+          "ask": 20.0,
+          "at": ""
+        },
+        {
+          "user": "benbaker",
+          "bid": 3.0,
+          "ask": 20.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 3.0,
+          "ask": 18.0,
+          "at": ""
+        },
+        {
+          "user": "Charl",
+          "bid": 3.0,
+          "ask": 15.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 3.0,
+          "ask": 14.0,
+          "at": ""
+        },
+        {
+          "user": "lance",
+          "bid": 4.0,
+          "ask": 14.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 4.0,
+          "ask": 13.0,
+          "at": ""
+        },
+        {
+          "user": "Charl",
+          "bid": 4.0,
+          "ask": 10.0,
+          "at": ""
+        },
+        {
+          "user": "John Street",
+          "bid": 4.0,
+          "ask": 9.0,
+          "at": ""
+        }
+      ],
+      "positions": [
+        {
+          "user": "Charl",
+          "side": "SELL",
+          "price": 4.0,
+          "pnl": -10.0
+        },
+        {
+          "user": "conner",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": 7.5
+        },
+        {
+          "user": "lance",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": 7.5
+        },
+        {
+          "user": "kush",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": 7.5
+        },
+        {
+          "user": "benbaker",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": 7.5
+        },
+        {
+          "user": "John Street",
+          "side": "MAKER",
+          "price": null,
+          "pnl": -20.0
+        }
+      ]
+    }
+  ]
+}

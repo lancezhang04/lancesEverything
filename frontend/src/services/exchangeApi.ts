@@ -61,18 +61,26 @@ export const exchangeApi = {
     const { data } = await api.post('/products', product);
     return data;
   },
-  setValue: (id: number, value: number) => api.put(`/products/${id}/value`, { value }),
+  setValue: (id: number, value: number) => api.post(`/products/${id}/value`, { value }),
+  stepValue: (id: number, delta: number) => api.post(`/products/${id}/value`, { delta }),
+  confirmValue: (id: number) => api.post(`/products/${id}/value/confirm`),
+  clearSession: () => api.post('/session/clear'),
   settle: (id: number, value: number | null) => api.post(`/products/${id}/settle`, { value }),
   advance: (id: number) => api.post(`/products/${id}/advance`),
   deleteUser: (username: string) => api.delete(`/users/${username}`),
+  setAdmin: (username: string, is_admin: boolean) =>
+    api.put(`/users/${username}/admin`, { is_admin }),
+  deleteProduct: (id: number) => api.delete(`/products/${id}`),
+  removePosition: (id: number, username: string) =>
+    api.delete(`/products/${id}/positions/${username}`),
 
-  /** The CSV route needs an auth header, so fetch it as a blob rather than linking to it. */
-  downloadCsv: async () => {
-    const { data } = await api.get('/export.csv', { responseType: 'blob' });
+  /** The export route needs an auth header, so fetch it as a blob rather than linking to it. */
+  downloadSession: async () => {
+    const { data } = await api.get('/export.json', { responseType: 'blob' });
     const url = URL.createObjectURL(data);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'exchange.csv';
+    link.download = `${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
     URL.revokeObjectURL(url);
   },

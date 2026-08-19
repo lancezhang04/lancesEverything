@@ -12,6 +12,13 @@ Accept an optional starting phase as an argument: `QUOTING` (default), `TRADING`
 or `OPEN`. Use a later phase to jump straight to the part being tested instead of
 replaying a whole round.
 
+Also accept an optional `--full` flag, in either order (`/test-exchange OPEN --full`).
+It keeps the primary product exactly as it is without the flag and adds three more
+players and four more products around it, one parked in each phase. Reach for it
+when testing anything that needs a populated board — the product list, filtering
+and sorting, cross-product P&L, the admin screens — and leave it off when walking
+a single round end to end, where the extra products are just noise.
+
 ## 1. Bootstrap the backend venv if it's missing
 
 Build it with **Python 3.12**, not the default `python3`. The pinned
@@ -55,11 +62,15 @@ curl -sf http://localhost:8000/health
 
 ## 3. Seed the game
 
-Replace `QUOTING` with the requested phase:
+Replace `QUOTING` with the requested phase, and add `&full=1` for `--full`:
 
 ```bash
 curl -sX POST "http://localhost:8000/api/exchange/dev/seed?phase=QUOTING" | python3 -m json.tool
 ```
+
+The response reports the phase it landed on plus the product and user counts, which
+is the quickest check that the flag took effect: 1 product and 4 users without it,
+5 and 7 with it.
 
 This wipes all exchange state and rebuilds it, creating:
 
@@ -77,6 +88,23 @@ At `TRADING` alice has quoted 5 @ 10, bob has tightened to 6 @ 9 and is the mark
 maker, and the others have passed. At `OPEN` alice has lifted the ask, carol has
 hit the bid, and the running value is 7.
 
+### What `--full` adds
+
+Three more players — `dave`, `erin`, `frank`, all with password `pass` — and four
+more products. `dave` is also made an admin, so handing the role over and having two
+admins at once can be tested. The four extra products cover the states a single
+round can't show at the same time:
+
+| Product | Phase | What it exercises |
+|---|---|---|
+| *Slides in Tyler's deck* | `SETTLED` | realised P&L — bob made 18 @ 22, settled at 24, so the buyers are up and the seller is down |
+| *Minutes until first 'circle back'* | `OPEN` | an expired product awaiting settlement, carrying alice's unverified tally of 12 against a confirmed 11 |
+| *Coffees Tyler drinks before noon* | `TRADING` | a half-filled book — bob has traded, carol and dave haven't |
+| *Times someone says 'let's take this offline'* | `QUOTING` | a fresh wide market (erin at 20 @ 40) with an expiry a week out |
+
+Unit values vary across them (0.25 to 2.0) so P&L bugs that only show up at a
+non-default multiplier have somewhere to surface.
+
 ## 4. Report how to drive it
 
 Tell the user to open **http://localhost:5173/exchange**, and that testing several
@@ -87,6 +115,9 @@ Suggest a path through the game that matches the seeded phase. From `QUOTING`:
 sign in as alice and quote 5 @ 10, tighten to 6 @ 9 as bob, pass as carol and
 alice, then trade as alice and carol, then sign in as admin to update the current
 value and settle.
+
+That path is unchanged by `--full` — the primary product is seeded identically
+either way, and the extra products sit alongside it untouched.
 
 ## Checking state without the UI
 
@@ -103,7 +134,12 @@ curl -s http://localhost:8000/api/exchange/state \
 
 Swap in the `admin`/`admin_pass` token to reach the admin-only routes
 (`POST /products`, `PUT /products/{id}/value`, `POST /products/{id}/settle`,
-`DELETE /users/{name}`, `GET /export.csv`).
+`DELETE /users/{name}`, `GET /export.json`).
+
+`GET /export.json` is the session archive that the Past sessions tab replays.
+To check a change to it end to end, download it and drop it in
+`frontend/src/data/sessions/` — files there are picked up at build time, so it
+appears in the session picker with no manifest to update.
 
 ## Notes
 
@@ -114,3 +150,7 @@ Swap in the `admin`/`admin_pass` token to reach the admin-only routes
   would put players in different games.
 - If a game stalls because someone never joined or never acted, the admin can call
   `POST /products/{id}/advance` to force the phase forward.
+- The expired product under `--full` is backdated after its round is built, because
+  `join` and `trade` both refuse an already-expired product. Expiry is a soft gate:
+  it blocks new quotes and trades but never auto-settles, so an admin can still
+  settle that product by hand.

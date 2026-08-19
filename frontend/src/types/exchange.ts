@@ -8,6 +8,8 @@ export interface PositionRow {
   side: Side;
   price: number | null;
   pnl: number | null;
+  /** Side was coined for someone who joined but never traded. Absent on older archives. */
+  auto?: boolean;
 }
 
 export interface QuoteEntry {
@@ -31,7 +33,11 @@ export interface Product {
   passed: string[];
   trades: Record<string, 'BUY' | 'SELL'>;
   quote_history: QuoteEntry[];
+  auto_assigned: string[];
   current_value: number | null;
+  /** Players' running count, unverified until an admin confirms it. */
+  proposed_value: number | null;
+  proposed_by: string | null;
   settle_value: number | null;
   expired: boolean;
   positions: PositionRow[];
