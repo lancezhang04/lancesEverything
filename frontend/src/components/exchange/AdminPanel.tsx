@@ -17,16 +17,21 @@ export const AdminPanel = ({ products, users }: AdminPanelProps) => {
   const [unitValue, setUnitValue] = useState('0.5');
   const [values, setValues] = useState<Record<number, string>>({});
   const [confirmingClear, setConfirmingClear] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState<number | null>(null);
 
   const createProduct = useExchangeAction(exchangeApi.createProduct);
   const settle = useExchangeAction(exchangeApi.settle);
   const advance = useExchangeAction(exchangeApi.advance);
   const deleteUser = useExchangeAction(exchangeApi.deleteUser);
   const clearSession = useExchangeAction(exchangeApi.clearSession);
+  const deleteProduct = useExchangeAction(exchangeApi.deleteProduct);
+  const removePosition = useExchangeAction(exchangeApi.removePosition);
+  const setAdmin = useExchangeAction(exchangeApi.setAdmin);
 
-  const failed = [createProduct, settle, advance, deleteUser, clearSession].find(
-    (m) => m.isError
-  );
+  const failed = [
+    createProduct, settle, advance, deleteUser, clearSession,
+    deleteProduct, removePosition, setAdmin,
+  ].find((m) => m.isError);
 
   const create = () => {
     createProduct.mutate(
@@ -144,7 +149,46 @@ export const AdminPanel = ({ products, users }: AdminPanelProps) => {
                     Force next phase
                   </button>
                 )}
+                <button
+                  onClick={() =>
+                    confirmingDelete === product.id
+                      ? deleteProduct.mutate([product.id], {
+                          onSuccess: () => setConfirmingDelete(null),
+                        })
+                      : setConfirmingDelete(product.id)
+                  }
+                  className={`${buttonClass} ml-auto ${
+                    confirmingDelete === product.id
+                      ? 'bg-red-500 text-white ring-2 ring-red-300'
+                      : 'bg-slate-800 text-red-400 hover:bg-slate-700'
+                  }`}
+                >
+                  {confirmingDelete === product.id ? 'Confirm delete' : 'Delete market'}
+                </button>
               </div>
+
+              {product.positions.length > 0 && (
+                <ul className="flex flex-col divide-y divide-slate-700/60 mt-3 pt-2 border-t border-slate-700">
+                  {product.positions.map((row) => (
+                    <li key={row.user} className="flex items-center justify-between gap-2 py-1.5">
+                      <span className="text-xs text-slate-400">
+                        {row.user}
+                        <span className="text-slate-600 ml-2">{row.side}</span>
+                        {row.price !== null && <span className="text-slate-600 ml-2">at {num(row.price)}</span>}
+                        {row.auto && <span className="text-amber-400 ml-2">auto</span>}
+                      </span>
+                      {row.user !== product.maker && (
+                        <button
+                          onClick={() => removePosition.mutate([product.id, row.user])}
+                          className="text-xs text-red-400 hover:text-red-300 transition-colors shrink-0"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             );
           })}
@@ -155,7 +199,8 @@ export const AdminPanel = ({ products, users }: AdminPanelProps) => {
           or the running tally if the box is empty. A settled market can still be
           corrected — enter the right value and hit Correct settlement, which
           recomputes everyone's P&amp;L. Force next phase unsticks a game where
-          someone never acted.
+          someone never acted — anyone who joined but never traded is dealt a
+          random side at that point, flagged <span className="text-amber-400">auto</span>.
         </p>
       </Card>
 
@@ -184,16 +229,26 @@ export const AdminPanel = ({ products, users }: AdminPanelProps) => {
             <li key={user.username} className="flex items-center justify-between py-2">
               <span className="text-sm text-slate-100">
                 {user.username}
-                {user.is_admin && <span className="text-xs text-slate-500 ml-2">admin</span>}
+                {user.is_admin && <span className="text-xs text-emerald-400 ml-2">admin</span>}
               </span>
-              {!user.is_admin && (
-                <button
-                  onClick={() => deleteUser.mutate([user.username])}
-                  className="text-xs text-red-400 hover:text-red-300 transition-colors"
-                >
-                  Delete
-                </button>
-              )}
+              <span className="flex items-center gap-3 shrink-0">
+                {user.username !== 'admin' && (
+                  <button
+                    onClick={() => setAdmin.mutate([user.username, !user.is_admin])}
+                    className="text-xs text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    {user.is_admin ? 'Revoke admin' : 'Make admin'}
+                  </button>
+                )}
+                {!user.is_admin && (
+                  <button
+                    onClick={() => deleteUser.mutate([user.username])}
+                    className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    Delete
+                  </button>
+                )}
+              </span>
             </li>
           ))}
         </ul>

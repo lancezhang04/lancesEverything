@@ -46,6 +46,8 @@ export const ProductDetail = ({ product, me, onBack }: ProductDetailProps) => {
 
   const marketLabel =
     product.bid === null ? 'No market yet' : `${num(product.bid)} @ ${num(product.ask)}`;
+  const spread =
+    product.bid === null || product.ask === null ? null : product.ask - product.bid;
 
   return (
     <div className="flex flex-col gap-6">
@@ -119,7 +121,7 @@ export const ProductDetail = ({ product, me, onBack }: ProductDetailProps) => {
               <>
                 <p className="text-sm text-slate-400">
                   {product.maker
-                    ? `Beat ${marketLabel} — raise the bid, lower the ask, or both.`
+                    ? `Beat ${marketLabel} — post any market with a spread under ${spread}.`
                     : 'No market yet. Post the opening bid and ask.'}
                 </p>
                 <div className="flex flex-wrap gap-3 items-end">
@@ -288,6 +290,11 @@ export const ProductDetail = ({ product, me, onBack }: ProductDetailProps) => {
                   </td>
                   <td className={tdClass}>
                     <SideBadge side={row.side} />
+                    {row.auto && (
+                      <span className="text-xs text-amber-400 ml-2" title="Never traded — side assigned at random">
+                        auto
+                      </span>
+                    )}
                   </td>
                   <td className={`${tdClass} text-right`}>{num(row.price)}</td>
                   <td className={`${tdClass} text-right`}>

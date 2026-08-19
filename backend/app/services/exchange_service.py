@@ -18,6 +18,7 @@ A product moves through four phases:
 from __future__ import annotations
 
 import hashlib
+import random
 import secrets
 import threading
 from datetime import datetime, timezone
@@ -95,6 +96,20 @@ def _others(product: dict) -> List[str]:
     return [u for u in product["participants"] if u != product["maker"]]
 
 
+def _enter_open(product: dict) -> None:
+    """Close trading, coining a side for anyone who joined but never acted.
+
+    Someone who sat out would otherwise leave the maker with an unbalanced
+    book and no stake of their own, so they get a random side rather than
+    escaping the round.
+    """
+    for username in _others(product):
+        if username not in product["trades"]:
+            product["trades"][username] = random.choice(("BUY", "SELL"))
+            product["auto_assigned"].append(username)
+    product["phase"] = OPEN
+
+
 def _maybe_advance(product: dict) -> None:
     """Move the product on if the current phase has run its course."""
     if product["phase"] == QUOTING:
@@ -104,7 +119,7 @@ def _maybe_advance(product: dict) -> None:
     elif product["phase"] == TRADING:
         others = _others(product)
         if others and all(u in product["trades"] for u in others):
-            product["phase"] = OPEN
+            _enter_open(product)
 
 
 # --------------------------------------------------------------------------- accounts
@@ -178,6 +193,7 @@ def create_product(name: str, description: str, expiry: str, unit_value: float) 
             "passed": [],
             "trades": {},
             "quote_history": [],
+            "auto_assigned": [],
             "current_value": None,
             # A player's running count, unverified until an admin confirms it.
             "proposed_value": None,
@@ -200,7 +216,12 @@ def join(product_id: int, username: str) -> None:
 
 
 def quote(product_id: int, username: str, bid: float, ask: float) -> None:
-    """Post a market. After the first one, each must be strictly tighter than the last."""
+    """Post a market. After the first one, each must be strictly narrower than the last.
+
+    Only the spread has to shrink — the market may slide up or down as it
+    narrows, so dropping the bid or raising the ask is fine as long as the
+    quote ends up tighter overall.
+    """
     with _lock:
         product = _product(product_id)
         _require_phase(product, QUOTING)
@@ -212,11 +233,11 @@ def quote(product_id: int, username: str, bid: float, ask: float) -> None:
         if bid >= ask:
             raise ExchangeError("Bid must be below ask.")
         if product["maker"] is not None:
-            tighter = bid >= product["bid"] and ask <= product["ask"]
-            unchanged = bid == product["bid"] and ask == product["ask"]
-            if not tighter or unchanged:
+            current_spread = product["ask"] - product["bid"]
+            if (ask - bid) >= current_spread:
                 raise ExchangeError(
-                    f"Your market must be tighter than {product['bid']:g} @ {product['ask']:g}."
+                    f"Your spread must be narrower than {current_spread:g} "
+                    f"(the market is {product['bid']:g} @ {product['ask']:g})."
                 )
         product["bid"], product["ask"], product["maker"] = bid, ask, username
         product["quote_history"].append(
@@ -322,6 +343,47 @@ def settle(product_id: int, value: Optional[float] = None) -> None:
         product["phase"] = SETTLED
 
 
+def delete_product(product_id: int) -> None:
+    with _lock:
+        _product(product_id)
+        del _products[product_id]
+
+
+def remove_position(product_id: int, username: str) -> None:
+    """Pull a player out of a market entirely — their trade and their seat.
+
+    The maker can't be removed this way: the whole market is priced off them,
+    so there'd be no counterparty left. Delete the product instead.
+    """
+    with _lock:
+        product = _product(product_id)
+        if username == product["maker"]:
+            raise ExchangeError(
+                f"{username} is the market maker — delete the market instead of their position."
+            )
+        if username not in product["participants"] and username not in product["trades"]:
+            raise ExchangeError(f"{username} has no position on this market.")
+        product["trades"].pop(username, None)
+        if username in product["participants"]:
+            product["participants"].remove(username)
+        if username in product["passed"]:
+            product["passed"].remove(username)
+        if username in product["auto_assigned"]:
+            product["auto_assigned"].remove(username)
+        _maybe_advance(product)
+
+
+def set_admin(username: str, is_admin: bool) -> None:
+    """Hand admin rights to another player, so one person isn't stuck running everything."""
+    with _lock:
+        user = _users.get(username)
+        if user is None:
+            raise ExchangeError(f"No user named '{username}'.")
+        if username == ADMIN_USERNAME and not is_admin:
+            raise ExchangeError("The built-in admin account can't have its rights removed.")
+        user["is_admin"] = bool(is_admin)
+
+
 def clear_session() -> None:
     """Drop every product so a new game night starts clean.
 
@@ -342,7 +404,7 @@ def advance(product_id: int) -> None:
                 raise ExchangeError("Nobody has made a market yet.")
             product["phase"] = TRADING
         elif product["phase"] == TRADING:
-            product["phase"] = OPEN
+            _enter_open(product)
         else:
             raise ExchangeError("Use settle to close an open product.")
 
@@ -363,11 +425,16 @@ def _positions(product: dict) -> List[dict]:
             units = (mark - price) if side == "BUY" else (price - mark)
             pnl = units * product["unit_value"]
             maker_pnl -= pnl
-        rows.append({"user": username, "side": side, "price": price, "pnl": pnl})
+        rows.append({
+            "user": username, "side": side, "price": price, "pnl": pnl,
+            "auto": username in product["auto_assigned"],
+        })
 
     for username in product["participants"]:
         if username != product["maker"] and username not in product["trades"]:
-            rows.append({"user": username, "side": "PENDING", "price": None, "pnl": None})
+            rows.append({
+                "user": username, "side": "PENDING", "price": None, "pnl": None, "auto": False,
+            })
 
     if product["maker"]:
         rows.append(
@@ -376,6 +443,7 @@ def _positions(product: dict) -> List[dict]:
                 "side": "MAKER",
                 "price": None,
                 "pnl": maker_pnl if mark is not None else None,
+                "auto": False,
             }
         )
     return rows
@@ -387,7 +455,7 @@ def _public(product: dict) -> dict:
             "id", "name", "description", "expiry", "unit_value", "phase",
             "bid", "ask", "maker", "participants", "passed", "trades",
             "quote_history", "current_value", "settle_value",
-            "proposed_value", "proposed_by",
+            "proposed_value", "proposed_by", "auto_assigned",
         )},
         "expired": _is_expired(product),
         "positions": _positions(product),

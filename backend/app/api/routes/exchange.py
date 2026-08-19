@@ -6,6 +6,7 @@ else is a thin write that delegates the rules to exchange_service.
 
 import json
 import os
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response
 from pydantic import BaseModel
@@ -45,6 +46,10 @@ class ValueRequest(BaseModel):
 
 class SettleRequest(BaseModel):
     value: Optional[float] = None
+
+
+class AdminRequest(BaseModel):
+    is_admin: bool
 
 
 def current_user(authorization: str = Header(default="")) -> dict:
@@ -149,9 +154,27 @@ async def advance(product_id: int, user: dict = Depends(admin_user)):
     return {"status": "success"}
 
 
+@router.delete("/products/{product_id}")
+async def delete_product(product_id: int, user: dict = Depends(admin_user)):
+    _run(ex.delete_product, product_id)
+    return {"status": "success"}
+
+
+@router.delete("/products/{product_id}/positions/{username}")
+async def remove_position(product_id: int, username: str, user: dict = Depends(admin_user)):
+    _run(ex.remove_position, product_id, username)
+    return {"status": "success"}
+
+
 @router.delete("/users/{username}")
 async def delete_user(username: str, user: dict = Depends(admin_user)):
     _run(ex.delete_user, username)
+    return {"status": "success"}
+
+
+@router.put("/users/{username}/admin")
+async def set_admin(username: str, request: AdminRequest, user: dict = Depends(admin_user)):
+    _run(ex.set_admin, username, request.is_admin)
     return {"status": "success"}
 
 
@@ -168,9 +191,78 @@ async def export_session(user: dict = Depends(admin_user)):
     )
 
 
+_EXTRA_PLAYERS = ("dave", "erin", "frank")
+
+
+def _seed_extra_board() -> None:
+    """Fill the board out with more players, products and history.
+
+    The primary product is left exactly as the plain seed builds it, so the
+    walkthrough still applies; everything here is extra context sitting around
+    it, with one product parked in each of the other phases.
+    """
+    for name in _EXTRA_PLAYERS:
+        ex.login(name, "pass")
+    ex.set_admin("dave", True)  # a second admin, to test handing the role over
+
+    # SETTLED: a finished round, so positions show realised P&L.
+    pid = ex.create_product("Slides in Tyler's deck", "Counted at the end.", "", 1.0)["id"]
+    for name in ("alice", "bob", "carol", "dave"):
+        ex.join(pid, name)
+    ex.quote(pid, "alice", 15, 25)
+    ex.quote(pid, "bob", 18, 22)   # bob makes the market
+    for name in ("alice", "carol", "dave"):
+        ex.abstain(pid, name)
+    ex.trade(pid, "alice", "BUY")
+    ex.trade(pid, "carol", "SELL")
+    ex.trade(pid, "dave", "BUY")
+    ex.update_value(pid, "admin", True, value=24)
+    ex.settle(pid)
+
+    # OPEN, expired, and carrying a player's unverified tally awaiting confirm.
+    pid = ex.create_product("Minutes until first 'circle back'", "", "", 0.25)["id"]
+    for name in ("alice", "bob", "carol", "erin"):
+        ex.join(pid, name)
+    ex.quote(pid, "erin", 8, 14)
+    ex.quote(pid, "carol", 9, 12)
+    for name in ("alice", "bob", "erin"):
+        ex.abstain(pid, name)
+    ex.trade(pid, "alice", "BUY")
+    ex.trade(pid, "bob", "SELL")
+    ex.trade(pid, "erin", "BUY")
+    ex.update_value(pid, "admin", True, value=11)
+    ex.update_value(pid, "alice", False, delta=1)
+    # Backdated only once the round is built: join and trade both refuse an
+    # already-expired product, so this state can't be reached going forwards.
+    ex._products[pid]["expiry"] = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+
+    # TRADING, half filled: bob has traded, carol and dave haven't.
+    pid = ex.create_product("Coffees Tyler drinks before noon", "", "", 2.0)["id"]
+    for name in ("bob", "carol", "dave", "frank"):
+        ex.join(pid, name)
+    ex.quote(pid, "dave", 2, 6)
+    ex.quote(pid, "frank", 3, 5)
+    for name in ("bob", "carol", "dave"):
+        ex.abstain(pid, name)
+    ex.trade(pid, "bob", "BUY")
+
+    # QUOTING, one wide market posted, expiry still ahead of it.
+    next_week = (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()
+    pid = ex.create_product(
+        "Times someone says 'let's take this offline'", "", next_week, 0.5
+    )["id"]
+    for name in ("alice", "dave", "erin", "frank"):
+        ex.join(pid, name)
+    ex.quote(pid, "erin", 20, 40)
+
+
 @router.post("/dev/seed")
-async def dev_seed(phase: str = Query(default="QUOTING")):
-    """Wipe state and rebuild a game at the requested phase. Local testing only."""
+async def dev_seed(phase: str = Query(default="QUOTING"), full: bool = Query(default=False)):
+    """Wipe state and rebuild a game at the requested phase. Local testing only.
+
+    ``full=1`` adds three more players and four more products around the
+    primary one, covering every phase at once.
+    """
     if os.environ.get("EXCHANGE_DEV") != "1":
         raise HTTPException(status_code=404, detail="Not found.")
 
@@ -194,4 +286,13 @@ async def dev_seed(phase: str = Query(default="QUOTING")):
         ex.trade(pid, "carol", "SELL")
         ex.update_value(pid, "admin", True, value=7)
 
-    return {"status": "success", "phase": ex.state_for("admin")["products"][0]["phase"]}
+    if full:
+        _seed_extra_board()
+
+    state = ex.state_for("admin")
+    return {
+        "status": "success",
+        "phase": state["products"][0]["phase"],
+        "products": len(state["products"]),
+        "users": len(state["users"]),
+    }

@@ -68,6 +68,11 @@ export const exchangeApi = {
   settle: (id: number, value: number | null) => api.post(`/products/${id}/settle`, { value }),
   advance: (id: number) => api.post(`/products/${id}/advance`),
   deleteUser: (username: string) => api.delete(`/users/${username}`),
+  setAdmin: (username: string, is_admin: boolean) =>
+    api.put(`/users/${username}/admin`, { is_admin }),
+  deleteProduct: (id: number) => api.delete(`/products/${id}`),
+  removePosition: (id: number, username: string) =>
+    api.delete(`/products/${id}/positions/${username}`),
 
   /** The export route needs an auth header, so fetch it as a blob rather than linking to it. */
   downloadSession: async () => {
