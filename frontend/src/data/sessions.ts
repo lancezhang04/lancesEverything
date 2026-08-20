@@ -35,6 +35,58 @@ export const sessions: Session[] = Object.values(files).sort((a, b) =>
   b.session.localeCompare(a.session)
 );
 
+export interface SessionStats {
+  markets: number;
+  trades: number;
+  quotes: number;
+  /** Winners' total take, which equals what the losers paid. */
+  moneyMoved: number;
+  settledInside: number;
+  biggestPot: number;
+  tightestSpread: number | null;
+  widestOpening: number | null;
+}
+
+/** Was the final number actually inside the market someone made? */
+export const settledInside = (product: SessionProduct) =>
+  product.bid !== null &&
+  product.ask !== null &&
+  product.settle_value !== null &&
+  product.settle_value >= product.bid &&
+  product.settle_value <= product.ask;
+
+export const sessionStats = (session: Session): SessionStats => {
+  const filled = session.products.flatMap((p) =>
+    p.positions.filter((r) => r.side === 'BUY' || r.side === 'SELL')
+  );
+  const spreads = session.products
+    .filter((p) => p.bid !== null && p.ask !== null)
+    .map((p) => (p.ask as number) - (p.bid as number));
+  const openings = session.products
+    .map((p) => p.quote_history[0])
+    .filter(Boolean)
+    .map((q) => q.ask - q.bid);
+
+  return {
+    markets: session.products.length,
+    trades: filled.length,
+    quotes: session.products.reduce((n, p) => n + p.quote_history.length, 0),
+    moneyMoved: session.products.reduce(
+      (sum, p) => sum + p.positions.reduce((s, r) => s + Math.max(r.pnl ?? 0, 0), 0),
+      0
+    ),
+    settledInside: session.products.filter(settledInside).length,
+    biggestPot: Math.max(
+      0,
+      ...session.products.map((p) =>
+        p.positions.reduce((s, r) => s + Math.max(r.pnl ?? 0, 0), 0)
+      )
+    ),
+    tightestSpread: spreads.length ? Math.min(...spreads) : null,
+    widestOpening: openings.length ? Math.max(...openings) : null,
+  };
+};
+
 export interface PlayerTotal {
   user: string;
   pnl: number;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Session, SessionProduct, sessions } from '../../data/sessions';
 import { Leaderboard } from './Leaderboard';
+import { SessionStats } from './SessionStats';
 import { SpreadChart } from './SpreadChart';
 import { Card, money, num, Pnl, SectionTitle, SideBadge, tdClass, thClass } from './ui';
 
@@ -67,6 +68,11 @@ const SessionOverview = ({
   return (
     <>
       <section>
+        <SectionTitle>The session at a glance</SectionTitle>
+        <SessionStats session={session} />
+      </section>
+
+      <section>
         <SectionTitle>Session P&amp;L</SectionTitle>
         <Leaderboard products={session.products} />
       </section>
@@ -82,7 +88,10 @@ const SessionOverview = ({
                          border-l-4 border-emerald-500/70 transition-shadow duration-500
                          hover:shadow-[0_0_32px_rgba(16,185,129,0.35)]"
             >
-              <p className="text-slate-100 font-semibold mb-2">{product.name}</p>
+              <p className="text-slate-100 font-semibold mb-1">{product.name}</p>
+              {product.description && (
+                <p className="text-sm text-slate-400 mb-2 line-clamp-2">{product.description}</p>
+              )}
               <p className="text-xs text-slate-500">
                 {num(product.bid)} @ {num(product.ask)} · maker {product.maker ?? '—'}
               </p>
@@ -117,8 +126,11 @@ const ProductRecap = ({
     </button>
 
     <Card className="p-6 border-l-4 border-emerald-500/70">
-      <h2 className="text-2xl font-semibold text-slate-100 mb-4">{product.name}</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <h2 className="text-2xl font-semibold text-slate-100 mb-2">{product.name}</h2>
+      {product.description && (
+        <p className="text-sm text-slate-400 mb-4">{product.description}</p>
+      )}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
         <Stat label="Final market" value={`${num(product.bid)} @ ${num(product.ask)}`} />
         <Stat label="Market maker" value={product.maker ?? '—'} />
         <Stat label="Settled at" value={num(product.settle_value)} />
