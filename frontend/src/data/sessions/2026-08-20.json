@@ -1,0 +1,619 @@
+{
+  "session": "2026-08-20",
+  "exported_at": "2026-08-20T10:05:14.830337+00:00",
+  "products": [
+    {
+      "id": 3,
+      "name": "MORE MORE MORE",
+      "description": "The combined # of rounds of Kahoot + CMI played by EOD.",
+      "expiry": "2026-08-20T18:00",
+      "unit_value": 1.0,
+      "phase": "SETTLED",
+      "bid": 5.0,
+      "ask": 7.0,
+      "maker": "John Street",
+      "participants": [
+        "John Street",
+        "lance",
+        "ben",
+        "conner",
+        "arnav",
+        "divek",
+        "char"
+      ],
+      "passed": [
+        "conner"
+      ],
+      "trades": {
+        "lance": "SELL",
+        "ben": "SELL",
+        "arnav": "SELL",
+        "char": "SELL",
+        "divek": "SELL",
+        "conner": "BUY"
+      },
+      "quote_history": [
+        {
+          "user": "John Street",
+          "bid": 1.0,
+          "ask": 20.0,
+          "at": "2026-08-19T11:43:49.568999+00:00"
+        },
+        {
+          "user": "lance",
+          "bid": 1.0,
+          "ask": 15.0,
+          "at": "2026-08-19T11:45:32.452889+00:00"
+        },
+        {
+          "user": "conner",
+          "bid": 2.0,
+          "ask": 15.0,
+          "at": "2026-08-19T12:04:32.429059+00:00"
+        },
+        {
+          "user": "John Street",
+          "bid": 2.0,
+          "ask": 12.0,
+          "at": "2026-08-19T12:05:32.010478+00:00"
+        },
+        {
+          "user": "arnav",
+          "bid": 2.0,
+          "ask": 9.0,
+          "at": "2026-08-19T12:53:11.919462+00:00"
+        },
+        {
+          "user": "arnav",
+          "bid": 4.0,
+          "ask": 9.0,
+          "at": "2026-08-19T12:58:04.338576+00:00"
+        },
+        {
+          "user": "arnav",
+          "bid": 4.0,
+          "ask": 8.0,
+          "at": "2026-08-19T12:58:14.425065+00:00"
+        },
+        {
+          "user": "divek",
+          "bid": 2.0,
+          "ask": 5.0,
+          "at": "2026-08-19T19:40:16.310603+00:00"
+        },
+        {
+          "user": "John Street",
+          "bid": 5.0,
+          "ask": 7.0,
+          "at": "2026-08-19T20:59:46.685788+00:00"
+        }
+      ],
+      "current_value": 3.0,
+      "settle_value": 3.0,
+      "proposed_value": null,
+      "proposed_by": null,
+      "auto_assigned": [],
+      "expired": false,
+      "positions": [
+        {
+          "user": "lance",
+          "side": "SELL",
+          "price": 5.0,
+          "pnl": 2.0,
+          "auto": false
+        },
+        {
+          "user": "ben",
+          "side": "SELL",
+          "price": 5.0,
+          "pnl": 2.0,
+          "auto": false
+        },
+        {
+          "user": "arnav",
+          "side": "SELL",
+          "price": 5.0,
+          "pnl": 2.0,
+          "auto": false
+        },
+        {
+          "user": "char",
+          "side": "SELL",
+          "price": 5.0,
+          "pnl": 2.0,
+          "auto": false
+        },
+        {
+          "user": "divek",
+          "side": "SELL",
+          "price": 5.0,
+          "pnl": 2.0,
+          "auto": false
+        },
+        {
+          "user": "conner",
+          "side": "BUY",
+          "price": 7.0,
+          "pnl": -4.0,
+          "auto": false
+        },
+        {
+          "user": "John Street",
+          "side": "MAKER",
+          "price": null,
+          "pnl": -6.0,
+          "auto": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Get me home #2",
+      "description": "Number of minutes past 5:00pm when the traineeship programming officially ends. Can be negative, and informal conversation/strictly optional activity where less than half of the group participates in don't count.",
+      "expiry": "2026-08-20T18:30",
+      "unit_value": 0.5,
+      "phase": "SETTLED",
+      "bid": 1.0,
+      "ask": 9.0,
+      "maker": "arnav",
+      "participants": [
+        "John Street",
+        "lance",
+        "ben",
+        "arnav",
+        "kush",
+        "char",
+        "conner"
+      ],
+      "passed": [],
+      "trades": {
+        "kush": "BUY",
+        "lance": "BUY",
+        "ben": "BUY",
+        "char": "BUY",
+        "John Street": "BUY",
+        "conner": "SELL"
+      },
+      "quote_history": [
+        {
+          "user": "John Street",
+          "bid": -30.0,
+          "ask": 90.0,
+          "at": "2026-08-19T11:43:31.034707+00:00"
+        },
+        {
+          "user": "ben",
+          "bid": -10.0,
+          "ask": 65.0,
+          "at": "2026-08-19T11:52:47.979547+00:00"
+        },
+        {
+          "user": "arnav",
+          "bid": -10.0,
+          "ask": 37.0,
+          "at": "2026-08-19T12:48:36.240033+00:00"
+        },
+        {
+          "user": "John Street",
+          "bid": -5.0,
+          "ask": 39.0,
+          "at": "2026-08-19T19:56:46.190600+00:00"
+        },
+        {
+          "user": "kush",
+          "bid": -10.0,
+          "ask": 30.0,
+          "at": "2026-08-19T20:40:24.011674+00:00"
+        },
+        {
+          "user": "lance",
+          "bid": -5.0,
+          "ask": 25.0,
+          "at": "2026-08-19T20:44:24.098202+00:00"
+        },
+        {
+          "user": "John Street",
+          "bid": -4.0,
+          "ask": 24.0,
+          "at": "2026-08-19T20:59:06.610269+00:00"
+        },
+        {
+          "user": "lance",
+          "bid": -3.0,
+          "ask": 23.0,
+          "at": "2026-08-19T21:08:46.234859+00:00"
+        },
+        {
+          "user": "kush",
+          "bid": -3.0,
+          "ask": 19.0,
+          "at": "2026-08-19T21:39:01.726024+00:00"
+        },
+        {
+          "user": "John Street",
+          "bid": -1.0,
+          "ask": 19.0,
+          "at": "2026-08-19T21:47:07.979570+00:00"
+        },
+        {
+          "user": "lance",
+          "bid": 0.0,
+          "ask": 19.0,
+          "at": "2026-08-19T21:53:32.239787+00:00"
+        },
+        {
+          "user": "kush",
+          "bid": -1.0,
+          "ask": 17.0,
+          "at": "2026-08-19T21:54:45.350860+00:00"
+        },
+        {
+          "user": "conner",
+          "bid": -1.0,
+          "ask": 16.0,
+          "at": "2026-08-19T21:58:33.315666+00:00"
+        },
+        {
+          "user": "John Street",
+          "bid": 0.0,
+          "ask": 16.0,
+          "at": "2026-08-19T21:58:55.575661+00:00"
+        },
+        {
+          "user": "arnav",
+          "bid": 1.0,
+          "ask": 9.0,
+          "at": "2026-08-19T21:59:22.080468+00:00"
+        }
+      ],
+      "current_value": -1.0,
+      "settle_value": -1.0,
+      "proposed_value": null,
+      "proposed_by": null,
+      "auto_assigned": [],
+      "expired": false,
+      "positions": [
+        {
+          "user": "kush",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": -5.0,
+          "auto": false
+        },
+        {
+          "user": "lance",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": -5.0,
+          "auto": false
+        },
+        {
+          "user": "ben",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": -5.0,
+          "auto": false
+        },
+        {
+          "user": "char",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": -5.0,
+          "auto": false
+        },
+        {
+          "user": "John Street",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": -5.0,
+          "auto": false
+        },
+        {
+          "user": "conner",
+          "side": "SELL",
+          "price": 1.0,
+          "pnl": 1.0,
+          "auto": false
+        },
+        {
+          "user": "arnav",
+          "side": "MAKER",
+          "price": null,
+          "pnl": 24.0,
+          "auto": false
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "MC Leigh",
+      "description": "The number of times Leigh makes an announcement to the whole room. Note that this must be giving a specific instruction or sharing a specific piece of information to the WHOLE ROOM (e.g., \"Lunch is starting now, be back in 45 minutes\" or \"everyone quiet down please\"). Other forms of speech (e.g., \"Can you repeat that question?\" or \"Thanks Tyler for explaining\") does NOT count.",
+      "expiry": "2026-08-20T18:30",
+      "unit_value": 1.0,
+      "phase": "SETTLED",
+      "bid": 2.0,
+      "ask": 4.0,
+      "maker": "ben",
+      "participants": [
+        "John Street",
+        "lance",
+        "ben",
+        "arnav",
+        "char",
+        "kush",
+        "conner"
+      ],
+      "passed": [
+        "lance",
+        "kush",
+        "conner"
+      ],
+      "trades": {
+        "kush": "BUY",
+        "lance": "BUY",
+        "arnav": "BUY",
+        "char": "BUY",
+        "John Street": "BUY",
+        "conner": "BUY"
+      },
+      "quote_history": [
+        {
+          "user": "John Street",
+          "bid": 0.0,
+          "ask": 25.0,
+          "at": "2026-08-19T11:44:38.210765+00:00"
+        },
+        {
+          "user": "lance",
+          "bid": 2.0,
+          "ask": 20.0,
+          "at": "2026-08-19T11:46:17.746670+00:00"
+        },
+        {
+          "user": "ben",
+          "bid": 2.0,
+          "ask": 15.0,
+          "at": "2026-08-19T11:51:13.637496+00:00"
+        },
+        {
+          "user": "John Street",
+          "bid": 1.0,
+          "ask": 12.0,
+          "at": "2026-08-19T12:06:07.027578+00:00"
+        },
+        {
+          "user": "arnav",
+          "bid": 1.0,
+          "ask": 11.0,
+          "at": "2026-08-19T12:53:50.356977+00:00"
+        },
+        {
+          "user": "ben",
+          "bid": 1.0,
+          "ask": 10.0,
+          "at": "2026-08-19T12:53:58.523710+00:00"
+        },
+        {
+          "user": "arnav",
+          "bid": 1.0,
+          "ask": 5.0,
+          "at": "2026-08-19T12:55:16.797573+00:00"
+        },
+        {
+          "user": "arnav",
+          "bid": 1.0,
+          "ask": 4.0,
+          "at": "2026-08-19T12:55:28.903669+00:00"
+        },
+        {
+          "user": "ben",
+          "bid": 2.0,
+          "ask": 4.0,
+          "at": "2026-08-19T12:56:44.647586+00:00"
+        }
+      ],
+      "current_value": 1.0,
+      "settle_value": 1.0,
+      "proposed_value": null,
+      "proposed_by": null,
+      "auto_assigned": [],
+      "expired": false,
+      "positions": [
+        {
+          "user": "kush",
+          "side": "BUY",
+          "price": 4.0,
+          "pnl": -3.0,
+          "auto": false
+        },
+        {
+          "user": "lance",
+          "side": "BUY",
+          "price": 4.0,
+          "pnl": -3.0,
+          "auto": false
+        },
+        {
+          "user": "arnav",
+          "side": "BUY",
+          "price": 4.0,
+          "pnl": -3.0,
+          "auto": false
+        },
+        {
+          "user": "char",
+          "side": "BUY",
+          "price": 4.0,
+          "pnl": -3.0,
+          "auto": false
+        },
+        {
+          "user": "John Street",
+          "side": "BUY",
+          "price": 4.0,
+          "pnl": -3.0,
+          "auto": false
+        },
+        {
+          "user": "conner",
+          "side": "BUY",
+          "price": 4.0,
+          "pnl": -3.0,
+          "auto": false
+        },
+        {
+          "user": "ben",
+          "side": "MAKER",
+          "price": null,
+          "pnl": 18.0,
+          "auto": false
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Evil twins",
+      "description": "The # of times any rival trading firm is explicitly mentioned by a presenter by EOD.",
+      "expiry": "2026-08-20T18:30",
+      "unit_value": 0.5,
+      "phase": "SETTLED",
+      "bid": 4.0,
+      "ask": 9.0,
+      "maker": "John Street",
+      "participants": [
+        "John Street",
+        "lance",
+        "ben",
+        "arnav",
+        "char",
+        "conner",
+        "kush"
+      ],
+      "passed": [
+        "arnav",
+        "kush"
+      ],
+      "trades": {
+        "lance": "BUY",
+        "ben": "BUY",
+        "kush": "BUY",
+        "char": "SELL",
+        "arnav": "BUY",
+        "conner": "SELL"
+      },
+      "quote_history": [
+        {
+          "user": "John Street",
+          "bid": 0.0,
+          "ask": 20.0,
+          "at": "2026-08-19T11:45:30.028979+00:00"
+        },
+        {
+          "user": "lance",
+          "bid": 0.0,
+          "ask": 18.0,
+          "at": "2026-08-19T11:46:04.101613+00:00"
+        },
+        {
+          "user": "ben",
+          "bid": 5.0,
+          "ask": 18.0,
+          "at": "2026-08-19T11:51:50.482997+00:00"
+        },
+        {
+          "user": "lance",
+          "bid": 7.0,
+          "ask": 18.0,
+          "at": "2026-08-19T20:38:37.149702+00:00"
+        },
+        {
+          "user": "char",
+          "bid": 5.0,
+          "ask": 15.0,
+          "at": "2026-08-19T21:26:46.947149+00:00"
+        },
+        {
+          "user": "lance",
+          "bid": 6.0,
+          "ask": 14.0,
+          "at": "2026-08-19T21:33:56.298226+00:00"
+        },
+        {
+          "user": "char",
+          "bid": 5.0,
+          "ask": 12.0,
+          "at": "2026-08-19T21:57:07.059190+00:00"
+        },
+        {
+          "user": "conner",
+          "bid": 4.0,
+          "ask": 10.0,
+          "at": "2026-08-19T21:59:18.390808+00:00"
+        },
+        {
+          "user": "John Street",
+          "bid": 4.0,
+          "ask": 9.0,
+          "at": "2026-08-19T22:00:00.102126+00:00"
+        }
+      ],
+      "current_value": 11.0,
+      "settle_value": 11.0,
+      "proposed_value": null,
+      "proposed_by": null,
+      "auto_assigned": [],
+      "expired": false,
+      "positions": [
+        {
+          "user": "lance",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": 1.0,
+          "auto": false
+        },
+        {
+          "user": "ben",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": 1.0,
+          "auto": false
+        },
+        {
+          "user": "kush",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": 1.0,
+          "auto": false
+        },
+        {
+          "user": "char",
+          "side": "SELL",
+          "price": 4.0,
+          "pnl": -3.5,
+          "auto": false
+        },
+        {
+          "user": "arnav",
+          "side": "BUY",
+          "price": 9.0,
+          "pnl": 1.0,
+          "auto": false
+        },
+        {
+          "user": "conner",
+          "side": "SELL",
+          "price": 4.0,
+          "pnl": -3.5,
+          "auto": false
+        },
+        {
+          "user": "John Street",
+          "side": "MAKER",
+          "price": null,
+          "pnl": 3.0,
+          "auto": false
+        }
+      ]
+    }
+  ]
+}
