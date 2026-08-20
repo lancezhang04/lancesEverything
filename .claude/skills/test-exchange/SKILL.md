@@ -81,7 +81,7 @@ This wipes all exchange state and rebuilds it, creating:
 | `bob` | `pass` | player |
 | `carol` | `pass` | player |
 
-Plus one product, *"Times Tyler says 'clear as mud'"*, at $0.50 per unit with all
+Plus one product, *"Times Tyler says 'clear as mud'"*, at 0.50 per unit with all
 three players joined.
 
 At `TRADING` alice has quoted 5 @ 10, bob has tightened to 6 @ 9 and is the market
