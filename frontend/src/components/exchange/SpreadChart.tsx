@@ -51,7 +51,7 @@ export const SpreadChart = ({ quotes, settleValue }: SpreadChartProps) => {
     <div className="flex flex-col gap-3">
       <div className="h-56 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={data} margin={{ top: 8, right: 8, bottom: 4, left: -16 }}>
+          <ComposedChart data={data} margin={{ top: 8, right: 30, bottom: 4, left: -16 }}>
             <XAxis
               dataKey="step"
               stroke="#64748b"
@@ -100,6 +100,11 @@ export const SpreadChart = ({ quotes, settleValue }: SpreadChartProps) => {
               strokeWidth={2}
               dot={{ r: 3, fill: '#f87171' }}
               isAnimationActive={false}
+              // bid and ask are a red/green pair the common colour-vision
+              // deficiencies barely separate, so the line is named at its end.
+              // Only the last point gets a label — a number on every point is
+              // noise, and the quote log below already lists them all.
+              label={endLabel(data.length, 'ask', '#f87171')}
             />
             <Line
               type="stepAfter"
@@ -108,6 +113,7 @@ export const SpreadChart = ({ quotes, settleValue }: SpreadChartProps) => {
               strokeWidth={2}
               dot={{ r: 3, fill: '#34d399' }}
               isAnimationActive={false}
+              label={endLabel(data.length, 'bid', '#34d399')}
             />
             {settleValue !== null && settleValue !== undefined && (
               <Line
@@ -148,6 +154,23 @@ export const SpreadChart = ({ quotes, settleValue }: SpreadChartProps) => {
     </div>
   );
 };
+
+/** Names a line at its right-hand end, so identity never rests on hue alone. */
+const endLabel = (count: number, text: string, color: string) => (props: any) =>
+  props.index === count - 1 ? (
+    <text
+      x={props.x + 8}
+      y={props.y}
+      fill={color}
+      fontSize={11}
+      dominantBaseline="middle"
+    >
+      {text}
+    </text>
+  ) : (
+    // Recharts' label type won't accept null, so skipped points render nothing.
+    <g />
+  );
 
 const Key = ({ color, label, dashed }: { color: string; label: string; dashed?: boolean }) => (
   <span className="flex items-center gap-1.5">
