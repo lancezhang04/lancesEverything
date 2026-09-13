@@ -80,11 +80,11 @@ export const HomePage = () => {
             </a>
           </div>
 
-          {/* Placement card */}
+          {/* Fund Placement card */}
           <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6 flex flex-col gap-4 min-h-[227px] border-l-4 border-cyan-500/70 transition-shadow duration-500 hover:shadow-[0_0_32px_rgba(6,182,212,0.4)]">
             <div>
               <h2 className="text-xl font-semibold text-slate-100 mb-2 flex items-center gap-2">
-                Placement
+                Fund Placement
                 <span className="text-sm font-mono bg-cyan-900/50 text-cyan-400 px-1.5 py-0.5 rounded">WIP</span>
               </h2>
               <p className="text-sm text-slate-400 leading-relaxed">
@@ -101,8 +101,28 @@ export const HomePage = () => {
             </a>
           </div>
 
+          {/* Trainer card */}
+          <div className="bg-slate-800/80 shadow-lg shadow-slate-900/50 rounded-lg p-6 flex flex-col gap-4 min-h-[227px] border-l-4 border-rose-500/70 transition-shadow duration-500 hover:shadow-[0_0_32px_rgba(244,63,94,0.4)]">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-100 mb-2 flex items-center gap-2">
+                Trainer
+              </h2>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Press play to walk through a training program a step at a time —
+                which lift, which set, how long to rest — with a running count of
+                how far ahead of the clock you are.
+              </p>
+            </div>
+            <a
+              href="/trainer"
+              className="mt-auto inline-block px-4 py-2 text-sm font-medium bg-rose-600 text-white rounded-md hover:bg-rose-700 text-center transition-colors"
+            >
+              Start a Session &rarr;
+            </a>
+          </div>
+
           {/* Placeholder cards */}
-          {Array.from({ length: 2 }).map((_, i) => (
+          {Array.from({ length: 1 }).map((_, i) => (
             <div
               key={i}
               className="rounded-lg p-6 border-2 border-dashed border-slate-600/50 flex items-center justify-center min-h-[227px]"

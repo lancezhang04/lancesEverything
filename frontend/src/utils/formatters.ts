@@ -14,3 +14,9 @@ export const formatPercent = (value: number, decimals = 2): string => {
 export const formatNumber = (value: number, decimals = 2): string => {
   return value.toFixed(decimals);
 };
+
+/** Seconds as m:ss, sign dropped — callers decide how to show direction. */
+export const formatClock = (seconds: number): string => {
+  const whole = Math.round(Math.abs(seconds));
+  return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
+};
