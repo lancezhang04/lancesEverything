@@ -9,13 +9,14 @@ config.yaml              portfolio holdings, factor loadings, premium assumption
 backend/
   app/
     main.py              FastAPI app, CORS, router wiring
-    api/routes/          portfolio · config · equities · exchange
+    api/routes/          portfolio · config · equities · exchange · placement
     core/                config manager (YAML + in-memory overrides), models
     services/
       portfolio_service.py   loadings, active share, rebalancing
       equity_service.py      prices, core-satellite blend
       market_service.py      MSCI ACWI regional split + cache/fallback
       exchange_service.py    the whole LanceX game, in memory
+      placement_service.py   asset placement: drag matrix, greedy fill, growth
 frontend/
   src/
     components/
@@ -23,13 +24,14 @@ frontend/
       holdings/ factors/ targets/ rebalance/    portfolio tabs
       workout/           day tables, activation radar, HIIT card, methodology
       exchange/          LanceX board, product detail, leaderboard, admin, recaps
+      placement/         drag matrix, vanilla-vs-optimal grid, growth gap
     data/
       workoutData.ts     the entire workout program
       sessions/*.json    archived LanceX game nights (bundled at build time)
 .cache/                  stock prices + market split, refreshed on demand
 ```
 
-Routes: `/` home · `/portfolio` · `/workout` · `/exchange`.
+Routes: `/` home · `/portfolio` · `/workout` · `/exchange` · `/placement`.
 
 ## Prerequisites
 

@@ -13,6 +13,7 @@ React frontend and one FastAPI backend: a **factor portfolio analyzer**, a
 | 📈 **[Factor Portfolio Analyzer](https://lances.site/portfolio)** | Five-factor loadings, expected returns, and share-level rebalancing trades | [docs/portfolio.md](docs/portfolio.md) |
 | 🏋️ **[Workouts](https://lances.site/workout)** | A weekly split with per-muscle-head activation ratings and demo clips | [docs/workout.md](docs/workout.md) |
 | 📊 **[LanceX](https://lances.site/exchange)** | "Make a market" with friends — quote it, trade it, settle it | [docs/exchange.md](docs/exchange.md) |
+| 🗂️ **[Placement](https://lances.site/placement)** | Which account each fund belongs in, ranked by the tax drag a shelter removes | [docs/placement.md](docs/placement.md) |
 
 ---
 
