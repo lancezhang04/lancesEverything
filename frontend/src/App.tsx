@@ -4,6 +4,7 @@ import { Dashboard } from './components/layout/Dashboard';
 import { HomePage } from './components/layout/HomePage';
 import { WorkoutPage } from './components/workout/WorkoutPage';
 import { ExchangePage } from './components/exchange/ExchangePage';
+import { PlacementPage } from './components/placement/PlacementPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,14 @@ function App() {
           }
         />
         <Route path="/workout" element={<WorkoutPage />} />
+        <Route
+          path="/placement"
+          element={
+            <QueryClientProvider client={queryClient}>
+              <PlacementPage />
+            </QueryClientProvider>
+          }
+        />
         <Route
           path="/exchange"
           element={
