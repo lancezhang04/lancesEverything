@@ -1,8 +1,9 @@
 # Lance's Everything
 
-Three personal tools that had no business being in the same repo, sharing one
-React frontend and one FastAPI backend: a **factor portfolio analyzer**, a
-**training program**, and a **market-making game** for game nights.
+Personal tools that had no business being in the same repo, sharing one React
+frontend and one FastAPI backend: a **factor portfolio analyzer**, a **training
+program**, a **market-making game** for game nights, and a **gym session timer**
+built for one specific athlete.
 
 **[lances.site](https://lances.site)** · React + TypeScript + Tailwind · FastAPI
 
@@ -12,8 +13,9 @@ React frontend and one FastAPI backend: a **factor portfolio analyzer**, a
 |---|---|---|
 | 📈 **[Factor Portfolio Analyzer](https://lances.site/portfolio)** | Five-factor loadings, expected returns, and share-level rebalancing trades | [docs/portfolio.md](docs/portfolio.md) |
 | 🏋️ **[Workouts](https://lances.site/workout)** | A weekly split with per-muscle-head activation ratings and demo clips | [docs/workout.md](docs/workout.md) |
+| ⏱️ **[Trainer](https://lances.site/trainer)** | A press-play timer that walks through a training program one step at a time | [docs/trainer.md](docs/trainer.md) |
 | 📊 **[LanceX](https://lances.site/exchange)** | "Make a market" with friends — quote it, trade it, settle it | [docs/exchange.md](docs/exchange.md) |
-| 🗂️ **[Placement](https://lances.site/placement)** | Which account each fund belongs in, ranked by the tax drag a shelter removes | [docs/placement.md](docs/placement.md) |
+| 🗂️ **[Fund Placement](https://lances.site/placement)** | Which account each fund belongs in, ranked by the tax drag a shelter removes | [docs/placement.md](docs/placement.md) |
 
 ---
 
@@ -65,6 +67,30 @@ Sunday swaps the table for a HIIT protocol card — Norwegian 4×4, Tabata, Spri
 or 30-20-10 — each with its interval structure drawn to scale.
 
 **[→ The split, the rating system, and the protocols](docs/workout.md)**
+
+---
+
+## ⏱️ Trainer
+
+The workouts page above is a reference you read. This one is a tool you operate
+mid-set. It's built for someone training alone on an erratic schedule, and it does
+one thing: press play, and it says what to do *right now*.
+
+Each step is a movement, a set count and a countdown. The colour of the screen is
+the mode — amber for a working set, sky for rest, slate for walking to the next
+machine — so which one she's in reads from across the squat rack without resolving
+any text. Rests run themselves out with a chime; a set never starts on its own,
+because the gap between the rest ending and actually being under the bar is real.
+
+A chip in the header tracks cumulative drift against the plan, live. Finishing a
+set early banks time; pausing, dawdling, or running long bleeds it. Resting for the
+full two minutes she was given never makes her look late.
+
+The underlying block is 45 minutes hard-capped and budgeted at ~34, and the timer
+spends the headroom on purpose — it runs ~44, because being rushed is what ends
+training blocks and finishing early is the correct error.
+
+**[→ The session model, the drift maths, and what the program constrains](docs/trainer.md)**
 
 ---
 

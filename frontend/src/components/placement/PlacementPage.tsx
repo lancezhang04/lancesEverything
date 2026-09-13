@@ -15,7 +15,7 @@ export const PlacementPage = () => {
   const [result, setResult] = useState<PlacementResponse | null>(null);
 
   useEffect(() => {
-    document.title = "Lance's Placement";
+    document.title = "Lance's Fund Placement";
     return () => {
       document.title = "Lance's Everything";
     };
@@ -49,9 +49,9 @@ export const PlacementPage = () => {
                   className="inline-block h-12 sm:h-[3.2rem]"
                 />
               </a>
-              <span className="hidden sm:inline text-3xl">Placement</span>
+              <span className="hidden sm:inline text-3xl">Fund Placement</span>
             </div>
-            <span className="block sm:hidden text-lg mt-1">Placement</span>
+            <span className="block sm:hidden text-lg mt-1">Fund Placement</span>
           </h1>
         </div>
       </div>
