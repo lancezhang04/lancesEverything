@@ -1,0 +1,606 @@
+<title>Block One Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#F4F2ED; --surface:#FFFFFF; --sunk:#EBE8E1; --line:#DCD7CD;
+  --text:#15181C; --text-2:#59616B; --text-3:#8C939C;
+  --work:#A8590C; --work-soft:rgba(168,89,12,.10); --work-line:rgba(168,89,12,.28);
+  --rest:#0F6F83; --rest-soft:rgba(15,111,131,.10); --rest-line:rgba(15,111,131,.26);
+  --move:#5C6670; --move-soft:rgba(92,102,112,.08); --move-line:rgba(92,102,112,.22);
+  --ahead:#1E7548; --behind:#B23C26;
+  --shadow:0 1px 2px rgba(20,16,8,.05), 0 8px 24px -12px rgba(20,16,8,.18);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1216; --surface:#161B21; --sunk:#10151A; --line:#262E37;
+    --text:#EDF1F5; --text-2:#98A3AE; --text-3:#68737F;
+    --work:#F2A63C; --work-soft:rgba(242,166,60,.13); --work-line:rgba(242,166,60,.32);
+    --rest:#54B9CE; --rest-soft:rgba(84,185,206,.13); --rest-line:rgba(84,185,206,.30);
+    --move:#98A3AE; --move-soft:rgba(152,163,174,.10); --move-line:rgba(152,163,174,.24);
+    --ahead:#5FC98C; --behind:#EF7B62;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1216; --surface:#161B21; --sunk:#10151A; --line:#262E37;
+  --text:#EDF1F5; --text-2:#98A3AE; --text-3:#68737F;
+  --work:#F2A63C; --work-soft:rgba(242,166,60,.13); --work-line:rgba(242,166,60,.32);
+  --rest:#54B9CE; --rest-soft:rgba(84,185,206,.13); --rest-line:rgba(84,185,206,.30);
+  --move:#98A3AE; --move-soft:rgba(152,163,174,.10); --move-line:rgba(152,163,174,.24);
+  --ahead:#5FC98C; --behind:#EF7B62;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0; background:var(--paper); color:var(--text);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased; -webkit-tap-highlight-color:transparent;
+  overscroll-behavior:none;
+}
+.wrap{max-width:520px; margin:0 auto; padding-inline:20px; min-height:100dvh; display:flex; flex-direction:column}
+.eyebrow{
+  font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-3);
+}
+.num{font-family:Archivo,"IBM Plex Sans",sans-serif; font-variant-numeric:tabular-nums}
+button{font:inherit; color:inherit; border:none; background:none; cursor:pointer; padding:0}
+:focus-visible{outline:2px solid var(--accent,var(--text)); outline-offset:3px; border-radius:4px}
+
+/* ─── start screen ─────────────────────────────────────── */
+.start{padding-block:34px 28px; gap:26px; display:flex; flex-direction:column; flex:1}
+.masthead{display:flex; align-items:baseline; justify-content:space-between; gap:12px}
+.masthead h1{
+  margin:0; font-family:Archivo,sans-serif; font-variation-settings:"wdth" 118;
+  font-weight:700; font-size:29px; letter-spacing:-.015em; line-height:1;
+}
+.queue-note{font-size:12.5px; color:var(--text-3); text-align:right; line-height:1.35}
+
+.picker{display:grid; grid-template-columns:repeat(3,1fr); gap:7px}
+.pick{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:11px 8px 10px; text-align:center; transition:border-color .15s, background .15s;
+}
+.pick .l{font-family:Archivo,sans-serif; font-variation-settings:"wdth" 118; font-weight:700; font-size:21px; line-height:1}
+.pick .s{font-size:11px; color:var(--text-3); margin-top:3px; letter-spacing:.02em}
+.pick[aria-pressed="true"]{background:var(--work-soft); border-color:var(--work); color:var(--work)}
+.pick[aria-pressed="true"] .s{color:var(--work)}
+
+.slots{display:flex; flex-direction:column; border-top:1px solid var(--line)}
+.slot{
+  display:grid; grid-template-columns:22px 1fr auto; gap:12px; align-items:baseline;
+  padding:12px 2px; border-bottom:1px solid var(--line);
+}
+.slot .n{font-family:Archivo,sans-serif; font-weight:600; font-size:12px; color:var(--text-3); font-variant-numeric:tabular-nums}
+.slot .m{font-weight:500; font-size:15.5px; letter-spacing:-.005em}
+.slot .m em{font-style:normal; display:block; font-size:12.5px; color:var(--text-3); font-weight:400; margin-top:1px}
+.slot .v{font-size:13px; color:var(--text-2); font-variant-numeric:tabular-nums; white-space:nowrap}
+.slot.pinned .m{color:var(--work)}
+
+.first-set{
+  display:flex; gap:12px; align-items:flex-start; padding:13px 14px;
+  background:var(--sunk); border-radius:10px; cursor:pointer;
+}
+.first-set input{margin:2px 0 0; width:17px; height:17px; accent-color:var(--work); flex:none}
+.first-set span{font-size:13.5px; color:var(--text-2); line-height:1.45}
+.first-set b{color:var(--text); font-weight:600; display:block; font-size:14px}
+
+.go-wrap{margin-top:auto; padding-top:18px; display:flex; flex-direction:column; gap:10px}
+.go{
+  width:100%; background:var(--work); color:var(--paper); border-radius:12px;
+  padding:19px; font-family:Archivo,sans-serif; font-variation-settings:"wdth" 115;
+  font-weight:700; font-size:19px; letter-spacing:.03em; text-transform:uppercase;
+}
+.go:active{transform:translateY(1px)}
+.est{text-align:center; font-size:12.5px; color:var(--text-3); font-variant-numeric:tabular-nums}
+
+/* ─── run screen ───────────────────────────────────────── */
+.run{display:flex; flex-direction:column; flex:1; padding-block:14px 20px; gap:0}
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:11px}
+.badge{
+  font-family:Archivo,sans-serif; font-variation-settings:"wdth" 118; font-weight:700;
+  font-size:13px; letter-spacing:.06em; color:var(--text-3);
+}
+.delta{
+  font-family:Archivo,sans-serif; font-variant-numeric:tabular-nums; font-weight:600;
+  font-size:13px; padding:4px 9px; border-radius:20px; letter-spacing:.01em;
+  background:var(--sunk); color:var(--text-2); white-space:nowrap;
+}
+.delta[data-s="ahead"]{color:var(--ahead); background:color-mix(in srgb, var(--ahead) 12%, transparent)}
+.delta[data-s="behind"]{color:var(--behind); background:color-mix(in srgb, var(--behind) 12%, transparent)}
+
+.rail{display:flex; gap:5px; align-items:stretch; height:5px; margin-bottom:auto}
+.rail-g{display:flex; gap:2px; flex:var(--f,1)}
+.tick{flex:1; background:var(--line); border-radius:1px; transition:background .25s}
+.tick.past{background:var(--text-3)}
+.tick.now{background:var(--accent)}
+
+.stage{
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  padding-block:22px; gap:0;
+}
+.run{--accent:var(--move); --accent-soft:var(--move-soft); --accent-line:var(--move-line)}
+.run[data-mode="work"]{--accent:var(--work); --accent-soft:var(--work-soft); --accent-line:var(--work-line)}
+.run[data-mode="rest"]{--accent:var(--rest); --accent-soft:var(--rest-soft); --accent-line:var(--rest-line)}
+
+.kicker{
+  font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent); display:flex; align-items:center; gap:7px;
+}
+.kicker::before,.kicker::after{content:""; width:16px; height:1px; background:var(--accent-line)}
+.move{
+  margin:9px 0 0; font-family:Archivo,sans-serif; font-variation-settings:"wdth" 112;
+  font-weight:700; font-size:clamp(25px,7.4vw,33px); line-height:1.08; letter-spacing:-.02em;
+  text-wrap:balance; max-width:14ch;
+}
+.sub{margin:6px 0 0; font-size:13.5px; color:var(--text-2); font-variant-numeric:tabular-nums; text-wrap:balance; max-width:36ch}
+
+.dial{position:relative; width:min(66vw,252px); aspect-ratio:1; margin:16px 0 0; display:grid; place-items:center}
+.dial svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
+.dial line{stroke:var(--line); stroke-width:2.6; stroke-linecap:round; transition:stroke .18s}
+.dial line.lit{stroke:var(--accent)}
+.clock{
+  font-family:Archivo,sans-serif; font-variation-settings:"wdth" 122; font-weight:700;
+  font-size:min(19.5vw,74px); line-height:1; letter-spacing:-.035em; font-variant-numeric:tabular-nums;
+  position:relative; z-index:1;
+}
+.clock.over{color:var(--behind)}
+
+.cue{
+  margin:16px 0 0; padding:11px 15px; border-radius:10px; background:var(--accent-soft);
+  font-size:14px; line-height:1.45; color:var(--text); max-width:34ch; text-wrap:balance;
+}
+.cue b{display:block; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:3px; font-weight:600}
+
+.footer{margin-top:auto; padding-top:20px; display:flex; flex-direction:column; gap:11px}
+.next{
+  font-size:12.5px; color:var(--text-3); text-align:center;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.next span{color:var(--text-2)}
+.controls{display:grid; grid-template-columns:54px 1fr 54px; gap:9px}
+.icon{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  display:grid; place-items:center; color:var(--text-2);
+}
+.icon:disabled{opacity:.32}
+.icon svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round}
+.advance{
+  background:var(--accent); color:var(--paper); border-radius:12px; padding:19px 10px;
+  font-family:Archivo,sans-serif; font-variation-settings:"wdth" 115; font-weight:700;
+  font-size:17px; letter-spacing:.045em; text-transform:uppercase;
+}
+.advance:active{transform:translateY(1px)}
+
+.paused-tag{
+  text-align:center; font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:600; color:var(--behind); height:14px;
+}
+
+/* ─── done screen ──────────────────────────────────────── */
+.done{flex:1; display:flex; flex-direction:column; justify-content:center; gap:24px; padding-block:40px; text-align:center}
+.done h2{
+  margin:0; font-family:Archivo,sans-serif; font-variation-settings:"wdth" 118;
+  font-weight:700; font-size:34px; letter-spacing:-.02em;
+}
+.tally{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+.tally div{background:var(--paper); padding:16px 10px}
+.tally .k{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-3); font-weight:600}
+.tally .v{font-family:Archivo,sans-serif; font-variation-settings:"wdth" 118; font-weight:700; font-size:27px; font-variant-numeric:tabular-nums; margin-top:3px; letter-spacing:-.02em}
+.done p{margin:0; color:var(--text-2); font-size:14.5px; text-wrap:balance}
+.done .go{background:var(--surface); color:var(--text); border:1px solid var(--line)}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+<div class="wrap">
+  <!-- START -->
+  <section class="start" id="s-start">
+    <div class="masthead">
+      <h1>Block One</h1>
+      <div class="queue-note" id="queue-note">Pick up<br>where you left off</div>
+    </div>
+
+    <div>
+      <div class="eyebrow" style="margin-bottom:8px">Next in the queue</div>
+      <div class="picker" id="picker"></div>
+    </div>
+
+    <div class="slots" id="slots"></div>
+
+    <label class="first-set" for="first-time">
+      <input type="checkbox" id="first-time">
+      <span><b>This is my first session ever</b>One set of everything. Find out how sore you get before you find out the hard way.</span>
+    </label>
+
+    <div class="go-wrap">
+      <button class="go" id="btn-go">Start session</button>
+      <div class="est" id="est"></div>
+    </div>
+  </section>
+
+  <!-- RUN -->
+  <section class="run" id="s-run" data-mode="move" hidden>
+    <div class="topbar">
+      <div class="badge" id="badge">SESSION A</div>
+      <div class="delta num" id="delta">On schedule</div>
+    </div>
+    <div class="rail" id="rail"></div>
+
+    <div class="stage" id="stage">
+      <div class="kicker" id="kicker">Warm-up</div>
+      <h2 class="move" id="move">Easy cardio</h2>
+      <p class="sub" id="sub"></p>
+      <div class="dial">
+        <svg viewBox="0 0 200 200" id="dial" aria-hidden="true"></svg>
+        <div class="clock num" id="clock">4:00</div>
+      </div>
+      <div class="cue" id="cue" hidden></div>
+    </div>
+
+    <div class="footer">
+      <div class="paused-tag" id="paused-tag"></div>
+      <div class="next" id="next"></div>
+      <div class="controls">
+        <button class="icon" id="btn-back" title="Previous step" aria-label="Previous step">
+          <svg viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></svg>
+        </button>
+        <button class="advance" id="btn-next">Done</button>
+        <button class="icon" id="btn-pause" title="Pause" aria-label="Pause">
+          <svg viewBox="0 0 24 24" id="ico-pause"><path d="M9 5v14M15 5v14"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DONE -->
+  <section class="done" id="s-done" hidden>
+    <div>
+      <div class="eyebrow">Session complete</div>
+      <h2 id="done-title">That's three.</h2>
+    </div>
+    <div class="tally">
+      <div><div class="k">Time</div><div class="v num" id="done-time">—</div></div>
+      <div><div class="k">vs. plan</div><div class="v num" id="done-delta">—</div></div>
+    </div>
+    <p id="done-note"></p>
+    <button class="go" id="btn-again">Back to start</button>
+  </section>
+</div>
+
+<script>
+"use strict";
+
+/* ── Program data ─────────────────────────────────────────
+   Slots 2 and 3 are identical in all three sessions.
+   Slot 1 (protected, full rest), slot 4 and slot 5 rotate.  */
+
+const LEG_PRESS = { name:"Leg press", cue:"Stop the sled before your hips start to curl under." };
+const RDL       = { name:"Dumbbell Romanian deadlift", cue:"Push your hips back toward the wall behind you." };
+const SPLIT     = { name:"Dumbbell split squat", cue:"Point that knee at your second toe. Beltline stays level." };
+
+/* Slot 5 — one movement per session, two real working sets.
+   Previously crammed into the slot 2/3 rest windows, which doesn't survive
+   contact with a busy gym: it means holding two machines at once. */
+const ABDUCTION = { name:"Hip abduction machine", sub:"12–15 reps",       vol:"2 × 12–15",   cue:"Control it on the way back in." };
+const DEADBUG   = { name:"Dead bug",              sub:"8–10 each side",   vol:"2 × 8–10 ea", cue:"Keep your lower back planted on the floor." };
+const SIDEPLANK = { name:"Side plank",            sub:"20–40s each side", vol:"2 × 20–40s",  cue:"Keep your body in a straight line." };
+
+const SESSIONS = {
+  A: { emphasis:"Squat",       slot1:LEG_PRESS, slot4:RDL,       slot5:ABDUCTION, uni:false },
+  B: { emphasis:"Hinge",       slot1:RDL,       slot4:LEG_PRESS, slot5:DEADBUG,   uni:false },
+  C: { emphasis:"Single leg",  slot1:SPLIT,     slot4:RDL,       slot5:SIDEPLANK, uni:true  }
+};
+
+const RIR = "8–12 reps · leave 2–3 in the tank";
+
+/* Build the full step list for a session.
+   secs are padded past the ~32-min design budget so she isn't rushed: ~44 min. */
+function build(id, firstEver){
+  const S = SESSIONS[id], out = [];
+  const add = (g,gl,kind,name,sub,secs,cue,fill) =>
+    out.push({g,gl,kind,name,sub,secs,cue,fill});
+
+  /* Warm-up — identical every session */
+  add("warm","Warm-up","work","Easy cardio","Rower, elliptical, or incline walk",300,
+      "Conversational pace, aim for a light sweat. This is prep, not training.");
+
+  /* Slot 1 — the only lift that gets full rest */
+  const L1 = S.slot1;
+  add("s1","Slot 1 · Main lift","move","Set up — "+L1.name,"Find it, load it",60);
+
+  if (S.uni){
+    add("s1","Slot 1 · Main lift","work",L1.name,"Ramp-up · bodyweight",60,L1.cue);
+    add("s1","Slot 1 · Main lift","rest","Rest","Shake the legs out",60);
+    const sets = firstEver ? 1 : 3;
+    for (let i=1;i<=sets;i++){
+      add("s1","Slot 1 · Main lift","work",L1.name,`Working set ${i} of ${sets} · both legs · ${RIR}`,120,L1.cue);
+      if (i<sets) add("s1","Slot 1 · Main lift","rest","Full rest","Slot 1 gets all the rest it wants",150);
+    }
+  } else {
+    add("s1","Slot 1 · Main lift","work",L1.name,"Ramp-up 1 · light",60,L1.cue);
+    add("s1","Slot 1 · Main lift","rest","Rest","Add weight for the next one",60);
+    add("s1","Slot 1 · Main lift","work",L1.name,"Ramp-up 2 · moderate",60,L1.cue);
+    add("s1","Slot 1 · Main lift","rest","Rest","Load up to working weight",60);
+    const sets = firstEver ? 1 : 3;
+    for (let i=1;i<=sets;i++){
+      add("s1","Slot 1 · Main lift","work",L1.name,`Working set ${i} of ${sets} · ${RIR}`,90,L1.cue);
+      if (i<sets) add("s1","Slot 1 · Main lift","rest","Full rest","Slot 1 gets all the rest it wants",150);
+    }
+  }
+
+  /* Slot 2 — chest press, with the abduction machine living in the rest.
+     Never paired into slot 1's rest: fresh abductors are the point of the program. */
+  const upper = firstEver ? 1 : 2;
+  add("s2","Slot 2 · Upper push","move","Walk to the chest press","",60);
+  for (let i=1;i<=upper;i++){
+    add("s2","Slot 2 · Upper push","work","Chest press",`Set ${i} of ${upper} · ${RIR}`,90,
+        "Pin your shoulder blades down before the first rep.");
+    add("s2","Slot 2 · Upper push","rest","Rest",null,90);
+  }
+
+  /* Slot 3 — lat pulldown, side planks in the rest */
+  add("s3","Slot 3 · Upper pull","move","Walk to the lat pulldown","",60);
+  for (let i=1;i<=upper;i++){
+    add("s3","Slot 3 · Upper pull","work","Lat pulldown",`Set ${i} of ${upper} · ${RIR}`,90,
+        "Chest tall, drive your elbows down to your ribs.");
+    add("s3","Slot 3 · Upper pull","rest","Rest",null,90);
+  }
+
+  /* Slot 4 — lower accessory */
+  const L4 = S.slot4;
+  add("s4","Slot 4 · Lower accessory","move","Set up — "+L4.name,"",60);
+  const acc = firstEver ? 1 : 2;
+  for (let i=1;i<=acc;i++){
+    add("s4","Slot 4 · Lower accessory","work",L4.name,`Set ${i} of ${acc} · ${RIR}`,90,L4.cue);
+    if (i<acc) add("s4","Slot 4 · Lower accessory","rest","Rest",null,90);
+  }
+
+  /* Slot 5 — hips & trunk, its own slot with real working sets */
+  const L5 = S.slot5, five = firstEver ? 1 : 2;
+  add("s5","Slot 5 · Hips & trunk","move","Set up — "+L5.name,"Last one",60);
+  for (let i=1;i<=five;i++){
+    add("s5","Slot 5 · Hips & trunk","work",L5.name,`Set ${i} of ${five} · ${L5.sub}`,90,L5.cue);
+    if (i<five) add("s5","Slot 5 · Hips & trunk","rest","Rest",null,90);
+  }
+  return out;
+}
+
+const SLOT_PREVIEW = id => {
+  const S = SESSIONS[id];
+  return [
+    ["1", S.slot1.name, "Main lower lift", "3 × 8–12", true],
+    ["2", "Chest press", "Machine or dumbbell", "2 × 8–12", false],
+    ["3", "Lat pulldown", null, "2 × 8–12", false],
+    ["4", S.slot4.name, "Lower accessory", "2 × 8–12", false],
+    ["5", S.slot5.name, "Hips & trunk", S.slot5.vol, true]
+  ];
+};
+
+/* ── State ────────────────────────────────────────────── */
+const el = id => document.getElementById(id);
+let pick = "A", steps = [], idx = 0, actual = [], t0 = 0, sessionT0 = 0,
+    paused = false, pauseMark = 0, ticker = null, wakeLock = null;
+
+const mmss = s => {
+  s = Math.round(Math.abs(s));
+  return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0");
+};
+
+/* ── Start screen ─────────────────────────────────────── */
+function renderStart(){
+  el("picker").innerHTML = Object.keys(SESSIONS).map(k =>
+    `<button class="pick" data-k="${k}" aria-pressed="${k===pick}">
+       <div class="l">${k}</div><div class="s">${SESSIONS[k].emphasis}</div>
+     </button>`).join("");
+  el("picker").querySelectorAll(".pick").forEach(b =>
+    b.onclick = () => { pick = b.dataset.k; renderStart(); });
+
+  el("slots").innerHTML = SLOT_PREVIEW(pick).map(([n,m,d,v,p]) =>
+    `<div class="slot${p?" pinned":""}">
+       <div class="n">${n}</div>
+       <div class="m">${m}${d?`<em>${d}</em>`:""}</div>
+       <div class="v">${v}</div>
+     </div>`).join("");
+
+  const total = build(pick, el("first-time").checked).reduce((a,s)=>a+s.secs,0);
+  el("est").textContent = `About ${Math.round(total/60)} minutes · ${SESSIONS[pick].emphasis} emphasis`;
+  el("btn-go").textContent = "Start session " + pick;
+
+  const last = localStorage.getItem("isabel.last");
+  el("queue-note").innerHTML = last
+    ? `Last done: <strong>Session ${last}</strong><br>Next in the queue is ${next(last)}`
+    : `A → B → C is a queue,<br>not a calendar`;
+}
+const next = k => ({A:"B",B:"C",C:"A"})[k];
+
+el("first-time").onchange = renderStart;
+el("btn-go").onclick = () => start();
+el("btn-again").onclick = () => { show("s-start"); renderStart(); };
+
+/* ── Dial ─────────────────────────────────────────────── */
+const TICKS = 60;
+(function dial(){
+  let s = "";
+  for (let i=0;i<TICKS;i++){
+    const a = (i/TICKS)*Math.PI*2 - Math.PI/2;
+    const x1 = 100+Math.cos(a)*82, y1 = 100+Math.sin(a)*82;
+    const x2 = 100+Math.cos(a)*93, y2 = 100+Math.sin(a)*93;
+    s += `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}"/>`;
+  }
+  el("dial").innerHTML = s;
+})();
+
+/* ── Rail ─────────────────────────────────────────────── */
+function renderRail(){
+  const groups = [];
+  steps.forEach((s,i) => {
+    const g = groups[groups.length-1];
+    if (g && g.key===s.g) g.items.push(i); else groups.push({key:s.g, items:[i]});
+  });
+  el("rail").innerHTML = groups.map(g =>
+    `<div class="rail-g" style="--f:${g.items.length}">` +
+    g.items.map(i=>`<div class="tick" data-i="${i}"></div>`).join("") + `</div>`).join("");
+}
+
+/* ── Audio ────────────────────────────────────────────── */
+let ac = null;
+function beep(freq, dur, vol){
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    if (ac.state === "suspended") ac.resume();
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = "sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(0, ac.currentTime);
+    g.gain.linearRampToValueAtTime(vol, ac.currentTime+.012);
+    g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime+dur);
+    o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime+dur+.02);
+  }catch(e){}
+}
+const buzz = ms => { try{ navigator.vibrate && navigator.vibrate(ms); }catch(e){} };
+
+/* ── Wake lock ────────────────────────────────────────── */
+async function keepAwake(){
+  try{ if ("wakeLock" in navigator) wakeLock = await navigator.wakeLock.request("screen"); }catch(e){}
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && !el("s-run").hidden) keepAwake();
+});
+
+/* ── Run ──────────────────────────────────────────────── */
+function show(id){
+  ["s-start","s-run","s-done"].forEach(s => el(s).hidden = (s!==id));
+}
+
+function start(state){
+  const firstEver = el("first-time").checked;
+  steps = build(pick, firstEver);
+  idx = 0; actual = []; paused = false;
+  if (state){ idx = state.idx; actual = state.actual; pick = state.pick; steps = build(pick, state.firstEver); }
+  sessionT0 = Date.now(); t0 = Date.now();
+  renderRail(); show("s-run"); keepAwake();
+  beep(880,.09,.16);
+  paint();
+  clearInterval(ticker);
+  ticker = setInterval(tick, 200);
+}
+
+const elapsed = () => (paused ? pauseMark - t0 : Date.now() - t0) / 1000;
+const banked  = () => actual.reduce((a,v,i) => a + (steps[i].secs - v), 0);
+
+function paint(){
+  const s = steps[idx];
+  el("badge").textContent = "SESSION " + pick;
+  el("s-run").dataset.mode = s.kind;
+  el("kicker").textContent = s.gl;
+  el("move").textContent = s.name;
+  el("sub").textContent = s.fill || s.sub || "";
+  el("sub").style.color = s.fill ? "var(--accent)" : "";
+  el("sub").style.fontWeight = s.fill ? "600" : "";
+
+  const cue = el("cue");
+  if (s.cue){ cue.hidden = false; cue.innerHTML = `<b>${s.fill ? "Form" : "Cue"}</b>${s.cue}`; }
+  else cue.hidden = true;
+
+  el("btn-next").textContent = s.kind==="rest" ? "Skip rest" : s.kind==="move" ? "Ready" : "Done";
+  el("btn-back").disabled = idx===0;
+
+  const n = steps[idx+1];
+  el("next").innerHTML = n
+    ? `Up next · <span>${n.kind==="rest" ? (n.fill || "Rest") : n.name}</span>`
+    : `Last one`;
+
+  el("rail").querySelectorAll(".tick").forEach(t => {
+    const i = +t.dataset.i;
+    t.className = "tick" + (i<idx ? " past" : i===idx ? " now" : "");
+  });
+  tick();
+}
+
+let lastBeep = -1;
+function tick(){
+  const s = steps[idx], e = elapsed(), left = s.secs - e;
+
+  el("clock").textContent = (left<0 ? "+" : "") + mmss(left);
+  el("clock").classList.toggle("over", left < 0);
+
+  const lit = Math.max(0, Math.min(TICKS, Math.ceil((left/s.secs)*TICKS)));
+  el("dial").querySelectorAll("line").forEach((l,i) => l.classList.toggle("lit", i<lit));
+
+  const d = banked() - Math.max(0, e - s.secs);
+  const dd = el("delta");
+  if (Math.abs(d) < 20){ dd.textContent = "On schedule"; dd.dataset.s = "on"; }
+  else { dd.textContent = (d>0 ? "▲ " : "▼ ") + mmss(d) + (d>0 ? " ahead" : " behind"); dd.dataset.s = d>0 ? "ahead":"behind"; }
+
+  if (!paused && s.kind === "rest"){
+    const r = Math.ceil(left);
+    if (r<=3 && r>0 && r!==lastBeep){ lastBeep = r; beep(660,.07,.1); }
+    if (left <= 0){ lastBeep = -1; beep(990,.22,.2); buzz([120,70,120]); advance(); }
+  }
+}
+
+function advance(){
+  actual[idx] = elapsed();
+  if (idx >= steps.length-1) return finish();
+  idx++; t0 = Date.now(); lastBeep = -1;
+  if (paused){ paused = false; setPauseIcon(); }
+  paint();
+}
+
+function back(){
+  if (!idx) return;
+  idx--; actual.length = idx; t0 = Date.now(); lastBeep = -1;
+  if (paused){ paused = false; setPauseIcon(); }
+  paint();
+}
+
+function finish(){
+  clearInterval(ticker);
+  try{ wakeLock && wakeLock.release(); }catch(e){}
+  localStorage.setItem("isabel.last", pick);
+  const total = (Date.now()-sessionT0)/1000;
+  const planned = steps.reduce((a,s)=>a+s.secs,0);
+  const d = planned - total;
+  el("done-time").textContent = mmss(total);
+  el("done-delta").textContent = (Math.abs(d)<20 ? "±0:00" : (d>0?"−":"+") + mmss(d));
+  el("done-delta").style.color = Math.abs(d)<20 ? "" : (d>0 ? "var(--ahead)" : "var(--behind)");
+  el("done-note").textContent =
+    `Next time you train, run Session ${next(pick)} — ${SESSIONS[next(pick)].emphasis.toLowerCase()} emphasis. ` +
+    `Doesn't matter what day that is.`;
+  beep(660,.12,.18); setTimeout(()=>beep(880,.12,.18),140); setTimeout(()=>beep(1175,.3,.2),290);
+  buzz([90,60,90,60,180]);
+  show("s-done");
+}
+
+function setPauseIcon(){
+  el("ico-pause").innerHTML = paused ? '<path d="M7 4.5v15l13-7.5z"/>' : '<path d="M9 5v14M15 5v14"/>';
+  el("btn-pause").setAttribute("aria-label", paused ? "Resume" : "Pause");
+  el("paused-tag").textContent = paused ? "Paused" : "";
+}
+
+el("btn-next").onclick  = () => { beep(760,.05,.09); advance(); };
+el("btn-back").onclick  = back;
+el("btn-pause").onclick = () => {
+  if (paused){ t0 += Date.now() - pauseMark; paused = false; }
+  else { pauseMark = Date.now(); paused = true; }
+  setPauseIcon();
+};
+document.addEventListener("keydown", e => {
+  if (el("s-run").hidden) return;
+  if (e.code === "Space"){ e.preventDefault(); advance(); }
+  if (e.code === "ArrowLeft") back();
+});
+
+/* Carry a live session across a republish */
+window.claude?.hot?.snapshot(() => el("s-run").hidden ? null :
+  { idx, actual, pick, firstEver: el("first-time").checked });
+const boot = d => {
+  renderStart();
+  if (d && d.idx != null){ pick = d.pick; el("first-time").checked = d.firstEver; start(d); }
+};
+window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+</script>
