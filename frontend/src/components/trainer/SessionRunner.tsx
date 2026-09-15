@@ -55,7 +55,7 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
   const detail = step.fill ?? step.sub ?? '';
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col">
+    <div className="mx-auto flex h-full w-full max-w-lg min-h-0 flex-1 flex-col">
       <div className="mb-3 flex items-center justify-between gap-3">
         <span className="text-xs uppercase tracking-[0.12em] text-slate-500">
           Session {sessionId}
@@ -80,11 +80,14 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
         ))}
       </div>
 
-      {/* Every block below is a fixed height so nothing shifts when the movement
-          name wraps to two lines or a step arrives without a cue. */}
-      <div className="flex flex-1 flex-col items-center justify-center py-4 text-center">
+      {/* Each text block keeps a fixed height so nothing shifts between steps, but
+          those heights are capped against viewport height too — on a short phone
+          they compress and the dial, which is the flexible one, takes the rest.
+          --name drives both the headline size and its two-line box, so the box
+          always fits exactly two lines whatever the screen. */}
+      <div className="flex min-h-0 flex-1 flex-col items-center py-1 text-center [--name:min(6.6vw,2.7vh,2rem)] sm:py-3">
         <div
-          className={`flex h-4 items-center gap-2 text-[0.65rem] uppercase tracking-[0.16em] ${theme.text}`}
+          className={`flex h-4 flex-none items-center gap-2 text-[0.65rem] uppercase tracking-[0.16em] ${theme.text}`}
         >
           <span className={`h-px w-4 ${theme.rule}`} />
           {step.slotLabel}
@@ -93,15 +96,15 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
 
         {/* Top-aligned, not centred: a one-line movement name has to start at the
             same y as the first line of a two-line one. */}
-        <div className="mt-2 flex h-[5.25rem] w-full items-start justify-center">
-          <h2 className="max-w-[14ch] text-[clamp(1.5rem,7vw,2rem)] leading-tight text-slate-100">
+        <div className="mt-1.5 flex h-[calc(var(--name)*2.5)] w-full flex-none items-start justify-center">
+          <h2 className="max-w-[14ch] text-[length:var(--name)] leading-[1.25] text-slate-100">
             {step.name}
           </h2>
         </div>
 
-        <div className="flex h-[2.6rem] w-full items-start justify-center">
+        <div className="flex h-[clamp(2.3rem,5.4vh,2.6rem)] w-full flex-none items-start justify-center">
           <p
-            className={`max-w-[34ch] text-sm leading-snug tabular-nums ${
+            className={`max-w-[34ch] text-[length:clamp(0.78rem,1.6vh,0.875rem)] leading-snug tabular-nums ${
               step.fill ? theme.text : 'text-slate-400'
             }`}
           >
@@ -109,18 +112,20 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
           </p>
         </div>
 
-        <TickDial fraction={overtime ? 0 : remaining / step.secs} stroke={theme.stroke}>
-          <span
-            className={`text-[min(19vw,4.5rem)] font-semibold leading-none tabular-nums ${
-              overtime ? 'text-rose-400' : armed ? 'text-slate-400' : 'text-slate-100'
-            }`}
-          >
-            {overtime ? '+' : ''}
-            {formatClock(remaining)}
-          </span>
-        </TickDial>
+        <div className="flex min-h-[6rem] w-full flex-1 items-center justify-center py-1.5">
+          <TickDial fraction={overtime ? 0 : remaining / step.secs} stroke={theme.stroke}>
+            <span
+              className={`text-[clamp(1.5rem,29cqmin,4.5rem)] font-semibold leading-none tabular-nums ${
+                overtime ? 'text-rose-400' : armed ? 'text-slate-400' : 'text-slate-100'
+              }`}
+            >
+              {overtime ? '+' : ''}
+              {formatClock(remaining)}
+            </span>
+          </TickDial>
+        </div>
 
-        <div className="mt-4 flex h-[4.75rem] w-full justify-center">
+        <div className="mt-1.5 flex h-[clamp(3.1rem,9.2vh,4.75rem)] w-full flex-none justify-center">
           <div
             className={`flex max-w-[34ch] flex-col justify-center rounded-lg px-4 py-2 ${theme.soft} ${
               step.cue ? '' : 'invisible'
@@ -129,12 +134,14 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
             <span className={`mb-0.5 text-[0.6rem] uppercase tracking-[0.14em] ${theme.text}`}>
               {step.fill ? 'Form' : 'Cue'}
             </span>
-            <p className="text-sm leading-snug text-slate-200">{step.cue}</p>
+            <p className="text-[length:clamp(0.78rem,1.6vh,0.875rem)] leading-snug text-slate-200">
+              {step.cue}
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-none flex-col gap-[clamp(0.35rem,1vh,0.625rem)]">
         <p className="h-4 text-center text-[0.65rem] uppercase tracking-[0.16em] text-rose-400">
           {paused ? 'Paused' : ''}
         </p>
@@ -167,7 +174,7 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
               stepAdvanced();
               advance();
             }}
-            className={`rounded-lg px-4 py-4 text-base font-semibold uppercase tracking-wide transition-colors ${theme.button}`}
+            className={`rounded-lg px-4 py-[clamp(0.7rem,2vh,1rem)] text-base font-semibold uppercase tracking-wide transition-colors ${theme.button}`}
           >
             {armed ? 'Start' : RUNNING_LABEL[step.kind]}
           </button>

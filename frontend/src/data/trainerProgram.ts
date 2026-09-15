@@ -106,7 +106,17 @@ export const nextInQueue = (id: SessionId): SessionId =>
   SESSION_IDS[(SESSION_IDS.indexOf(id) + 1) % SESSION_IDS.length];
 
 /** Weeks 1–2 run at 2–3 reps in reserve, tightening to 1–2 later (§2, §14.03). */
-const RIR = '8–12 reps · leave 2–3 in the tank';
+const RIR = '8–12 reps · 2–3 RIR';
+
+/**
+ * How many sets each slot gets. One source for both the session the timer runs
+ * and the volumes the setup page lists, so the two can't drift apart.
+ */
+const setCounts = (oneSetMode: boolean) => ({
+  workingSets: oneSetMode ? 1 : 3,
+  accessorySets: oneSetMode ? 1 : 2,
+  upperSets: oneSetMode ? 1 : 2,
+});
 
 /**
  * §6 budgets the session at ~34 minutes on paper. These intervals deliberately
@@ -118,9 +128,7 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
   const steps: Step[] = [];
   const add = (step: Step) => steps.push(step);
 
-  const workingSets = oneSetMode ? 1 : 3;
-  const accessorySets = oneSetMode ? 1 : 2;
-  const upperSets = oneSetMode ? 1 : 2;
+  const { workingSets, accessorySets, upperSets } = setCounts(oneSetMode);
 
   /* Warm-up — identical every session (§5) */
   add({
@@ -248,18 +256,22 @@ export interface SlotPreview {
 }
 
 /** What she gets up front: the five slots in order, and nothing else (§15). */
-export function slotPreview(id: SessionId): SlotPreview[] {
+export function slotPreview(id: SessionId, oneSetMode: boolean): SlotPreview[] {
   const s = SESSIONS[id];
+  const { workingSets, accessorySets, upperSets } = setCounts(oneSetMode);
+  const reps = (sets: number) => `${sets} × 8–12`;
   return [
-    { n: '1', movement: s.slot1.name, note: 'Main lower lift', volume: '3 × 8–12', pinned: false },
-    { n: '2', movement: s.slot2.name, note: 'Upper push', volume: '2 × 8–12', pinned: false },
-    { n: '3', movement: s.slot3.name, note: 'Upper pull', volume: '2 × 8–12', pinned: false },
-    { n: '4', movement: s.slot4.name, note: 'Lower accessory', volume: '2 × 8–12', pinned: false },
+    { n: '1', movement: s.slot1.name, note: 'Main lower lift', volume: reps(workingSets), pinned: false },
+    { n: '2', movement: s.slot2.name, note: 'Upper push', volume: reps(upperSets), pinned: false },
+    { n: '3', movement: s.slot3.name, note: 'Upper pull', volume: reps(upperSets), pinned: false },
+    { n: '4', movement: s.slot4.name, note: 'Lower accessory', volume: reps(accessorySets), pinned: false },
     {
       n: '5',
+      /* One round lives in each of slot 2's and slot 3's rests, so the count
+         tracks the upper slots' set count. */
       movement: `${s.abduction.name} + ${s.trunk.name}`,
       note: 'Inside the rest of slots 2 & 3',
-      volume: '2 each',
+      volume: `${upperSets} each`,
       pinned: true,
     },
   ];

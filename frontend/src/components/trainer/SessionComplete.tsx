@@ -16,7 +16,7 @@ export const SessionComplete = ({ sessionId, summary, onRestart }: SessionComple
   const onTime = Math.abs(summary.delta) < DRIFT_DEADBAND;
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-6 text-center">
+    <div className="mx-auto flex w-full min-h-0 max-w-lg flex-1 flex-col justify-center gap-[clamp(0.85rem,2.6vh,1.5rem)] overflow-y-auto text-center">
       <div>
         <p className="text-[0.65rem] uppercase tracking-[0.16em] text-slate-500">
           Session complete
