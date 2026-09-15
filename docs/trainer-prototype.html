@@ -387,7 +387,7 @@ let pick = "A", steps = [], idx = 0, actual = [], t0 = 0, sessionT0 = 0,
     paused = false, pauseMark = 0, ticker = null, wakeLock = null;
 
 const mmss = s => {
-  s = Math.round(Math.abs(s));
+  s = Number.isFinite(s) ? Math.round(Math.abs(s)) : 0;
   return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0");
 };
 
@@ -479,9 +479,10 @@ function show(id){
 function start(state){
   const firstEver = el("first-time").checked;
   steps = build(pick, firstEver);
-  idx = 0; actual = []; paused = false;
+  idx = 0; actual = []; paused = false; pauseMark = 0;
   if (state){ idx = state.idx; actual = state.actual; pick = state.pick; steps = build(pick, state.firstEver); }
   sessionT0 = Date.now(); t0 = Date.now();
+  setPauseIcon();
   renderRail(); show("s-run"); keepAwake();
   beep(880,.09,.16);
   paint();
@@ -489,7 +490,11 @@ function start(state){
   ticker = setInterval(tick, 200);
 }
 
-const elapsed = () => (paused ? pauseMark - t0 : Date.now() - t0) / 1000;
+const elapsed = () => {
+  if (!t0) return 0;                                   // no step running yet
+  const now = (paused && pauseMark) ? pauseMark : Date.now();
+  return Math.max(0, (now - t0) / 1000);               // never run backwards
+};
 const banked  = () => actual.reduce((a,v,i) => a + (steps[i].secs - v), 0);
 
 function paint(){
@@ -547,14 +552,14 @@ function advance(){
   actual[idx] = elapsed();
   if (idx >= steps.length-1) return finish();
   idx++; t0 = Date.now(); lastBeep = -1;
-  if (paused){ paused = false; setPauseIcon(); }
+  if (paused){ paused = false; pauseMark = 0; setPauseIcon(); }
   paint();
 }
 
 function back(){
   if (!idx) return;
   idx--; actual.length = idx; t0 = Date.now(); lastBeep = -1;
-  if (paused){ paused = false; setPauseIcon(); }
+  if (paused){ paused = false; pauseMark = 0; setPauseIcon(); }
   paint();
 }
 
@@ -562,7 +567,7 @@ function finish(){
   clearInterval(ticker);
   try{ wakeLock && wakeLock.release(); }catch(e){}
   localStorage.setItem("isabel.last", pick);
-  const total = (Date.now()-sessionT0)/1000;
+  const total = sessionT0 ? (Date.now()-sessionT0)/1000 : 0;
   const planned = steps.reduce((a,s)=>a+s.secs,0);
   const d = planned - total;
   el("done-time").textContent = mmss(total);
@@ -585,9 +590,14 @@ function setPauseIcon(){
 el("btn-next").onclick  = () => { beep(760,.05,.09); advance(); };
 el("btn-back").onclick  = back;
 el("btn-pause").onclick = () => {
-  if (paused){ t0 += Date.now() - pauseMark; paused = false; }
-  else { pauseMark = Date.now(); paused = true; }
-  setPauseIcon();
+  if (!t0) return;                                     // nothing to pause
+  if (paused){
+    if (pauseMark) t0 += Date.now() - pauseMark;       // credit back the paused time
+    pauseMark = 0; paused = false;
+  } else {
+    pauseMark = Date.now(); paused = true;
+  }
+  setPauseIcon(); tick();
 };
 document.addEventListener("keydown", e => {
   if (el("s-run").hidden) return;
