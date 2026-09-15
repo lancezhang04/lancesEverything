@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Footer } from '../layout/Footer';
 import { SESSION_IDS, buildSession, nextInQueue } from '../../data/trainerProgram';
 import { SessionSummary } from '../../hooks/useSessionTimer';
 import { SessionId } from '../../types/trainer';
@@ -76,23 +75,28 @@ export const TrainerPage = () => {
     setPhase('setup');
   };
 
+  /* The whole module is a single-screen instrument: it claims the viewport
+     exactly at every phase, drops the site footer and shrinks the masthead, so
+     selection and a live session share one set of proportions. */
+
   return (
-    <div style={{ minHeight: '100dvh' }} className="relative z-10 flex flex-col">
-      <div className="sticky top-0 z-50 bg-slate-800/95 shadow-lg shadow-slate-900/50 backdrop-blur-sm">
-        <div className="px-4 py-3 sm:px-10 sm:py-4 lg:px-16">
+    <div className="relative z-10 flex h-[100dvh] flex-col overflow-hidden">
+      <div className="sticky top-0 z-50 flex-none bg-slate-800/95 shadow-lg shadow-slate-900/50 backdrop-blur-sm">
+        <div className="px-4 py-1.5 sm:px-10 sm:py-2 lg:px-16">
           <h1 className="text-slate-100">
+            {/* Wordmark stays on the logo's line at every width, so the masthead
+                reads "Lance's Trainer" on a phone. */}
             <div className="flex items-end gap-3">
               <a href="/">
-                <img src="/lances-logo.svg" alt="Lance's" className="inline-block h-12 sm:h-[3.2rem]" />
+                <img src="/lances-logo.svg" alt="Lance's" className="inline-block h-8 sm:h-10" />
               </a>
-              <span className="hidden text-3xl sm:inline">Trainer</span>
+              <span className="text-lg sm:text-xl">Trainer</span>
             </div>
-            <span className="mt-1 block text-lg sm:hidden">Trainer</span>
           </h1>
         </div>
       </div>
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <main className="mx-auto flex w-full min-h-0 max-w-7xl flex-1 flex-col px-4 py-2 sm:px-6 sm:py-3 lg:px-8">
         {phase === 'setup' && (
           <SessionSetup
             sessionId={sessionId}
@@ -111,7 +115,6 @@ export const TrainerPage = () => {
         )}
       </main>
 
-      <Footer />
     </div>
   );
 };

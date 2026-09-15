@@ -28,9 +28,9 @@ export const SessionSetup = ({
   const minutes = Math.round(plannedSeconds(buildSession(sessionId, oneSetMode)) / 60);
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-7">
+    <div className="mx-auto flex w-full min-h-0 max-w-lg flex-1 flex-col gap-[clamp(0.45rem,1.9vh,1.75rem)]">
       <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-2xl text-slate-100">Block One</h2>
+        <h2 className="text-[length:clamp(1.25rem,3.2vh,1.5rem)] text-slate-100">Block One</h2>
         <p className="text-right text-xs leading-snug text-slate-500">
           {lastCompleted ? (
             <>
@@ -60,7 +60,7 @@ export const SessionSetup = ({
                 key={id}
                 onClick={() => onSelect(id)}
                 aria-pressed={selected}
-                className={`rounded-lg border px-2 py-2.5 text-center transition-colors ${
+                className={`rounded-lg border px-2 py-[clamp(0.4rem,1.4vh,0.625rem)] text-center transition-colors ${
                   selected
                     ? 'border-amber-500 bg-amber-500/10 text-amber-400'
                     : 'border-slate-700 bg-slate-800/80 text-slate-300 hover:border-slate-600'
@@ -79,22 +79,30 @@ export const SessionSetup = ({
       </div>
 
       {/* The five slots in order — what she gets up front, and nothing else. */}
-      <div className="border-t border-slate-700/60">
-        {slotPreview(sessionId).map((slot) => (
+      <div className="min-h-0 flex-1 overflow-y-auto border-t border-slate-700/60">
+        {slotPreview(sessionId, oneSetMode).map((slot) => (
           <div
             key={slot.n}
-            className="grid grid-cols-[1.25rem_1fr_auto] items-baseline gap-3 border-b border-slate-700/60 py-3"
+            className="grid grid-cols-[1.25rem_1fr_auto] items-baseline gap-3 border-b border-slate-700/60 py-[clamp(0.25rem,1.15vh,0.75rem)]"
           >
             <span className="text-xs text-slate-600">{slot.n}</span>
             <span>
-              <span className={slot.pinned ? 'text-amber-400' : 'text-slate-200'}>
+              <span
+                className={`text-[length:clamp(0.82rem,2.1vh,0.97rem)] ${
+                  slot.pinned ? 'text-amber-400' : 'text-slate-200'
+                }`}
+              >
                 {slot.movement}
               </span>
+              {/* Secondary label; the first thing to go when the screen is too
+                  short to show all five movements at once. */}
               {slot.note && (
-                <span className="mt-0.5 block text-xs text-slate-500">{slot.note}</span>
+                <span className="mt-0.5 block text-xs text-slate-500 [@media(max-height:700px)]:hidden">
+                  {slot.note}
+                </span>
               )}
             </span>
-            <span className="whitespace-nowrap text-xs tabular-nums text-slate-400">
+            <span className="whitespace-nowrap text-[length:clamp(0.68rem,1.6vh,0.75rem)] tabular-nums text-slate-400">
               {slot.volume}
             </span>
           </div>
@@ -105,7 +113,7 @@ export const SessionSetup = ({
           should be, before her soreness response is known. */}
       <label
         htmlFor="trainer-one-set"
-        className="flex cursor-pointer items-center gap-3 rounded-lg bg-slate-800/60 px-3.5 py-3"
+        className="flex flex-none cursor-pointer items-center gap-3 rounded-lg bg-slate-800/60 px-3.5 py-[clamp(0.45rem,1.4vh,0.75rem)]"
       >
         <input
           id="trainer-one-set"
@@ -117,10 +125,10 @@ export const SessionSetup = ({
         <span className="text-sm text-slate-200">One set mode</span>
       </label>
 
-      <div className="mt-auto flex flex-col gap-2 pt-4">
+      <div className="flex flex-none flex-col gap-1.5 pt-[clamp(0.2rem,1vh,0.75rem)]">
         <button
           onClick={onStart}
-          className="w-full rounded-lg bg-amber-500 px-4 py-4 text-lg font-semibold uppercase tracking-wide text-slate-900 transition-colors hover:bg-amber-400"
+          className="w-full rounded-lg bg-amber-500 px-4 py-[clamp(0.7rem,2vh,1rem)] text-lg font-semibold uppercase tracking-wide text-slate-900 transition-colors hover:bg-amber-400"
         >
           Start session {sessionId}
         </button>

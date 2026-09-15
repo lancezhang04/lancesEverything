@@ -16,6 +16,10 @@ interface TickDialProps {
  * A stopwatch bezel rather than a progress bar: 60 ticks that go out as the step
  * drains, so a glance from six feet away reads roughly how long is left without
  * resolving the digits.
+ *
+ * The dial fills whatever vertical room the stage has left over, so it's the
+ * element that absorbs a short screen. It's a size container, which lets the
+ * countdown inside scale with the dial rather than with the viewport.
  */
 export const TickDial = ({ fraction, stroke, children }: TickDialProps) => {
   const ticks = useMemo(
@@ -35,7 +39,7 @@ export const TickDial = ({ fraction, stroke, children }: TickDialProps) => {
   const lit = Math.max(0, Math.min(TICK_COUNT, Math.ceil(fraction * TICK_COUNT)));
 
   return (
-    <div className="relative grid aspect-square w-[min(66vw,252px)] place-items-center">
+    <div className="relative grid aspect-square h-full max-h-[252px] max-w-full place-items-center [container-type:size]">
       <svg viewBox="0 0 200 200" className="absolute inset-0 h-full w-full" aria-hidden="true">
         {ticks.map((t, i) => (
           <line
