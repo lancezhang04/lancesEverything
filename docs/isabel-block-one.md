@@ -192,7 +192,7 @@ of RDL and 4 of seated row are both substantial isometric erector loading.
 
 ### Warm-up — identical every session
 
-**4 min low-impact cardio** (rower, elliptical, or incline walk). That's it.
+**5 min low-impact cardio** (rower, elliptical, or incline walk). That's it.
 
 No banded lateral walk, and no separate movement prep. Slot 1 already opens with ramp-up sets,
 and those are better prep than a general primer because they rehearse the exact lift she's about
@@ -209,19 +209,19 @@ modality this warm-up rules out rather than merely discourages.
 
 | Segment | Minutes | Notes |
 |---|---|---|
-| Cardio warm-up | 4 | Low-impact modalities only; never running |
+| Cardio warm-up | 5 | Low-impact modalities only; never running |
 | Slot 1 — main lift | 14.5 | Setup, two ramp-ups, three working sets, full rests |
 | Slot 2 — upper push | 5 | Setup, two sets, one 90 s rest |
 | Slot 3 — upper pull | 5 | |
 | Slot 4 — lower accessory | 5 | |
 | Slot 5 — isolation | 5 | |
-| **Total** | **~38.5** | Around 6 minutes of headroom |
+| **Total** | **~39.5** | Around 5 minutes of headroom |
 
 Transitions no longer get a line of their own. Every slot opens with a one-minute setup step, so
 the walk to the next machine is inside the budget rather than beside it — which is also the only
 honest place for it, since it's the part that reliably runs long.
 
-**Session C lands at ~38** on the same arithmetic: its slot 1 trades two ramp-ups for one and
+**Session C lands at ~39** on the same arithmetic: its slot 1 trades two ramp-ups for one and
 buys longer working sets with the difference, because 3 sets of split squats is really 6. If it
 runs over, drop slot 1 to **2 working sets** — the same lever §10 uses after a soccer game. Don't
 cut slot 4: it carries the program's only knee flexion. (This is also why C's row is the
@@ -327,7 +327,7 @@ different thing from you correcting her on it. **What you actively coach still w
 | Standing calf raise | Short, bouncy reps | "Rise up as high as you can, then lower all the way back down." | Heels below the step, knees straight, no bouncing |
 | Seated leg curl | Hips lifting off the pad at the end of the curl | "Glue your thighs to the seat and curl underneath you." | Tempo, foot angle |
 | DB lateral raise | Traps shrugging, weight swinging up | "Lead with your elbows, shoulders stay down away from your ears." | Exact height — stop at shoulder |
-| Easy cardio | Treating the warm-up as a workout | "Conversational pace." | What that actually means, why not running, why four minutes earns its place |
+| Easy cardio | Treating the warm-up as a workout | "Conversational pace." | What that actually means, why not running, why five minutes earns its place |
 
 > **Why the cues are worded that way.** Every one points at an *effect in the world* rather than
 > a muscle or body part. External cues generally produce better movement and faster learning than
