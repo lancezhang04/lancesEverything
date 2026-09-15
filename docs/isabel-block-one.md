@@ -27,8 +27,7 @@ and an IT band that occasionally complains.
 
 Three full-body sessions a week — same skeleton, varied movements — moderate reps taken close
 enough to failure to matter — built so that missing a session costs nothing, and
-with hip abductor work in two of every three sessions because that's what keeps her IT band
-quiet.
+with hip abductor work on the single-leg day, because that's what keeps her IT band quiet.
 
 ### The five rules
 
@@ -77,26 +76,30 @@ quiet.
 | Lat pulldown | Vertical pull | A | Always available, easy to load in small jumps. |
 | Seated cable row | Horizontal pull | B, C | Rhomboids and mid-back, which a pulldown-only program misses. |
 
-### Slot 5 — abduction twice a week, trunk function rotates
+### Slot 5 — one movement, two working sets
 
 | Movement | Appears | Why this one |
 |---|---|---|
-| **Hip abduction machine** | A, C | The IT band work. Loads on a stack, best glute med–to–TFL ratio. |
+| **Hip abduction machine** | C | The IT band work. Loads on a stack, best glute med–to–TFL ratio. |
 | Standing calf raise | B | Coverage, not variety — the one muscle group nothing else in the block trained. |
-| Side plank | C | Anti-lateral-flexion; trains the same lateral chain as the abduction work. |
-| DB lateral raise | A | Took A's side-plank slot. Lateral delt was the one muscle below the 4-set MED, and it's the group doing the most visible work on a KPI that deliberately isn't scale weight. |
-| Dead bug | B | Anti-extension — a second trunk function instead of the same one three times. |
+| DB lateral raise | A | Lateral delt was the one group under the 4-set MED, and it does the most visible work on a KPI that deliberately isn't scale weight. |
 
-Abduction holds **two of the three sessions** — four loaded sets a week on a stack that can
-progress, plus four sets of side plank on the same lateral chain. That dose is the
-non-negotiable; which day loses it is not.
+Slot 5 used to be **two** movements, run inside slots 2 and 3's rest periods. It is now one
+movement with two working sets of its own, because the rest-period version wasn't getting done.
+It asked her to abandon a machine mid-rest, cross the floor, do a set of something else, and be
+back ninety seconds later — at a campus rec, at peak hour, which §1 lists as a design constraint.
+Four minutes buys a slot that actually happens.
 
-> **This is a reduction from the original design**, which ran abduction in all three sessions
-> plus a banded walk in every warm-up. Two considerations moved it. The slot is capped by what
-> fits inside two rest periods, so anything added comes out of something else — and calves were
-> the only muscle group in the entire block trained *zero* times, while abduction was the most
-> covered thing in it. The change is a judgment about where the fifth and sixth sets were worth
-> the most, not a revision of §14.07's evidence. See that section for what was traded away.
+> ⚠️ **What that costs, and it isn't small.** Collapsing two movements into one removes the
+> block's **trunk work entirely** — side plank and dead bug are gone, six weekly sets to zero —
+> and leaves **abduction on session C alone**, two loaded sets a week where it had four. §14 ●07
+> is the highest-confidence claim in this document and it argues for more of that work, not
+> less, and §11 had side planks under *Emphasize*.
+>
+> The defence is narrow, and worth stating plainly rather than dressing up: two progressible
+> sets that happen beat six that don't. But this is a floor, not a new baseline. If the IT band
+> starts talking, §10's first lever is to put abduction into slot 5 on all three days and give
+> up the calf and delt work to do it.
 
 ### Swaps — when the machine is taken
 
@@ -118,8 +121,6 @@ A swap is for one session, not a program change — the next session goes back t
 | Seated cable row | Chest-supported row · Single-arm DB row · Machine row |
 | Hip abduction machine | Cable hip abduction · Side-lying abduction · Banded lateral walk |
 | Standing calf raise | Seated calf raise · Leg press calf press · Single-leg calf raise |
-| Side plank | Side plank from the knees · Suitcase carry · Copenhagen plank |
-| Dead bug | Bird dog · Pallof press · Hollow hold |
 
 > Note what this quietly restores: **side-lying abduction and the banded lateral walk are back**,
 > as fallbacks for a busy abduction machine rather than as programmed work. That's the right home
@@ -136,19 +137,21 @@ A swap is for one session, not a program change — the next session goes back t
 | 2 | Upper push | 2 | 8–12 | 60–90 s | Yes — flat / incline / overhead |
 | 3 | Upper pull | 2 | 8–12 | 60–90 s | Yes — pulldown / row |
 | 4 | Lower accessory | 2 | 8–12 | 60–90 s | Yes — whatever slot 1 isn't |
-| 5 | Abduction / calves + trunk | 2 ea | 12–15 / 20–40 s | — | Abduction on A and C; both rotate |
+| 5 | Isolation | 2 | 12–15 | 90 s | Yes — delts / calves / abduction |
 
-**Slot 1 is the only lift that gets full rest.** Slot 5 costs no extra time because it lives
-inside the rest periods of slots 2 and 3.
+**Slot 1 is the only lift that gets full rest** — 2–3 minutes between working sets. Everything
+after it rests a flat 90 seconds, and every slot opens with a one-minute setup step for finding
+the machine and loading it.
 
 > **"Accessory" means 2 sets, short rest, not protected — it does not mean easy.** B's leg press
 > is still a hard set by design. Tell her that, or a brutal second set reads as her having gone
 > too heavy. It self-caps without any instruction to go lighter: 60–90 seconds of rest, fourth in
 > the session, after three sets of RDL, she'll settle well below her A-day load on her own.
 
-> ⚠️ **Placement detail that matters:** slot 5 pairs with the *upper* lifts — never into the
-> main lower lift's rest. Fatiguing the hip abductors between sets of squats or split squats
-> would degrade exactly the frontal-plane control this program exists to protect.
+> ⚠️ **Ordering detail that matters:** slot 5 comes *last*, and on session C that is the whole
+> point. Fatiguing the hip abductors before split squats would degrade exactly the frontal-plane
+> control this program exists to protect — so the abduction work has to sit after slot 1, never
+> before or between its sets.
 
 ---
 
@@ -162,7 +165,7 @@ The lower-body pair in A and B swaps emphasis; everything else is a genuinely di
 | **2** | Chest press (flat) · 2×8–12 | Incline DB press · 2×8–12 | DB overhead press · 2×8–12 |
 | **3** | Lat pulldown · 2×8–12 | Seated cable row · 2×8–12 | Seated cable row · 2×8–12 |
 | **4** | DB Romanian deadlift · 2×8–12 | Leg press · 2×8–12 | Seated leg curl · 2×8–12 |
-| **5** | Hip abduction machine · 2×12–15 · DB lateral raise · 2×12–15 | Standing calf raise · 2×12–15 · Dead bug · 2×8–10 ea | Hip abduction machine · 2×12–15 · Side plank · 2×20–40s |
+| **5** | DB lateral raise · 2×12–15 | Standing calf raise · 2×12–15 | Hip abduction machine · 2×12–15 |
 
 Every day carries one knee-dominant push and one hip-dominant pull — that's what slot 4 is for,
 and it's why slot 4 is "whatever slot 1 isn't."
@@ -172,14 +175,17 @@ and it's why slot 4 is "whatever slot 1 isn't."
 | Slot | Instead of | Why |
 |---|---|---|
 | **C4** seated leg curl | 45° back extension | The RDL already supplies 5 weekly sets of hip extension; a back extension made it a third helping and left knee flexion at zero. The leg curl adds the missing function and is still a hip/pull complement to the split squat, so C's push/pull pairing holds. Seated, not lying — hip flexed puts the hamstring at longer length. |
-| **A5** DB lateral raise | Side plank | Lateral delt was the only muscle group under the 4-set MED, at two. A raise is zero-skill, fits the rest window, and is the group doing the most visible work on a KPI that deliberately isn't scale weight. |
+| **A5** DB lateral raise | Hip abduction | Lateral delt was the only muscle group under the 4-set MED, at two. A raise is zero-skill and is the group doing the most visible work on a KPI that deliberately isn't scale weight. Abduction survives on C, which is the day that needs it most. |
 
-⚠️ **The cost, and it compounds.** Slot 5 started as 6 abduction + 4 side plank. The calf raise
-took it to 4 + 4; the lateral raise takes it to **4 + 2**. Each step was defensible on its own,
-but together they halve the lateral-chain work that §2 calls the non-negotiable. The loaded,
-progressible half — 4 sets on the machine — is intact, and that's the half §14 ●07 actually rests
-on. But this is the floor. Nothing else comes out of slot 5, and if the IT band starts talking,
-§10's lever is to put abduction back on all three days.
+⚠️ **The cost, and it compounded.** Slot 5 started at 6 abduction + 4 side plank. The calf raise
+took it to 4 + 4, the lateral raise to 4 + 2, and moving the slot out of the rest periods — one
+movement a day instead of two — to **2 + 0**. Each step was defensible alone; together they took
+the lateral-chain work that §2 calls the non-negotiable down by two thirds, and the trunk work to
+nothing.
+
+What survives is the half §14 ●07 actually rests on: loaded, progressible abduction on a stack,
+now on session C only. That is the floor. Nothing else comes out of slot 5, and if the IT band
+starts talking, §10's lever is to put abduction back on all three days.
 
 **Dropping the back extension** also leaves no *dynamic* erector work. Acceptable: 5 weekly sets
 of RDL and 4 of seated row are both substantial isometric erector loading.
@@ -203,19 +209,23 @@ modality this warm-up rules out rather than merely discourages.
 
 | Segment | Minutes | Notes |
 |---|---|---|
-| Cardio | 4 | Low-impact modalities only; never running |
-| Slot 1, incl. ramp-up sets | 12 | 2–3 warm-up sets before 3 working sets |
-| Slot 2 — chest press | 3.5 | Machine abduction in the rest |
-| Slot 3 — lat pulldown | 3.5 | Side planks in the rest; lateral raises in A |
-| Slot 4 — lower accessory | 4 | |
-| Transitions & equipment friction | 5 | Peak-hour reality at a campus rec |
-| **Total** | **~32** | Roughly 13 minutes of headroom |
+| Cardio warm-up | 4 | Low-impact modalities only; never running |
+| Slot 1 — main lift | 14.5 | Setup, two ramp-ups, three working sets, full rests |
+| Slot 2 — upper push | 5 | Setup, two sets, one 90 s rest |
+| Slot 3 — upper pull | 5 | |
+| Slot 4 — lower accessory | 5 | |
+| Slot 5 — isolation | 5 | |
+| **Total** | **~38.5** | Around 6 minutes of headroom |
 
-**Session C runs longer** — 3 sets of split squats is really 6 working sets. Alternating legs
-helps, but budget 15–16 minutes for slot 1 on that day rather than 12, and ~36–38 minutes for
-the session. If C runs over, drop slot 1 to **2 working sets** — the same lever §10 uses after a
-soccer game. Don't cut slot 4: it carries the program's only knee flexion. (This is also why C's row is
-the two-handed seated row, not a single-arm version — one per-limb movement per session.)
+Transitions no longer get a line of their own. Every slot opens with a one-minute setup step, so
+the walk to the next machine is inside the budget rather than beside it — which is also the only
+honest place for it, since it's the part that reliably runs long.
+
+**Session C lands at ~38** on the same arithmetic: its slot 1 trades two ramp-ups for one and
+buys longer working sets with the difference, because 3 sets of split squats is really 6. If it
+runs over, drop slot 1 to **2 working sets** — the same lever §10 uses after a soccer game. Don't
+cut slot 4: it carries the program's only knee flexion. (This is also why C's row is the
+two-handed seated row, not a single-arm version — one per-limb movement per session.)
 
 > **Why deliberately under budget:** finishing early is the correct error. A session she
 > finishes in 38 minutes feeling strong beats one she abandons at 55.
@@ -317,8 +327,6 @@ different thing from you correcting her on it. **What you actively coach still w
 | Standing calf raise | Short, bouncy reps | "Rise up as high as you can, then lower all the way back down." | Heels below the step, knees straight, no bouncing |
 | Seated leg curl | Hips lifting off the pad at the end of the curl | "Glue your thighs to the seat and curl underneath you." | Tempo, foot angle |
 | DB lateral raise | Traps shrugging, weight swinging up | "Lead with your elbows, shoulders stay down away from your ears." | Exact height — stop at shoulder |
-| Side plank | Hips sagging toward the floor | "Keep your body in a straight line." | Elbow under shoulder, bottom-knee regression |
-| Dead bug | Lower back peeling off the floor | "Keep your lower back planted on the floor." | Opposite limbs together, shorten the reach rather than arch |
 | Easy cardio | Treating the warm-up as a workout | "Conversational pace." | What that actually means, why not running, why four minutes earns its place |
 
 > **Why the cues are worded that way.** Every one points at an *effect in the world* rather than
@@ -351,8 +359,6 @@ brevity over completeness — the longest is three minutes — and all verified 
 | Hip abduction machine | [Machine Tutorial](https://www.youtube.com/watch?v=MwXtApoiVEc) | SIU Rec Center | 1:40 |
 | Standing calf raise | [Standing DB Calf Raise Tutorial](https://www.youtube.com/watch?v=8sT7Ne3Kzwc) | KevTheTrainer | 1:01 |
 | DB lateral raise | [Proper Form & Technique](https://www.youtube.com/watch?v=ssAo_xwFt5c) | Brendan Wong | 0:51 |
-| Side plank | [The Right Way](https://www.youtube.com/watch?v=XeN4pEZZJNI) | Well+Good | 3:06 |
-| Dead bug | [Core Exercise: Dead Bug](https://www.youtube.com/watch?v=g_BYB0R-4Ws) | Children's Hospital Colorado | 1:38 |
 
 The leg curl link is the same channel as the RDL's, which is deliberate — two of the three
 lower-body demos in one voice is one less thing to adjust to.
@@ -365,7 +371,7 @@ lower-body demos in one voice is one less thing to adjust to.
 |---|---|
 | **Soccer game the day before** | Drop slot 1 to 2 working sets, cut slot 4 entirely. Keep both upper slots and the abductor work at full volume. Don't rearrange the week. |
 | **Only two sessions that week** | Nothing. She does the next two in the queue. Every session is pattern-complete, which is why this failure mode is free. |
-| **IT band is talking to her** | Run **A** instead of C — bilateral, shorter-range, and the abduction day. (B is also bilateral but its slot 5 is calves, so it's the weaker choice here; if the queue lands on B, swap its slot 5 back to the abduction machine for that session.) Cut single-leg volume. Persistent pain gets logged and reported. |
+| **IT band is talking to her** | Two moves, and they pull apart now that C is both the single-leg day *and* the abduction day. Run **A or B** instead of C to drop the single-leg volume — and put the **abduction machine into slot 5 of whichever session she runs**, displacing the lateral raise or the calf raise for as long as it takes. §5's compounding warning is what makes the second half necessary: abduction no longer appears anywhere except C. Persistent pain gets logged and reported. |
 | **Sessions finishing under 35 min** | Signal to add a movement around week 4 — **a chest/press movement** (DB bench, dips, push-up variation). With lateral delt covered by A's raise, chest at 4 direct sets is the thinnest pattern left. Add one, not two. |
 | **Lateral knee talks after the leg curl** | Watch item, not an expected one. §11 moderates loaded knee flexion through the irritable range; 2 sets once a week is trivial next to the bike, but it gets logged and reported like any IT band signal. |
 | **Topping out the rep range by week 2** | Expected, not a sign it's too easy. Returning athletes regain fast. Keep adding load and let it run. |
@@ -380,10 +386,11 @@ live theories. What *is* well supported is the part that drives programming.
 
 ### Emphasize
 
-- **Hip abductor strengthening** — machine abduction, two sessions out of three, loaded on a
-  stack so it can actually progress
-- **Side planks**, which train the same lateral chain. These run in session C only — see the
-  compounding warning in §5
+- **Hip abductor strengthening** — machine abduction, loaded on a stack so it can actually
+  progress. **Session C only**, two sets a week, which is the floor and is flagged as such in §5
+- **Side planks** train the same lateral chain and are **no longer in the block at all** — they
+  were the second casualty of slot 5 losing a movement. §10's lever restores abduction before
+  anything else if the band complains
 - **Single-leg control**, cued explicitly: knee tracks over the middle toes, no pelvic drop
 
 ### Moderate early
@@ -569,16 +576,24 @@ and strengthening improves symptoms.
 *intervention* has held up even as the mechanism hasn't been settled.
 
 > **What the delivered program actually runs, and what that trades.** This section argues for
-> abduction in every session; the program runs it in two of three (§3). Worth being precise about
-> what was given up, because the honest answer is "unknown, probably little": Fredericson's
-> protocol was six weeks of daily-to-near-daily work and its dose isn't separable from its
-> outcome, so nothing in the evidence base distinguishes four loaded sets a week from six. Four
-> still clears every volume floor in §14.02, still progresses on a stack, and still comes with
-> four sets of side plank on the same lateral chain.
+> abduction in every session. The program runs it in **one** — session C, two sets a week (§3) —
+> and no longer pairs it with side-plank work on the same lateral chain, because that is gone too.
 >
-> The thing to watch is that this is the **one** place where a reduction should be reversed on
-> symptom, not on schedule. If the IT band starts talking, slot 5 goes back to abduction on all
-> three days before anything else in the program changes.
+> An earlier draft of this note argued the reduction cost little: Fredericson's protocol can't
+> separate dose from outcome, so nothing in the evidence base distinguishes four loaded sets a
+> week from six. That argument stretches to four. It does **not** stretch to two with no
+> lateral-chain support, and two is below the ~4 sets/muscle/week floor §14 ●02 applies
+> everywhere else in this document. Saying otherwise would be the document talking itself into
+> something.
+>
+> What actually justifies it is adherence, not physiology. Slot 5 used to live inside slots 2
+> and 3's rest periods and wasn't getting done, and work that doesn't happen has no dose at all.
+> That is a real argument. It is also a different argument from *this is enough*, and the two
+> shouldn't be allowed to blur.
+>
+> So this is the **one** place where a reduction gets reversed on symptom rather than on
+> schedule. If the IT band starts talking, abduction goes into slot 5 on all three days before
+> anything else in the program changes (§10).
 
 *Her version: "This is the thing that keeps your IT band quiet. It's why we don't skip it."*
 
@@ -614,7 +629,7 @@ how technique is acquired. The upper-body and accessory slots vary because a mac
 cable row has almost no skill floor, so variety there is nearly free — and it's what keeps three
 sessions from collapsing into one session on repeat, which is an adherence cost with no
 offsetting benefit. Motor learning principles support the repetition half; the variety half is
-an adherence judgment. Total: 13 movements, but never more than 6 exercises in a session, and
+an adherence judgment. Total: 12 movements, but never more than 5 exercises in a session, and
 the hard ones are always the familiar ones.
 
 *Her version: "The hard lifts stay the same so you get good at them. The rest changes so you don't get bored."*
@@ -643,7 +658,7 @@ this document: the depth exists, it just doesn't arrive uninvited.
   "my brother has a study" beats "my brother said so."
 
 **The framing that does the most work:** lead with what the program *doesn't* ask of her. Three
-sessions, six exercises a session, 45 minutes, no supersets, nothing she doesn't already recognize. The
+sessions, five exercises a session, 40 minutes, no supersets, nothing she doesn't already recognize. The
 persuasive thing about this program isn't how well-evidenced it is — it's how little it demands.
 
 ---
@@ -679,18 +694,18 @@ base can fix.
 ## 18. Weekly volume by muscle group
 
 Direct sets in full, indirect at ~0.5. Unilateral counted per limb. MED reference ≈ 4 sets/muscle/week.
-Slot 5 carries two separate reductions to the lateral chain — see the warning in §5.
+Slot 5 has now been cut three times over — see the compounding warning in §5.
 
 | Muscle group | Direct | Where from | Status |
 |---|---|---|---|
 | Glutes | 8 | RDL 5, split squat 3 | Well clear, and uncredited above: leg press adds 5 |
 | Quads | 8 | Leg press 5, split squat 3 | Well clear |
 | Hamstrings | 7 | RDL 5 (hip ext), leg curl 2 (knee flex) | Clears, and **both functions now covered** — was 7 sets of hip extension only |
-| Hip abductors | 4 (+2 lateral-chain) | Machine 4 (A, C), side plank 2 (C) | **At the floor.** Down from 6+4 via two separate changes — see the warning in §5 |
+| Hip abductors | 2 | Machine 2 (C) | **Below the MED floor.** Down from 6+4 across three changes; the lateral-chain support is gone entirely — see §5 |
 | Erectors (dynamic) | 0 | — | Back extension removed; see §5 |
 | Back | 6 | Row 4 (horizontal), pulldown 2 (vertical) | Clears; both planes covered |
 | Erectors | ~9 isometric | RDL 5, seated row 4 | Ample isometric loading; no dynamic work |
-| Trunk | 4 | Side plank 2, dead bug 2 | At the floor. Anti-lateral-flexion + anti-extension; **anti-rotation still absent** — block two |
+| Trunk | 0 | — | **Absent.** Side plank and dead bug both left with slot 5's second movement; nothing trains the trunk directly now |
 | Chest | 4 (+~1 from OHP) | Flat 2, incline 2 | **At the MED floor — thinnest pattern left; the week-4 movement is earmarked here** |
 | Delts — anterior | ~5 | OHP 2, incline 2, flat ~1 | Well clear |
 | Delts — lateral | 4 | OHP 2, lateral raise 2 | **At the floor — was 2, the only group under it** |
