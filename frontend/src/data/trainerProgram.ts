@@ -247,13 +247,13 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
   /* Warm-up — identical every session (§5). Cardio only: the ramp-up sets in
      slot 1 are the movement prep, so a separate primer bought nothing. */
   add({
-    slot: 'warm', slotLabel: 'Warm-up', kind: 'work', secs: 240,
+    slot: 'warm', slotLabel: 'Warm-up', kind: 'work', secs: 300,
     name: 'Easy cardio', sub: 'Rower, elliptical, or incline walk',
     cue: 'Conversational pace.',
     more: [
       "Conversational pace means you could hold a full conversation through it without running out of breath. If you couldn't, it's too hard — this is the easiest gear you have.",
       'Running is the one option to skip. The repeated impact is a common trigger for IT band irritation, which is the thing this whole block is built around avoiding.',
-      'Four easy minutes warms the tissue and wakes up the signal between your brain and your muscles. Both make everything after it stronger and safer — it is not a workout of its own.',
+      'Five easy minutes warms the tissue and wakes up the signal between your brain and your muscles. Both make everything after it stronger and safer — it is not a workout of its own.',
     ],
   });
 
