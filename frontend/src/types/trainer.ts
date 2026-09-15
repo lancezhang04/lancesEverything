@@ -3,7 +3,7 @@ export type SessionId = 'A' | 'B' | 'C';
 /** What she's doing right now. Drives the accent colour of the whole screen. */
 export type StepKind = 'work' | 'rest' | 'move';
 
-export type SlotKey = 'warm' | 's1' | 's2' | 's3' | 's4';
+export type SlotKey = 'warm' | 's1' | 's2' | 's3' | 's4' | 's5';
 
 export interface Step {
   slot: SlotKey;
@@ -30,8 +30,6 @@ export interface Step {
   alternatives?: string[];
   /** Short form demo for the movement this step is about. */
   video?: string;
-  /** Slot 5 work that lives inside this rest period, if any. */
-  fill?: string;
 }
 
 export interface Movement {
@@ -70,13 +68,12 @@ export interface SessionDef {
   slot2: Movement;
   slot3: Movement;
   slot4: Movement;
-  /**
-   * Fills slot 2's rests. Abduction on two of the three days — that dose is the
-   * non-negotiable (§3); the third day spends the slot elsewhere.
+/**
+   * The isolation slot. It used to be two movements tucked inside slots 2 and 3's
+   * rest periods; in practice that meant leaving a machine mid-rest and getting
+   * back to it, which doesn't survive a busy gym. One movement, two real sets.
    */
-  slot2Fill: Accessory;
-  /** Fills slot 3's rests. Rotates so trunk work covers two functions, not one. */
-  slot3Fill: Accessory;
+  slot5: Accessory;
   /** Slot 1 is unilateral, so every working set costs roughly double. */
   unilateral: boolean;
 }

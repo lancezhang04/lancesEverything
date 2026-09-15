@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { lastFor, record } from '../../data/trainerLog';
+import { lastFor, record, suggestRampWeight } from '../../data/trainerLog';
 import { SessionSummary, useSessionTimer } from '../../hooks/useSessionTimer';
 import { useWakeLock } from '../../hooks/useWakeLock';
 import { SessionId, Step } from '../../types/trainer';
@@ -62,6 +62,10 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
     setSaved(false);
   }, [logKey]);
 
+  /* On a ramp-up, propose a load off the working set she logged last time, so
+     the first scroll lands somewhere sensible instead of at a flat 50. */
+  const suggested = logKey ? suggestRampWeight(logKey) : null;
+
   const hold = (next: { weight?: number | null; reps?: number | null }) => {
     if (!logKey) return;
     const w = next.weight === undefined ? weight : next.weight;
@@ -95,10 +99,10 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
       ? 'bg-emerald-500/15 text-emerald-400'
       : 'bg-rose-500/15 text-rose-400';
 
-  const detail = step.fill ?? step.sub ?? '';
-  /* On a rest, the coaching belongs to the slot 5 work filling it, not to the
-     lift she just put down — so the panel names that instead. */
-  const notesTitle = step.fill ?? step.name;
+  /* Only while the dial is still blank — once she's picked a number, repeating
+     the suggestion back at her is noise. */
+  const detail =
+    (step.sub ?? '') + (suggested !== null && weight === null ? ` · try ${suggested} lb` : '');
   /* Setup steps carry the same coaching as the sets they precede — walking up
      to a machine is exactly when she'd want to read it. */
   const expandable = Boolean(step.more?.length || step.alternatives?.length || step.video);
@@ -153,9 +157,7 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
 
         <div className="flex h-[clamp(2.3rem,5.4vh,2.6rem)] w-full flex-none items-start justify-center">
           <p
-            className={`max-w-[34ch] text-[length:clamp(0.78rem,1.6vh,0.875rem)] leading-snug tabular-nums ${
-              step.fill ? theme.text : 'text-slate-400'
-            }`}
+            className="max-w-[34ch] text-[length:clamp(0.78rem,1.6vh,0.875rem)] leading-snug tabular-nums text-slate-400"
           >
             {detail}
           </p>
@@ -204,7 +206,7 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
                 <RollerDial
                   values={WEIGHTS}
                   value={weight}
-                  fallback={WEIGHT_START}
+                  fallback={suggested ?? WEIGHT_START}
                   onChange={(v) => {
                     setWeight(v);
                     hold({ weight: v });
@@ -258,7 +260,7 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
               <span
                 className={`mb-0.5 flex items-center gap-1.5 text-[0.6rem] uppercase tracking-[0.14em] ${theme.text}`}
               >
-                {step.fill ? 'Form' : 'Cue'}
+                Cue
                 {expandable && (
                   <svg viewBox="0 0 24 24" className="h-3 w-3 fill-none stroke-current stroke-[3]" strokeLinecap="round" strokeLinejoin="round">
                     <path d="m6 9 6 6 6-6" />
@@ -281,7 +283,7 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
                 <p className={`text-[0.6rem] uppercase tracking-[0.16em] ${theme.text}`}>
                   {step.slotLabel}
                 </p>
-                <h3 className="truncate text-sm text-slate-100">{notesTitle}</h3>
+                <h3 className="truncate text-sm text-slate-100">{step.name}</h3>
               </div>
               <div className="flex flex-none items-center gap-3">
                 <span
@@ -355,7 +357,7 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
         <p className="truncate text-center text-xs text-slate-500">
           {next ? (
             <>
-              Up next · <span className="text-slate-400">{next.fill ?? next.name}</span>
+              Up next · <span className="text-slate-400">{next.name}</span>
             </>
           ) : (
             'Last one'

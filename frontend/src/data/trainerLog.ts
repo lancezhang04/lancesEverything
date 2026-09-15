@@ -63,3 +63,21 @@ export const record = (movement: string, weight: number | null, reps: number | n
     /* private browsing — the set just isn't remembered */
   }
 };
+
+/**
+ * What the ramp-ups should weigh, given what she worked with last time.
+ *
+ * Halves and three-quarters of the working load, rounded to the smallest plate
+ * jump — the point of a ramp-up is to rehearse the groove under something she
+ * can move cleanly, so being approximately right is the whole requirement.
+ * Returns null until that movement's first working set has been logged.
+ */
+const RAMP_SHARE: Record<string, number> = { ramp1: 0.5, ramp2: 0.75 };
+
+export const suggestRampWeight = (logKey: string): number | null => {
+  const match = /^(.+)\|s1\|(ramp1|ramp2)$/.exec(logKey);
+  if (!match) return null;
+  const working = lastFor(`${match[1]}|s1|work1`)?.weight;
+  if (!working) return null;
+  return Math.max(2.5, Math.round((working * RAMP_SHARE[match[2]]) / 2.5) * 2.5);
+};
