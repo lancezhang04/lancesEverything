@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SessionSummary, useSessionTimer } from '../../hooks/useSessionTimer';
 import { useWakeLock } from '../../hooks/useWakeLock';
 import { SessionId, Step } from '../../types/trainer';
@@ -27,6 +27,11 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
     useSessionTimer(steps, onComplete);
   useWakeLock(true);
 
+  /* The second cue layer. Closes itself on every step change so she never
+     advances into the next set with a panel still covering the dial. */
+  const [notesOpen, setNotesOpen] = useState(false);
+  useEffect(() => setNotesOpen(false), [index]);
+
   const theme = MODE_THEME[step.kind];
   const next = steps[index + 1];
   const overtime = remaining < 0;
@@ -53,6 +58,12 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
       : 'bg-rose-500/15 text-rose-400';
 
   const detail = step.fill ?? step.sub ?? '';
+  /* On a rest, the coaching belongs to the slot 5 work filling it, not to the
+     lift she just put down — so the panel names that instead. */
+  const notesTitle = step.fill ?? step.name;
+  /* Setup steps carry the same coaching as the sets they precede — walking up
+     to a machine is exactly when she'd want to read it. */
+  const expandable = Boolean(step.more?.length || step.alternatives?.length || step.video);
 
   return (
     <div className="mx-auto flex h-full w-full max-w-lg min-h-0 flex-1 flex-col">
@@ -85,7 +96,7 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
           they compress and the dial, which is the flexible one, takes the rest.
           --name drives both the headline size and its two-line box, so the box
           always fits exactly two lines whatever the screen. */}
-      <div className="flex min-h-0 flex-1 flex-col items-center py-1 text-center [--name:min(6.6vw,2.7vh,2rem)] sm:py-3">
+      <div className="relative flex min-h-0 flex-1 flex-col items-center py-1 text-center [--name:min(6.6vw,2.7vh,2rem)] sm:py-3">
         <div
           className={`flex h-4 flex-none items-center gap-2 text-[0.65rem] uppercase tracking-[0.16em] ${theme.text}`}
         >
@@ -125,20 +136,110 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
           </TickDial>
         </div>
 
+        {/* The one-liner, and the way into everything behind it. Keeps its box
+            whether or not this step has a cue, so the dial never moves. */}
         <div className="mt-1.5 flex h-[clamp(3.1rem,9.2vh,4.75rem)] w-full flex-none justify-center">
-          <div
-            className={`flex max-w-[34ch] flex-col justify-center rounded-lg px-4 py-2 ${theme.soft} ${
-              step.cue ? '' : 'invisible'
-            }`}
-          >
-            <span className={`mb-0.5 text-[0.6rem] uppercase tracking-[0.14em] ${theme.text}`}>
-              {step.fill ? 'Form' : 'Cue'}
-            </span>
-            <p className="text-[length:clamp(0.78rem,1.6vh,0.875rem)] leading-snug text-slate-200">
-              {step.cue}
-            </p>
-          </div>
+          {step.cue && (
+            <button
+              type="button"
+              onClick={() => expandable && setNotesOpen(true)}
+              disabled={!expandable}
+              aria-expanded={notesOpen}
+              className={`flex max-w-[34ch] flex-col justify-center rounded-lg px-4 py-2 text-left transition-colors ${theme.soft} ${
+                expandable ? 'cursor-pointer' : 'cursor-default'
+              }`}
+            >
+              <span
+                className={`mb-0.5 flex items-center gap-1.5 text-[0.6rem] uppercase tracking-[0.14em] ${theme.text}`}
+              >
+                {step.fill ? 'Form' : 'Cue'}
+                {expandable && (
+                  <svg viewBox="0 0 24 24" className="h-3 w-3 fill-none stroke-current stroke-[3]" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                )}
+              </span>
+              <p className="text-[length:clamp(0.78rem,1.6vh,0.875rem)] leading-snug text-slate-200">
+                {step.cue}
+              </p>
+            </button>
+          )}
         </div>
+
+        {/* Covers the dial, not the controls — she can still hit Done from here,
+            and the clock rides along in the header so it's never lost. */}
+        {notesOpen && (
+          <div className="absolute inset-0 z-30 flex flex-col overflow-hidden rounded-xl border border-slate-700 bg-slate-900/95 text-left backdrop-blur-sm">
+            <div className="flex flex-none items-start justify-between gap-3 border-b border-slate-700/70 px-4 py-2.5">
+              <div className="min-w-0">
+                <p className={`text-[0.6rem] uppercase tracking-[0.16em] ${theme.text}`}>
+                  {step.slotLabel}
+                </p>
+                <h3 className="truncate text-sm text-slate-100">{notesTitle}</h3>
+              </div>
+              <div className="flex flex-none items-center gap-3">
+                <span
+                  className={`text-sm tabular-nums ${overtime ? 'text-rose-400' : 'text-slate-400'}`}
+                >
+                  {overtime ? '+' : ''}
+                  {formatClock(remaining)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setNotesOpen(false)}
+                  aria-label="Close details"
+                  className="grid h-7 w-7 place-items-center rounded-md border border-slate-700 text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-200"
+                >
+                  <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-2" strokeLinecap="round">
+                    <path d="M6 6l12 12M18 6 6 18" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+              {step.cue && (
+                <p className={`text-sm font-medium leading-snug ${theme.text}`}>{step.cue}</p>
+              )}
+              {step.more && (
+                <ul className="mt-2.5 flex flex-col gap-2">
+                  {step.more.map((note) => (
+                    <li key={note} className="flex gap-2 text-[0.8rem] leading-snug text-slate-300">
+                      <span className="flex-none text-slate-600">·</span>
+                      <span>{note}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Names only — she's scanning for something free, not reading. */}
+              {step.alternatives && (
+                <div className="mt-3.5 border-t border-slate-700/60 pt-2.5">
+                  <p className="mb-1 text-[0.6rem] uppercase tracking-[0.14em] text-slate-500">
+                    Swaps
+                  </p>
+                  <p className="text-[0.8rem] leading-snug text-slate-400">
+                    {step.alternatives.join(' · ')}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {step.video && (
+              <a
+                href={step.video}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="flex flex-none items-center justify-center gap-2 border-t border-slate-700/70 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-slate-300 transition-colors hover:bg-slate-800/70 hover:text-slate-100"
+              >
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-current">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                Watch the demo
+              </a>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-none flex-col gap-[clamp(0.35rem,1vh,0.625rem)]">
