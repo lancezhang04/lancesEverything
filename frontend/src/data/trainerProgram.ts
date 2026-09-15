@@ -170,54 +170,34 @@ const LATERAL_RAISE: Accessory = {
   alternatives: ['Cable lateral raise', 'Machine lateral raise', 'Plate front-and-out raise'],
   video: 'https://www.youtube.com/watch?v=ssAo_xwFt5c',
 };
-const SIDE_PLANK: Accessory = {
-  name: 'Side plank',
-  dose: '20–40s each side',
-  cue: 'Keep your body in a straight line.',
-  more: [
-    'Elbow directly under your shoulder.',
-    'If a full one is too hard, drop your bottom knee to the floor and hold that instead.',
-  ],
-  alternatives: ['Side plank from the knees', 'Suitcase carry', 'Copenhagen plank'],
-  video: 'https://www.youtube.com/watch?v=XeN4pEZZJNI',
-};
-const DEAD_BUG: Accessory = {
-  name: 'Dead bug',
-  dose: '8–10 each side',
-  cue: 'Keep your lower back planted on the floor.',
-  more: [
-    'Opposite arm and opposite leg reach out together, slowly.',
-    "If your back lifts off the floor, don't reach as far. A shorter rep done flat beats a long one done arched.",
-  ],
-  alternatives: ['Bird dog', 'Pallof press', 'Hollow hold'],
-  video: 'https://www.youtube.com/watch?v=g_BYB0R-4Ws',
-};
 
 /**
  * A, B and C are a queue, not a calendar (§2). The lower-body pair in A and B
  * swaps emphasis; everything else is a genuinely different session (§5).
- * Abduction holds two of the three days — enough to keep the dose (§3) without
- * spending every slot-5 rest on it. B trades its abduction round for calves,
- * the one thing no session in the block trained at all.
  *
- * C4 is a leg curl rather than a back extension, and A5 a lateral raise rather than
- * a side plank — the two coverage gaps the block otherwise left open (§5).
+ * Slot 5 carries one movement per session now rather than two squeezed into
+ * other slots' rest periods. Collapsing two into one costs the block its trunk
+ * work entirely and leaves abduction on session C alone — a real reduction
+ * against §3 and §14.07, taken deliberately for work that wasn't happening.
+ *
+ * C4 is a leg curl rather than a back extension — a coverage gap the block
+ * otherwise left open (§5).
  */
 export const SESSIONS: Record<SessionId, SessionDef> = {
   A: {
     emphasis: 'Squat',
     slot1: LEG_PRESS, slot2: CHEST_PRESS, slot3: LAT_PULLDOWN, slot4: RDL,
-    slot2Fill: ABDUCTION_MACHINE, slot3Fill: LATERAL_RAISE, unilateral: false,
+    slot5: LATERAL_RAISE, unilateral: false,
   },
   B: {
     emphasis: 'Hinge',
     slot1: RDL, slot2: INCLINE_PRESS, slot3: CABLE_ROW, slot4: LEG_PRESS,
-    slot2Fill: CALF_RAISE, slot3Fill: DEAD_BUG, unilateral: false,
+    slot5: CALF_RAISE, unilateral: false,
   },
   C: {
     emphasis: 'Single leg',
     slot1: SPLIT_SQUAT, slot2: OVERHEAD_PRESS, slot3: CABLE_ROW, slot4: LEG_CURL,
-    slot2Fill: ABDUCTION_MACHINE, slot3Fill: SIDE_PLANK, unilateral: true,
+    slot5: ABDUCTION_MACHINE, unilateral: true,
   },
 };
 
@@ -228,6 +208,11 @@ export const nextInQueue = (id: SessionId): SessionId =>
 
 /** Weeks 1–2 run at 2–3 reps in reserve, tightening to 1–2 later (§2, §14.03). */
 const RIR = '8–12 reps · leave 2–3 in the tank';
+
+/** Finding a machine and loading it. One minute, everywhere. */
+const SETUP = 60;
+/** Every rest outside slot 1, which is the only lift that gets more (§14.05). */
+const SHORT_REST = 90;
 
 /** Copies a movement's coaching onto the step that's asking her to do it. */
 const coaching = (m: Movement) => ({
@@ -275,7 +260,7 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
   /* Slot 1 — the only lift that gets full rest (§4, §14.05) */
   const l1 = s.slot1;
   add({
-    slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'move', secs: 120,
+    slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'move', secs: SETUP,
     name: l1.name, sub: 'Set up — find it, load it', ...coaching(l1),
   });
 
@@ -283,8 +268,8 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
     /* Three sets of split squats is really six working sets, so slot 1 trades
        ramp-up sets for longer ones and still lands on the same clock (§6). */
     add({
-      slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'work', secs: 90,
-      name: l1.name, sub: 'Ramp-up · bodyweight · 6 each leg',
+      slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'work', secs: 60,
+      name: l1.name, sub: 'Ramp-up · bodyweight',
       logKey: `${l1.name}|s1|ramp`, ...coaching(l1),
     });
     add({
@@ -305,7 +290,7 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
   } else {
     add({
       slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'work', secs: 60,
-      name: l1.name, sub: 'Ramp-up 1 · light · 8 reps',
+      name: l1.name, sub: 'Ramp-up 1 · light',
       logKey: `${l1.name}|s1|ramp1`, ...coaching(l1),
     });
     add({
@@ -314,7 +299,7 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
     });
     add({
       slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'work', secs: 60,
-      name: l1.name, sub: 'Ramp-up 2 · moderate · 5 reps',
+      name: l1.name, sub: 'Ramp-up 2 · moderate',
       logKey: `${l1.name}|s1|ramp2`, ...coaching(l1),
     });
     add({
@@ -334,45 +319,36 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
     }
   }
 
-  /* Slots 2 and 3 — the slot 5 work lives inside these rests, never slot 1's.
-     Fatiguing the abductors before split squats would degrade exactly the
-     frontal-plane control this program exists to protect (§4). */
-  const upper: { key: SlotKey; label: string; lift: Movement; fill: Accessory; walk: number }[] = [
-    { key: 's2', label: 'Slot 2 · Upper push', lift: s.slot2, fill: s.slot2Fill, walk: 120 },
-    { key: 's3', label: 'Slot 3 · Upper pull', lift: s.slot3, fill: s.slot3Fill, walk: 90 },
+  /* Slots 2 to 5 — same shape, one after another. Slot 5 used to live inside
+     slots 2 and 3's rest periods, which read well on paper and doesn't survive
+     a busy gym: it means surrendering a machine mid-rest and hoping to get it
+     back. It costs four minutes to run it as its own slot and it actually
+     happens, which is the trade every time. */
+  const rest: { key: SlotKey; label: string; lift: Movement; sets: number; last?: boolean }[] = [
+    { key: 's2', label: 'Slot 2 · Upper push', lift: s.slot2, sets: upperSets },
+    { key: 's3', label: 'Slot 3 · Upper pull', lift: s.slot3, sets: upperSets },
+    { key: 's4', label: 'Slot 4 · Lower accessory', lift: s.slot4, sets: accessorySets },
+    { key: 's5', label: 'Slot 5 · Isolation', lift: s.slot5, sets: accessorySets, last: true },
   ];
-  for (const { key, label, lift, fill, walk } of upper) {
-    add({ slot: key, slotLabel: label, kind: 'move', secs: walk,
-          name: lift.name, sub: 'Walk over and set up', ...coaching(lift) });
-    for (let i = 1; i <= upperSets; i++) {
+  for (const { key, label, lift, sets, last } of rest) {
+    add({
+      slot: key, slotLabel: label, kind: 'move', secs: SETUP,
+      name: lift.name, sub: last ? 'Last one — set up' : 'Walk over and set up',
+      ...coaching(lift),
+    });
+    for (let i = 1; i <= sets; i++) {
       add({
         slot: key, slotLabel: label, kind: 'work', secs: 75,
-        name: lift.name, sub: `Set ${i} of ${upperSets} · ${RIR}`,
+        name: lift.name,
+        sub: `Set ${i} of ${sets} · ${'dose' in lift ? lift.dose : RIR}`,
         logKey: `${lift.name}|${key}|set${i}`, ...coaching(lift),
       });
-      add({
-        slot: key, slotLabel: label, kind: 'rest', secs: 105,
-        name: 'Rest', fill: `${fill.name} · ${fill.dose}`, ...coaching(fill),
+      /* No rest after the last set — the walk to the next slot is the rest. */
+      if (i < sets) add({
+        slot: key, slotLabel: label, kind: 'rest', secs: SHORT_REST,
+        name: 'Rest', sub: "Brisk — this one isn't protected",
       });
     }
-  }
-
-  /* Slot 4 — lower accessory, short rest */
-  const l4 = s.slot4;
-  add({
-    slot: 's4', slotLabel: 'Slot 4 · Lower accessory', kind: 'move', secs: 90,
-    name: l4.name, sub: 'Last one — set up', ...coaching(l4),
-  });
-  for (let i = 1; i <= accessorySets; i++) {
-    add({
-      slot: 's4', slotLabel: 'Slot 4 · Lower accessory', kind: 'work', secs: 75,
-      name: l4.name, sub: `Set ${i} of ${accessorySets} · ${RIR}`,
-      logKey: `${l4.name}|s4|set${i}`, ...coaching(l4),
-    });
-    if (i < accessorySets) add({
-      slot: 's4', slotLabel: 'Slot 4 · Lower accessory', kind: 'rest', secs: 105,
-      name: 'Rest', sub: "Brisk — this one isn't protected",
-    });
   }
 
   return steps;
@@ -399,11 +375,9 @@ export function slotPreview(id: SessionId, oneSetMode: boolean): SlotPreview[] {
     { n: '4', movement: s.slot4.name, note: 'Lower accessory', volume: reps(accessorySets), pinned: false },
     {
       n: '5',
-      /* One round lives in each of slot 2's and slot 3's rests, so the count
-         tracks the upper slots' set count. */
-      movement: `${s.slot2Fill.name} + ${s.slot3Fill.name}`,
-      note: 'Inside the rest of slots 2 & 3',
-      volume: `${upperSets} each`,
+      movement: s.slot5.name,
+      note: 'Isolation',
+      volume: `${accessorySets} × ${s.slot5.dose.replace(' reps', '')}`,
       pinned: true,
     },
   ];
