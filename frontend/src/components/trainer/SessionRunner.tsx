@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { lastFor, record } from '../../data/trainerLog';
 import { SessionSummary, useSessionTimer } from '../../hooks/useSessionTimer';
 import { useWakeLock } from '../../hooks/useWakeLock';
 import { SessionId, Step } from '../../types/trainer';
 import { formatClock } from '../../utils/formatters';
 import { stepAdvanced } from '../../utils/gymCues';
 import { MODE_THEME } from './modeTheme';
+import { RollerDial } from './RollerDial';
 import { TickDial } from './TickDial';
 
 interface SessionRunnerProps {
@@ -22,6 +24,13 @@ const RUNNING_LABEL: Record<Step['kind'], string> = {
 /** Drift under twenty seconds isn't worth a number — it reads as noise. */
 const DRIFT_DEADBAND = 20;
 
+/* 0–400 lb in the smallest jump most racks actually offer, and a rep range wide
+   enough that a ramp-up set and a long side plank both land on it. */
+const WEIGHTS = Array.from({ length: 161 }, (_, i) => i * 2.5);
+const REPS = Array.from({ length: 30 }, (_, i) => i + 1);
+const WEIGHT_START = 50;
+const REPS_START = 10;
+
 export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerProps) => {
   const { index, step, remaining, delta, paused, armed, start, advance, back, togglePause } =
     useSessionTimer(steps, onComplete);
@@ -31,6 +40,35 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
      advances into the next set with a panel still covering the dial. */
   const [notesOpen, setNotesOpen] = useState(false);
   useEffect(() => setNotesOpen(false), [index]);
+
+  /* Every set that carries a load, ramp-ups included — they're keyed per set,
+     so a light ramp-up can't overwrite the working weight it precedes. */
+  const logKey = step.logKey;
+  const loggable = Boolean(logKey);
+
+  const [weight, setWeight] = useState<number | null>(null);
+  const [reps, setReps] = useState<number | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  /* Dial positions for this session, held per set so that stepping away to a
+     rest and back doesn't wipe numbers she hasn't pressed Save on. */
+  const pending = useRef<Record<string, { weight: number | null; reps: number | null }>>({});
+
+  useEffect(() => {
+    if (!logKey) return;
+    const last = pending.current[logKey] ?? lastFor(logKey);
+    setWeight(last?.weight ?? null);
+    setReps(last?.reps ?? null);
+    setSaved(false);
+  }, [logKey]);
+
+  const hold = (next: { weight?: number | null; reps?: number | null }) => {
+    if (!logKey) return;
+    const w = next.weight === undefined ? weight : next.weight;
+    const r = next.reps === undefined ? reps : next.reps;
+    pending.current[logKey] = { weight: w, reps: r };
+    setSaved(false);
+  };
 
   const theme = MODE_THEME[step.kind];
   const next = steps[index + 1];
@@ -123,7 +161,32 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
           </p>
         </div>
 
-        <div className="flex min-h-[6rem] w-full flex-1 items-center justify-center py-1.5">
+        <div className="flex min-h-[6rem] w-full flex-1 flex-col items-center justify-center py-1.5">
+        {/* Equal flex tracks either side of the clock, so each dial sits centred
+            in the space between the timer and the edge rather than tucked up
+            against the bezel. The 4.5rem box inside each track is reserved on
+            every step, dial or not: without it the clock slides sideways and
+            resizes between a working set and the rest that follows it. */}
+        <div className="flex w-full min-h-0 max-h-[400px] flex-1 items-center justify-between gap-1">
+          <div className="flex h-full flex-1 items-center justify-center">
+            <div className="h-full w-[4.5rem] flex-none">
+              {loggable && (
+                <RollerDial
+                  values={REPS}
+                  value={reps}
+                  fallback={REPS_START}
+                  onChange={(v) => {
+                    setReps(v);
+                    hold({ reps: v });
+                  }}
+                  label="reps"
+                  accent={theme.text}
+                  syncKey={logKey ?? ''}
+                />
+              )}
+            </div>
+          </div>
+
           <TickDial fraction={overtime ? 0 : remaining / step.secs} stroke={theme.stroke}>
             <span
               className={`text-[clamp(1.5rem,29cqmin,4.5rem)] font-semibold leading-none tabular-nums ${
@@ -134,6 +197,49 @@ export const SessionRunner = ({ sessionId, steps, onComplete }: SessionRunnerPro
               {formatClock(remaining)}
             </span>
           </TickDial>
+
+          <div className="flex h-full flex-1 items-center justify-center">
+            <div className="h-full w-[4.5rem] flex-none">
+              {loggable && (
+                <RollerDial
+                  values={WEIGHTS}
+                  value={weight}
+                  fallback={WEIGHT_START}
+                  onChange={(v) => {
+                    setWeight(v);
+                    hold({ weight: v });
+                  }}
+                  label="lb"
+                  accent={theme.text}
+                  syncKey={logKey ?? ''}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+
+          {/* Optional on purpose — a set she forgets to log still counts. The row
+              keeps its height on unloggable steps so the clock above it doesn't
+              hop when the button comes and goes. */}
+          <div className="mt-1.5 flex h-7 flex-none items-center justify-center">
+            {loggable && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (logKey) record(logKey, weight, reps);
+                  setSaved(true);
+                }}
+                disabled={weight === null && reps === null}
+                className={`rounded-md border px-3.5 py-1 text-[0.8rem] uppercase tracking-[0.1em] transition-colors disabled:opacity-25 ${
+                  saved
+                    ? `border-current ${theme.text}`
+                    : 'border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                }`}
+              >
+                {saved ? 'Saved' : 'Save set'}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* The one-liner, and the way into everything behind it. Keeps its box

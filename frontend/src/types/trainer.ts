@@ -19,6 +19,13 @@ export interface Step {
   cue?: string;
   /** Deeper notes, revealed only when she taps the cue. */
   more?: string[];
+  /**
+   * Storage key for this set's numbers, or absent if there's nothing to log.
+   * Identifies the set, not just the movement — `Leg press|s1|work2` — so a
+   * ramp-up and the working set it precedes keep separate weights, and the
+   * same lift in two slots doesn't collide.
+   */
+  logKey?: string;
   /** Same job, different equipment — names only. */
   alternatives?: string[];
   /** Short form demo for the movement this step is about. */

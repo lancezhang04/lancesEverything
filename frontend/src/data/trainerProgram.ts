@@ -284,7 +284,8 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
        ramp-up sets for longer ones and still lands on the same clock (§6). */
     add({
       slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'work', secs: 90,
-      name: l1.name, sub: 'Ramp-up · bodyweight · 6 each leg', ...coaching(l1),
+      name: l1.name, sub: 'Ramp-up · bodyweight · 6 each leg',
+      logKey: `${l1.name}|s1|ramp`, ...coaching(l1),
     });
     add({
       slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'rest', secs: 60,
@@ -294,7 +295,7 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
       add({
         slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'work', secs: 120,
         name: l1.name, sub: `Working set ${i} of ${workingSets} · both legs · ${RIR}`,
-        ...coaching(l1),
+        logKey: `${l1.name}|s1|work${i}`, ...coaching(l1),
       });
       if (i < workingSets) add({
         slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'rest', secs: 150,
@@ -304,7 +305,8 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
   } else {
     add({
       slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'work', secs: 60,
-      name: l1.name, sub: 'Ramp-up 1 · light · 8 reps', ...coaching(l1),
+      name: l1.name, sub: 'Ramp-up 1 · light · 8 reps',
+      logKey: `${l1.name}|s1|ramp1`, ...coaching(l1),
     });
     add({
       slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'rest', secs: 60,
@@ -312,7 +314,8 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
     });
     add({
       slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'work', secs: 60,
-      name: l1.name, sub: 'Ramp-up 2 · moderate · 5 reps', ...coaching(l1),
+      name: l1.name, sub: 'Ramp-up 2 · moderate · 5 reps',
+      logKey: `${l1.name}|s1|ramp2`, ...coaching(l1),
     });
     add({
       slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'rest', secs: 75,
@@ -321,7 +324,8 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
     for (let i = 1; i <= workingSets; i++) {
       add({
         slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'work', secs: 75,
-        name: l1.name, sub: `Working set ${i} of ${workingSets} · ${RIR}`, ...coaching(l1),
+        name: l1.name, sub: `Working set ${i} of ${workingSets} · ${RIR}`,
+        logKey: `${l1.name}|s1|work${i}`, ...coaching(l1),
       });
       if (i < workingSets) add({
         slot: 's1', slotLabel: 'Slot 1 · Main lift', kind: 'rest', secs: 165,
@@ -343,7 +347,8 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
     for (let i = 1; i <= upperSets; i++) {
       add({
         slot: key, slotLabel: label, kind: 'work', secs: 75,
-        name: lift.name, sub: `Set ${i} of ${upperSets} · ${RIR}`, ...coaching(lift),
+        name: lift.name, sub: `Set ${i} of ${upperSets} · ${RIR}`,
+        logKey: `${lift.name}|${key}|set${i}`, ...coaching(lift),
       });
       add({
         slot: key, slotLabel: label, kind: 'rest', secs: 105,
@@ -361,7 +366,8 @@ export function buildSession(id: SessionId, oneSetMode: boolean): Step[] {
   for (let i = 1; i <= accessorySets; i++) {
     add({
       slot: 's4', slotLabel: 'Slot 4 · Lower accessory', kind: 'work', secs: 75,
-      name: l4.name, sub: `Set ${i} of ${accessorySets} · ${RIR}`, ...coaching(l4),
+      name: l4.name, sub: `Set ${i} of ${accessorySets} · ${RIR}`,
+      logKey: `${l4.name}|s4|set${i}`, ...coaching(l4),
     });
     if (i < accessorySets) add({
       slot: 's4', slotLabel: 'Slot 4 · Lower accessory', kind: 'rest', secs: 105,
